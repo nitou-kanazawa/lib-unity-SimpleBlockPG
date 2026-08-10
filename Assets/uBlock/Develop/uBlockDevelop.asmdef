@@ -1,0 +1,16 @@
+{
+    "name": "uBlockDevelop",
+    "rootNamespace": "Develop",
+    "references": [
+        "GUID:994a57d5af17a7445a5d2a1fb5287cdb"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

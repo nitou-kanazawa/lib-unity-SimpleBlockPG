@@ -1,6 +1,6 @@
 using System;
 
-namespace Nitou.BlockPG {
+namespace Nitou.uBlock {
 
     [Serializable]
     public record BlockId {
