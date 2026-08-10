@@ -50,9 +50,9 @@ namespace nitou.BlockPG.DragDrop{
         private void DetectConectableBlockSpot() {
 
             // [NOTE] GhostBlock はインスペクタ未設定だとnullになる．
+            //        あくまで接続先の予告表示なので、未設定でも接続そのものは成立させる．
+            //        （以前はここで早期リターンしており、未設定だとブロックが一切繋がらなかった）
             var ghostBlock = _system.GhostBlock;
-            if (ghostBlock == null)
-                return;
 
             //
             var spot = _system.FindClosestBlockSpot(this, _system.DetectionDistance);
@@ -81,10 +81,12 @@ namespace nitou.BlockPG.DragDrop{
 
             // BlockBody
             if (spot is BPG_SpotBlockBody && spot.Block != this.Block) {
-                ghostBlock.Show(
-                    parent: spot.RectTransform,
-                    localScale: Vector3.one,
-                    siblingIndex: 0);
+                if (ghostBlock != null) {
+                    ghostBlock.Show(
+                        parent: spot.RectTransform,
+                        localScale: Vector3.one,
+                        siblingIndex: 0);
+                }
 
                 // cache spot
                 _currentSpot = spot;
@@ -92,10 +94,12 @@ namespace nitou.BlockPG.DragDrop{
             // OuterArea (ブロック下部)
             // ※スポットの所属ブロックを基準に配置するため、未設定の場合は接続対象にできない
             else if (spot is BPG_SpotOuterArea && spot.Block != null) {
-                ghostBlock.Show(
-                    parent: spot.Block.RectTransform.parent,
-                    localScale: Vector3.one,
-                    siblingIndex: spot.Block.RectTransform.GetSiblingIndex() + 1);  // ※対象ブロックの一つ下に配置する
+                if (ghostBlock != null) {
+                    ghostBlock.Show(
+                        parent: spot.Block.RectTransform.parent,
+                        localScale: Vector3.one,
+                        siblingIndex: spot.Block.RectTransform.GetSiblingIndex() + 1);  // ※対象ブロックの一つ下に配置する
+                }
 
                 // ※ルートブロックの場合、親セクションは存在しない
                 spot.Block.ParentSection?.UpdateLayout();
@@ -105,7 +109,9 @@ namespace nitou.BlockPG.DragDrop{
             }
             // その他
             else {
-                ghostBlock.Hide();
+                if (ghostBlock != null) {
+                    ghostBlock.Hide();
+                }
                 _currentSpot = null;
             }
 

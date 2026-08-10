@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using nitou.BlockPG.DragDrop;
 using nitou.BlockPG.Enviorment;
 using nitou.BlockPG.Interface;
 
@@ -42,13 +43,15 @@ namespace RuntimeTests {
         public I_BPG_ProgrammingEnv ProgrammingEnv { get; }
 
 
-        /// ----------------------------------------------------------------------------
-        // Public Method
-
         /// <summary>
         /// ブロックが載る Canvas．
         /// </summary>
         public Canvas Canvas { get; }
+
+        /// <summary>
+        /// ドラッグ中のブロックの一時的な配置先．（※withDraggingSystem 指定時のみ）
+        /// </summary>
+        public RectTransform DraggingLayer { get; }
 
 
         /// ----------------------------------------------------------------------------
@@ -58,7 +61,10 @@ namespace RuntimeTests {
         /// Canvas の表示倍率．CanvasScaler を使う実環境では 1 以外になるため、
         /// 生成物のスケールが倍率に影響されないことを検証する用途で指定する．
         /// </param>
-        public BlockPGTestEnv(float canvasScaleFactor = 1f) {
+        /// <param name="withDraggingSystem">
+        /// ドラッグ操作に必要な <see cref="DraggingSystem"/> を用意するかどうか．
+        /// </param>
+        public BlockPGTestEnv(float canvasScaleFactor = 1f, bool withDraggingSystem = false) {
             // EventSystem
             // ※UI操作を伴わないテストでも、EventSystemが無いと一部のUGUI処理が警告を出す
             if (EventSystem.current == null) {
@@ -93,6 +99,36 @@ namespace RuntimeTests {
 
             envObj.SetActive(true);
             ProgrammingEnv = env;
+
+            if (!withDraggingSystem)
+                return;
+
+            // ドラッグ中の一時的な配置先
+            var dragLayerObj = new GameObject("[Test] DraggingLayer", typeof(RectTransform));
+            var dragRect = dragLayerObj.GetComponent<RectTransform>();
+            dragRect.SetParent(canvasObj.transform, worldPositionStays: false);
+            dragRect.anchorMin = Vector2.zero;
+            dragRect.anchorMax = Vector2.one;
+            dragRect.offsetMin = Vector2.zero;
+            dragRect.offsetMax = Vector2.zero;
+            DraggingLayer = dragRect;
+
+            // DraggingSystem
+            // [NOTE] 参照は private な SerializeField のため、リフレクションで設定する．
+            //        （ドラッグ処理は配置先が未設定だと親なしへ飛ばされて成立しない）
+            var systemObj = new GameObject("[Test] DraggingSystem");
+            var system = systemObj.AddComponent<DraggingSystem>();
+            SetPrivateField(system, "_draggingObjHolder", dragRect);
+            _roots.Add(systemObj);
+        }
+
+        private static void SetPrivateField(object target, string fieldName, object value) {
+            var field = target.GetType().GetField(fieldName,
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (field == null)
+                throw new InvalidOperationException($"Field '{fieldName}' is not found on {target.GetType().Name}.");
+
+            field.SetValue(target, value);
         }
 
         public void Dispose() {
