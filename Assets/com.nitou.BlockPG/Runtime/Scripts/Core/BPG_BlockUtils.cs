@@ -6,7 +6,8 @@ namespace nitou.BlockPG{
 
     public static class BPG_BlockUtils {
 
-        private static readonly string folderPath = "BlockPG/Blocks";
+        // [NOTE] Resources 直下の実配置は "BlockPG/" のため、"BlockPG/Blocks" では常にロードに失敗していた．
+        private static readonly string folderPath = "BlockPG";
 
         public static TBlock LoadBlockPrefab<TBlock>(string prefabName)
             where TBlock : BPG_BlockBase {
