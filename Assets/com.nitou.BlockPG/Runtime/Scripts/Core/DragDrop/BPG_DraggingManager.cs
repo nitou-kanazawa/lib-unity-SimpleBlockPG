@@ -71,7 +71,7 @@ namespace nitou.BlockPG.DragDrop
         /// <summary>
         /// 環境内に入っているかどうか
         /// </summary>
-        public bool IsOverapping { get; private set; }
+        public bool IsOverlapping { get; private set; }
 
 
 
@@ -204,7 +204,7 @@ namespace nitou.BlockPG.DragDrop
 
             // reset flags
             IsDragging = false;
-            IsOverapping = false;
+            IsOverlapping = false;
 
             BE2_MainEventsManager.Instance.TriggerEvent(BE2EventTypes.OnPrimaryKeyUpEnd);
             BPG_InputEventBus.PublishPrimaryKeyUpEnd();

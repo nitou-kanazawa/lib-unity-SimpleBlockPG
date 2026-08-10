@@ -13,7 +13,7 @@ namespace nitou.BlockPG.DragDrop{
         /// ----------------------------------------------------------------------------
         // Interface Method
 
-        public override void OnBegineDrag(PointerEventData eventData) {
+        public override void OnBeginDrag(PointerEventData eventData) {
             // append to dagging layer
             _system.AssignToDraggingPanel(this);
         }
