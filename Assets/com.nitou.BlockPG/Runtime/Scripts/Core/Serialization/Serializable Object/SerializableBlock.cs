@@ -69,15 +69,20 @@ namespace nitou.BlockPG.Serialization {
         /// Converting from XML elements to classes for serialization.
         /// </summary>
         public static SerializableBlock FromXElement(XElement xBlock) {
+            if (xBlock == null)
+                throw new ArgumentNullException(nameof(xBlock));
 
+            // [NOTE] 欠落した要素があっても復元を継続できるよう、要素の取得は null 許容で行う．
             var sBlock = new SerializableBlock(
-                id: int.TryParse(xBlock.Element("id").Value, out var id) ? id : -1,
-                name: xBlock.Element("name").Value,
-                localPosition: XmlUtils.StringToVector3(xBlock.Element("localPosition").Value));
+                id: int.TryParse(xBlock.Element("id")?.Value, out var id) ? id : -1,
+                name: xBlock.Element("name")?.Value ?? string.Empty,
+                localPosition: XmlUtils.StringToVector3(xBlock.Element("localPosition")?.Value));
 
             // section List
-            var xSections = xBlock.Element("sections").Elements(SerializableBlockSection.NAME_KEY);
-            sBlock.sections.AddRange(xSections.Select(xSection => SerializableBlockSection.FromXElement(xSection)));
+            var xSections = xBlock.Element("sections")?.Elements(SerializableBlockSection.NAME_KEY);
+            if (xSections != null) {
+                sBlock.sections.AddRange(xSections.Select(xSection => SerializableBlockSection.FromXElement(xSection)));
+            }
 
             return sBlock;
         }
