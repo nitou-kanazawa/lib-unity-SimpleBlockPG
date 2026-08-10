@@ -112,9 +112,19 @@ namespace nitou.BlockPG.Blocks.Section {
             _spot = GetComponent<BPG_SpotBlockBody>();
 
             // parents
-            if (transform.parent != null) {
-                _section = transform.parent.GetComponent<I_BPG_BlockSection>();
-                _blockLayout = transform.parent.parent.GetComponent<I_BPG_BlockLayout>();
+            // [NOTE] 階層構造は Block > Section > Body を前提とする．
+            //        ドラッグ中の再ペアレントなどで前提が崩れる場合があるため、各階層を確認する．
+            var sectionTransform = transform.parent;
+            if (sectionTransform != null) {
+                _section = sectionTransform.GetComponent<I_BPG_BlockSection>();
+
+                var blockTransform = sectionTransform.parent;
+                _blockLayout = (blockTransform != null)
+                    ? blockTransform.GetComponent<I_BPG_BlockLayout>()
+                    : null;
+            } else {
+                _section = null;
+                _blockLayout = null;
             }
         }
 
@@ -125,18 +135,26 @@ namespace nitou.BlockPG.Blocks.Section {
         }
 
         private void UpdateSelfSize() {
+            // 所属セクションが不明な場合はサイズを決定できない
+            if (_section == null)
+                return;
 
-            float minHeight = _section.Block.IsTrigger() ? 0f : 50f;
-            float height = _childBlocks.Sum(child => child.Layout.Size.y - 10) - 10;
+            // ※所属ブロックが未設定の場合はトリガーブロックとして扱わない
+            bool isTriggerBlock = _section.Block != null && _section.Block.IsTrigger();
+
+            float minHeight = isTriggerBlock ? 0f : 50f;
+            float height = _childBlocks.Sum(child => (child.Layout != null ? child.Layout.Size.y : 0f) - 10) - 10;
 
             height = Mathf.Max(minHeight, height);
 
 
             // 特定条件下で高さを加算
-            bool isSecondLastSibling =
-                _section.RectTransform.GetSiblingIndex() == _section.RectTransform.parent.childCount - 2;
+            // ※セクションがルート直下にある場合、親を持たない
+            var sectionParent = _section.RectTransform.parent;
+            bool isSecondLastSibling = sectionParent != null
+                && _section.RectTransform.GetSiblingIndex() == sectionParent.childCount - 2;
 
-            if (isSecondLastSibling && !_section.Block.IsTrigger()) {
+            if (isSecondLastSibling && !isTriggerBlock) {
                 height += 50;
             }
 

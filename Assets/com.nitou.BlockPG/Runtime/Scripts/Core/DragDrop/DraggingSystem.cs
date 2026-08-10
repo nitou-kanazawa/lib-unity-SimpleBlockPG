@@ -79,7 +79,7 @@ namespace nitou.BlockPG.DragDrop {
                 // Block body 、
                 (spot is BPG_SpotBlockBody ||
                 // または対象ブロックが親を持っている
-                (spot is BPG_SpotOuterArea && spot.Block.ParentSection != null))
+                (spot is BPG_SpotOuterArea && spot.Block?.ParentSection != null))
             );
         }
 

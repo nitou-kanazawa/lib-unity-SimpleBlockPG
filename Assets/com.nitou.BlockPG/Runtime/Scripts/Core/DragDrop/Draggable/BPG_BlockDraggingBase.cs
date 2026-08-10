@@ -16,6 +16,10 @@ namespace nitou.BlockPG.DragDrop {
         // misc
         private Vector2 _offset;
 
+        // [NOTE] Object.Destroy() はフレーム終了まで遅延されるため、破棄済みかどうかを
+        //        Unityのnull判定で見分けられない．明示的にフラグで管理する．
+        private bool _isRemoved = false;
+
 
         /// ----------------------------------------------------------------------------
         // Property
@@ -43,13 +47,20 @@ namespace nitou.BlockPG.DragDrop {
         //        派生側で OnEnable() を宣言せず、必ずこれを override すること．
         protected virtual void OnEnable() {
             Block = GetComponent<I_BPG_Block>();
-            _system = DraggingSystem.Instance;
             if (Block is null) {
-                Debug.LogWarning("Block is not attched.");
+                Debug.LogWarning("Block is not attached.", this);
                 this.enabled = false;
                 return;
             }
 
+            // [NOTE] シーン内に DraggingSystem が無いとドラッグ処理が一切成立しないため、
+            //        取得できなければ自身を無効化する（各ハンドラでのnull参照を防ぐ）．
+            _system = DraggingSystem.Instance;
+            if (_system == null) {
+                Debug.LogWarning($"{nameof(DraggingSystem)} is not found in the scene.", this);
+                this.enabled = false;
+                return;
+            }
         }
 
 
@@ -62,9 +73,13 @@ namespace nitou.BlockPG.DragDrop {
         }
 
         void IBeginDragHandler.OnBeginDrag(PointerEventData eventData) {
-            _offset = RayPoint - eventData.position;
+            // つかんだ位置とブロック原点とのズレを保持する
+            _offset = TryGetPointerWorldPoint(eventData, out var worldPoint)
+                ? RayPoint - worldPoint
+                : Vector2.zero;
+            _isRemoved = false;
 
-            // 
+            //
             if (_system.CanDrag(this)) {
                 IsDragging = true;
                 OnBegineDrag(eventData);
@@ -74,7 +89,12 @@ namespace nitou.BlockPG.DragDrop {
         void IDragHandler.OnDrag(PointerEventData eventData) {
             if (IsDragging) {
                 // apply position
-                RectTransform.position = eventData.position + _offset;
+                if (TryGetPointerWorldPoint(eventData, out var worldPoint)) {
+                    var position = RectTransform.position;
+                    position.x = worldPoint.x + _offset.x;
+                    position.y = worldPoint.y + _offset.y;
+                    RectTransform.position = position;
+                }
                 OnDrag(eventData);
             }
         }
@@ -86,10 +106,17 @@ namespace nitou.BlockPG.DragDrop {
             }
 
             // Hide ghost block
-            _system.GhostBlock.Hide();
-            _system.GhostBlock.RectTransform.SetParent(null);
+            // [NOTE] GhostBlock はインスペクタ未設定だとnullになる．
+            if (_system.GhostBlock != null) {
+                _system.GhostBlock.Hide();
+                _system.GhostBlock.RectTransform.SetParent(null);
+            }
 
-            // 
+            // [NOTE] ドロップ先が見つからずブロックを破棄した場合、以降は破棄済みインスタンスの操作になる．
+            if (_isRemoved)
+                return;
+
+            //
             this.Block.UpdateParentSection();
         }
         #endregion
@@ -111,7 +138,8 @@ namespace nitou.BlockPG.DragDrop {
         // Protected Method
 
         /// <summary>
-        /// 
+        /// レイキャストで検出した空きスポットへドロップする．
+        /// ドロップ先が見つからない場合はブロックを破棄し、falseを返す．
         /// </summary>
         protected bool DropToRaycastedFreeSpot(PointerEventData eventData) {
 
@@ -128,7 +156,25 @@ namespace nitou.BlockPG.DragDrop {
             }
 
             // if can`t find any spot, remove block.
+            _isRemoved = true;
             BPG_BlockUtils.RemoveBlock(Block);
+            return false;
+        }
+
+        /// <summary>
+        /// ポインター位置をワールド座標へ変換する．
+        /// [NOTE] eventData.position はスクリーン座標のため、そのままワールド座標と
+        ///        加減算できるのは CanvasのRenderModeが ScreenSpaceOverlay の場合のみ．
+        ///        ScreenSpaceCamera / WorldSpace でもドラッグが破綻しないよう変換する．
+        /// </summary>
+        private bool TryGetPointerWorldPoint(PointerEventData eventData, out Vector2 worldPoint) {
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                    RectTransform, eventData.position, eventData.pressEventCamera, out var point)) {
+                worldPoint = point;
+                return true;
+            }
+
+            worldPoint = Vector2.zero;
             return false;
         }
 
