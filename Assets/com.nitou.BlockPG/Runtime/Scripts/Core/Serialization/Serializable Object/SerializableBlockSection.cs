@@ -54,15 +54,24 @@ namespace nitou.BlockPG.Serialization {
         /// Converting from XML elements to classes for serialization.
         /// </summary>
         public static SerializableBlockSection FromXElement(XElement xSection) {
+            if (xSection == null)
+                throw new ArgumentNullException(nameof(xSection));
+
             var sSection = new SerializableBlockSection();
             {
+                // [NOTE] 欠落した要素があっても復元を継続できるよう、要素の取得は null 許容で行う．
+
                 // Block list
-                var xChildBlocks = xSection.Element("childBlocks").Elements(SerializableBlock.NAME_KEY);
-                sSection.childBlocks.AddRange(xChildBlocks.Select(xBlock => SerializableBlock.FromXElement(xBlock)));
+                var xChildBlocks = xSection.Element("childBlocks")?.Elements(SerializableBlock.NAME_KEY);
+                if (xChildBlocks != null) {
+                    sSection.childBlocks.AddRange(xChildBlocks.Select(xBlock => SerializableBlock.FromXElement(xBlock)));
+                }
 
                 // Input list
-                var xInputs = xSection.Element("inputs").Elements(SerializableInput.NAME_KEY);
-                sSection.inputs.AddRange(xInputs.Select(xInput => SerializableInput.FromXElement(xInput)));
+                var xInputs = xSection.Element("inputs")?.Elements(SerializableInput.NAME_KEY);
+                if (xInputs != null) {
+                    sSection.inputs.AddRange(xInputs.Select(xInput => SerializableInput.FromXElement(xInput)));
+                }
             }
             return sSection;
         }
