@@ -13,8 +13,9 @@ namespace nitou.BlockPG.Blocks.Section {
         I_BPG_BlockSectionBody {
 
         // [NOTE]
-        // - ブロックの表示順をLayoutGroupによって管理しているため、リストは毎フレーム更新する実装となっている．
-        // - 同様にサイズ更新もLayoutGroupに依存するため、場合によっては１F遅延するかも．
+        // - ブロックの表示順は LayoutGroup によって管理している．
+        // - 子ブロックのリストとサイズは、構成が変化した時にのみ更新する．
+        //   （OnTransformChildrenChanged で検知し、次のフレームでまとめて反映される）
 
         private Image _image;
         private BPG_SpotBlockBody _spot;
@@ -83,7 +84,7 @@ namespace nitou.BlockPG.Blocks.Section {
         /// </summary>
         [ContextMenu("Update Layout")]
         public void UpdateLayout() {
-            UpdateChildBlocks();    // ※毎フレーム、ブロックリストは更新する
+            UpdateChildBlocks();    // ※親からの再帰更新時にもリストを取り直す
             UpdateSelfSize();
             ApplyColor();
         }
