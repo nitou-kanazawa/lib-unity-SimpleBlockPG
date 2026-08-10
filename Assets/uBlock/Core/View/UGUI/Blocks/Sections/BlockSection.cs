@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.uBlock {
+namespace Nitou.uBlock.View.UGUI {
 
     [DisallowMultipleComponent]
     public sealed class BlockSection : ComponentBase {

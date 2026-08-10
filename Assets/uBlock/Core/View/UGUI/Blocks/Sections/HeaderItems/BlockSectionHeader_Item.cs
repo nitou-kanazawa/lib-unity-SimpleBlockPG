@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Nitou.uBlock {
+namespace Nitou.uBlock.View.UGUI {
 
     public class BlockSectionHeader_Item : ComponentBase ,
         IBlockSectionHeaderItem {

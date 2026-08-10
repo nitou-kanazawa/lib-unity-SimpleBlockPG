@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Nitou.uBlock {
+namespace Nitou.uBlock.View.UGUI {
     
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Image))]
