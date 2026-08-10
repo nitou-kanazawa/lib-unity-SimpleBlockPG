@@ -73,7 +73,10 @@ namespace nitou.BlockPG.DragDrop {
         }
 
         void IBeginDragHandler.OnBeginDrag(PointerEventData eventData) {
-            _offset = RayPoint - eventData.position;
+            // つかんだ位置とブロック原点とのズレを保持する
+            _offset = TryGetPointerWorldPoint(eventData, out var worldPoint)
+                ? RayPoint - worldPoint
+                : Vector2.zero;
             _isRemoved = false;
 
             //
@@ -86,7 +89,12 @@ namespace nitou.BlockPG.DragDrop {
         void IDragHandler.OnDrag(PointerEventData eventData) {
             if (IsDragging) {
                 // apply position
-                RectTransform.position = eventData.position + _offset;
+                if (TryGetPointerWorldPoint(eventData, out var worldPoint)) {
+                    var position = RectTransform.position;
+                    position.x = worldPoint.x + _offset.x;
+                    position.y = worldPoint.y + _offset.y;
+                    RectTransform.position = position;
+                }
                 OnDrag(eventData);
             }
         }
@@ -150,6 +158,23 @@ namespace nitou.BlockPG.DragDrop {
             // if can`t find any spot, remove block.
             _isRemoved = true;
             BPG_BlockUtils.RemoveBlock(Block);
+            return false;
+        }
+
+        /// <summary>
+        /// ポインター位置をワールド座標へ変換する．
+        /// [NOTE] eventData.position はスクリーン座標のため、そのままワールド座標と
+        ///        加減算できるのは CanvasのRenderModeが ScreenSpaceOverlay の場合のみ．
+        ///        ScreenSpaceCamera / WorldSpace でもドラッグが破綻しないよう変換する．
+        /// </summary>
+        private bool TryGetPointerWorldPoint(PointerEventData eventData, out Vector2 worldPoint) {
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                    RectTransform, eventData.position, eventData.pressEventCamera, out var point)) {
+                worldPoint = point;
+                return true;
+            }
+
+            worldPoint = Vector2.zero;
             return false;
         }
 
