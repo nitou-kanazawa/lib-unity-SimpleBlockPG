@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace nitou.BlockPG.DragDrop{
@@ -11,7 +11,7 @@ namespace nitou.BlockPG.DragDrop{
         // Interface Method
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOŠJnˆ—D
+        /// ãƒ‰ãƒ©ãƒƒã‚°é–‹å§‹å‡¦ç†ï¼
         /// </summary>
         public override void OnBegineDrag(PointerEventData eventData) {
             // Append to dagging layer
@@ -19,12 +19,12 @@ namespace nitou.BlockPG.DragDrop{
         }
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOˆ—D
+        /// ãƒ‰ãƒ©ãƒƒã‚°å‡¦ç†ï¼
         /// </summary>
         public override void OnDrag(PointerEventData eventData) { }
 
         /// <summary>
-        /// ƒhƒ‰ƒbƒOI—¹ˆ—D
+        /// ãƒ‰ãƒ©ãƒƒã‚°çµ‚äº†å‡¦ç†ï¼
         /// </summary>
         public override void OnEndDrag(PointerEventData eventData) {
 

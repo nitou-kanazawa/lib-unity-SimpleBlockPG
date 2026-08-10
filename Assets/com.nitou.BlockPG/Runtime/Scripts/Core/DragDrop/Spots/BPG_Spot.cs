@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace nitou.BlockPG.DragDrop{
@@ -21,6 +21,16 @@ namespace nitou.BlockPG.DragDrop{
         private readonly static List<I_BPG_Spot> _spotsList = new();
 
         public static IReadOnlyList<I_BPG_Spot> ActiveSpots => _spotsList;
+
+        /// <summary>
+        /// 静的状態をリセットする．
+        /// [NOTE] "Enter Play Mode Options" でドメインリロードを無効にした場合、
+        ///        前回の実行で登録された破棄済みスポットが残るため明示的にクリアする．
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState() {
+            _spotsList.Clear();
+        }
 
         /// <summary>
         /// 指定スポットを登録する．
@@ -52,9 +62,11 @@ namespace nitou.BlockPG.DragDrop{
         /// ----------------------------------------------------------------------------
         // Lifecycle Events
 
-        private void OnEnable() => BPG_Spot.Register(this);
+        // [NOTE] Unity は同名メッセージを最派生クラスの1つしか呼ばないため、
+        //        派生側で OnEnable/OnDisable を宣言せず、必ずこれらを override すること．
+        protected virtual void OnEnable() => BPG_Spot.Register(this);
 
-        private void OnDisable() => BPG_Spot.Unregister(this);
+        protected virtual void OnDisable() => BPG_Spot.Unregister(this);
 
     }
 

@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Xml.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -45,7 +45,7 @@ namespace nitou.BlockPG.Serialization {
                 //foreach (var input in section.Header.Inputs) {
 
                 //    if (input.Transform.TryGetComponent<I_BPG_Block>(out _)) {
-                //        Debug.LogWarning("ƒuƒƒbƒN‚Ì“ü—ÍƒXƒ|ƒbƒg‚É‘¼ƒuƒƒbƒN‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚·B");
+                //        Debug.LogWarning("ãƒ–ãƒ­ãƒƒã‚¯ã®å…¥åŠ›ã‚¹ãƒãƒƒãƒˆã«ä»–ãƒ–ãƒ­ãƒƒã‚¯ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã™ã€‚");
                 //    }
 
                 //    sSection.inputs.Add(new SerializableInput(input.InputValues.stringValue));
@@ -86,10 +86,10 @@ namespace nitou.BlockPG.Serialization {
                 block.RectTransform.localPosition = sBlock.localPosition;
 
                 //if (sBlock.blockIns != null) {
-                //    block.SetAdditonalData(sBlock.blockIns); // ¦ƒJƒXƒ^ƒ€ƒuƒƒbƒN‚ÌŒÅ—Lƒf[ƒ^‚ğİ’è‚·‚é
+                //    block.SetAdditonalData(sBlock.blockIns); // â€»ã‚«ã‚¹ã‚¿ãƒ ãƒ–ãƒ­ãƒƒã‚¯ã®å›ºæœ‰ãƒ‡ãƒ¼ã‚¿ã‚’è¨­å®šã™ã‚‹
                 //}
 
-                // ”z‰º‚ÌƒZƒNƒVƒ‡ƒ“‚ğ¶¬‚·‚é
+                // é…ä¸‹ã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’ç”Ÿæˆã™ã‚‹
                 AddSerializableBlockSectionsAsync(block, sBlock, programmingEnv).Forget();
             }
 
@@ -97,11 +97,11 @@ namespace nitou.BlockPG.Serialization {
         }
 
         /// <summary>
-        /// ƒZƒNƒVƒ‡ƒ“‚ÍˆÈ‰º‚ÌƒuƒƒbƒN‚ğ¶¬‚·‚éD
-        /// ¦qƒuƒƒbƒN‚ÍeƒZƒNƒVƒ‡ƒ“‚ÌƒCƒ“ƒXƒ^ƒ“ƒX¶¬Œã‚Éˆ—‚µ‚È‚¢‚ÆNullƒGƒ‰[‚ª”­¶‚·‚éD
+        /// ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã¯ä»¥ä¸‹ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’ç”Ÿæˆã™ã‚‹ï¼
+        /// â€»å­ãƒ–ãƒ­ãƒƒã‚¯ã¯è¦ªã‚»ã‚¯ã‚·ãƒ§ãƒ³ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆå¾Œã«å‡¦ç†ã—ãªã„ã¨Nullã‚¨ãƒ©ãƒ¼ãŒç™ºç”Ÿã™ã‚‹ï¼
         /// </summary>
         private static async UniTaskVoid AddSerializableBlockSectionsAsync(I_BPG_Block block, SerializableBlock sBlock, I_BPG_ProgrammingEnv programmingEnv) {
-            // ƒtƒŒ[ƒ€‚ÌI—¹‚ğ‘Ò‚Â
+            // ãƒ•ãƒ¬ãƒ¼ãƒ ã®çµ‚äº†ã‚’å¾…ã¤
             await UniTask.Yield();
 
             var sections = block.Layout.Sections;

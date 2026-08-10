@@ -1,4 +1,4 @@
-using UniRx;
+Ôªøusing UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using nitou.BlockPG.Blocks;
@@ -63,7 +63,7 @@ namespace Develop {
                 return;
             }
 
-            // ÉeÉXÉgÉRÅ[Éh
+            // „ÉÜ„Çπ„Éà„Ç≥„Éº„Éâ
             {
                 var rootBlock = targetBlock.GetRootBlock();
                 Debug.Log($"Root : {rootBlock?.RectTransform.name}");

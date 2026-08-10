@@ -1,15 +1,15 @@
-using System.Linq;
+ï»¿using System.Linq;
 using UnityEngine;
 
-// [Ql]
-//  qiita: ƒVƒ“ƒOƒ‹ƒgƒ“‚ğg‚Á‚Ä‚İ‚æ‚¤@https://qiita.com/Teach/items/c146c7939db7acbd7eee
-//  kan‚Ìƒƒ‚’ : MonoBehaviour‚ğŒp³‚µ‚½ƒVƒ“ƒOƒ‹ƒgƒ“ https://kan-kikuchi.hatenablog.com/entry/SingletonMonoBehaviour
+// [å‚è€ƒ]
+//  qiita: ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚’ä½¿ã£ã¦ã¿ã‚ˆã†ã€€https://qiita.com/Teach/items/c146c7939db7acbd7eee
+//  kanã®ãƒ¡ãƒ¢å¸³: MonoBehaviourã‚’ç¶™æ‰¿ã—ãŸã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ https://kan-kikuchi.hatenablog.com/entry/SingletonMonoBehaviour
 
 namespace nitou.AssetLoader {
 
     /// <summary>
-    /// MonoBehaviour‚ğŒp³‚µ‚½ƒVƒ“ƒOƒ‹ƒgƒ“
-    /// ¦DontDestroyOnLoad‚ÍŒÄ‚Î‚È‚¢i”h¶ƒNƒ‰ƒX‘¤‚Ås‚¤j
+    /// MonoBehaviourã‚’ç¶™æ‰¿ã—ãŸã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³
+    /// â€»DontDestroyOnLoadã¯å‘¼ã°ãªã„ï¼ˆæ´¾ç”Ÿã‚¯ãƒ©ã‚¹å´ã§è¡Œã†ï¼‰
     /// </summary>
     public abstract class SingletonMonoBehaviour<T> : MonoBehaviour 
         where T : MonoBehaviour {
@@ -24,9 +24,9 @@ namespace nitou.AssetLoader {
                     _instance = FindObjectOfType<T>(includeInactive: true); 
 #endif
 
-                    // ƒV[ƒ““à‚É‘¶İ‚µ‚È‚¢ê‡‚ÍƒGƒ‰[
+                    // ã‚·ãƒ¼ãƒ³å†…ã«å­˜åœ¨ã—ãªã„å ´åˆã¯ã‚¨ãƒ©ãƒ¼
                     if (_instance == null) {
-                        Debug.LogWarning(typeof(T) + " ‚ğƒAƒ^ƒbƒ`‚µ‚Ä‚¢‚éGameObject‚Í‚ ‚è‚Ü‚¹‚ñ");
+                        Debug.LogWarning(typeof(T) + " ã‚’ã‚¢ã‚¿ãƒƒãƒã—ã¦ã„ã‚‹GameObjectã¯ã‚ã‚Šã¾ã›ã‚“");
                     }
                 }
                 return _instance;
@@ -38,9 +38,21 @@ namespace nitou.AssetLoader {
         // MonoBehaviour Method
 
         protected virtual void Awake() {
-            // Šù‚ÉƒCƒ“ƒXƒ^ƒ“ƒX‚ª‘¶İ‚·‚é‚È‚ç”jŠü
+            // æ—¢ã«ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒå­˜åœ¨ã™ã‚‹ãªã‚‰ç ´æ£„
             if (!CheckInstance())
                 Destroy(this.gameObject);
+        }
+
+        /// <summary>
+        /// [NOTE] é™çš„ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®è§£æ”¾ï¼
+        ///        "Enter Play Mode Options" ã§ãƒ‰ãƒ¡ã‚¤ãƒ³ãƒªãƒ­ãƒ¼ãƒ‰ã‚’ç„¡åŠ¹ã«ã—ãŸå ´åˆã€
+        ///        ç ´æ£„æ¸ˆã¿ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¸ã®å‚ç…§ãŒæ¬¡ã®å®Ÿè¡Œã«æŒã¡è¶Šã•ã‚Œã‚‹ãŸã‚æ˜ç¤ºçš„ã«ã‚¯ãƒªã‚¢ã™ã‚‹ï¼
+        ///        â€»é–‹ã„ãŸã‚¸ã‚§ãƒãƒªãƒƒã‚¯å‹ã§ã¯ RuntimeInitializeOnLoadMethod ãŒä½¿ãˆãªã„ãŸã‚ç ´æ£„æ™‚ã«è¡Œã†ï¼
+        /// </summary>
+        protected virtual void OnDestroy() {
+            if (ReferenceEquals(_instance, this)) {
+                _instance = null;
+            }
         }
 
 
@@ -48,17 +60,17 @@ namespace nitou.AssetLoader {
         // Private Method
 
         /// <summary>
-        /// ‘¼‚ÌƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚ÉƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚é‚©’²‚×‚é
+        /// ä»–ã®ã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã«ã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹ã‹èª¿ã¹ã‚‹
         /// </summary>
         protected bool CheckInstance() {
-            // ‘¶İ‚µ‚È‚¢ior©•ª©gjê‡
+            // å­˜åœ¨ã—ãªã„ï¼ˆorè‡ªåˆ†è‡ªèº«ï¼‰å ´åˆ
             if (_instance == null) {
                 _instance = this as T;
                 return true;
             } else if (Instance == this) {
                 return true;
             }
-            // Šù‚É‘¶İ‚·‚éê‡
+            // æ—¢ã«å­˜åœ¨ã™ã‚‹å ´åˆ
             return false;
         }
     }

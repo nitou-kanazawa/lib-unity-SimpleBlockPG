@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 namespace nitou.BlockPG.Interface{
@@ -9,12 +9,12 @@ namespace nitou.BlockPG.Interface{
     public interface I_BPG_BlockLayout : ILayoutable{
 
         /// <summary>
-        /// qƒZƒNƒVƒ‡ƒ“D
+        /// å­ã‚»ã‚¯ã‚·ãƒ§ãƒ³ï¼
         /// </summary>
         IReadOnlyList<I_BPG_BlockSection> Sections { get; }
 
         /// <summary>
-        /// ƒuƒƒbƒNƒJƒ‰[D.
+        /// ãƒ–ãƒ­ãƒƒã‚¯ã‚«ãƒ©ãƒ¼ï¼.
         /// </summary>
         Color Color { get; set; }
     }

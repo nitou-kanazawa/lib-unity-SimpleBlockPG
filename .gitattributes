@@ -1,0 +1,18 @@
+# ソースコードの文字コードについて
+# [NOTE] 日本語コメントを含むため、*.cs は UTF-8 (BOM付き) で保存すること．
+#        BOM を外すと日本語ロケールの IDE が Shift-JIS として保存し直し、文字化けの原因になる．
+#        （過去に 23 ファイルが Shift-JIS 化して文字化けした経緯あり）
+*.cs    diff=csharp
+
+# バイナリとして扱うアセット
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.psd   binary
+*.tga   binary
+*.fbx   binary
+*.dll   binary
+*.ttf   binary
+*.otf   binary
+*.wav   binary
+*.mp3   binary

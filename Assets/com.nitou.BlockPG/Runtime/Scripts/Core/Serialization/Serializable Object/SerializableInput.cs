@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Xml.Linq;
 using UnityEngine;
 
@@ -25,7 +25,7 @@ namespace nitou.BlockPG.Serialization {
         #region Static Method (Data conversion)
 
         /// <summary>
-        /// éØï ñº.
+        /// Ë≠òÂà•Âêç.
         /// </summary>
         public static readonly string NAME_KEY = "Input";
 

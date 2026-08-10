@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 
 namespace nitou.BlockPG.Events{
@@ -6,7 +6,7 @@ namespace nitou.BlockPG.Events{
     using nitou.BlockPG.DragDrop;
 
     /// <summary>
-    /// ‘I‘ğƒCƒxƒ“ƒgƒf[ƒ^D
+    /// é¸æŠã‚¤ãƒ™ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ï¼
     /// </summary>
     public struct BlockSelectEvent : IEquatable<BlockSelectEvent> {
 
@@ -27,7 +27,7 @@ namespace nitou.BlockPG.Events{
 
 
     /// <summary>
-    /// ƒhƒ‰ƒbƒOƒCƒxƒ“ƒgƒf[ƒ^D
+    /// ãƒ‰ãƒ©ãƒƒã‚°ã‚¤ãƒ™ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ï¼
     /// </summary>
     public struct BlockLocationEvent : IEquatable<BlockLocationEvent> {
 
@@ -51,7 +51,7 @@ namespace nitou.BlockPG.Events{
 
 
     /// <summary>
-    /// ˆÚ“®iƒhƒ‰ƒbƒO•ƒhƒƒbƒvjƒCƒxƒ“ƒgƒf[ƒ^D
+    /// ç§»å‹•ï¼ˆãƒ‰ãƒ©ãƒƒã‚°ï¼†ãƒ‰ãƒ­ãƒƒãƒ—ï¼‰ã‚¤ãƒ™ãƒ³ãƒˆãƒ‡ãƒ¼ã‚¿ï¼
     /// </summary>
     public struct BlockMoveEvent : IEquatable<BlockMoveEvent> {
         

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace nitou.BlockPG.DragDrop{
     using nitou.BlockPG.Interface;
@@ -25,11 +25,11 @@ namespace nitou.BlockPG.DragDrop{
 
         public override void OnEndDrag(PointerEventData eventData) {
 
-            // Ú‘±‘ÎÛ‚ÌƒuƒƒbƒN‚ª‘¶İ‚·‚éê‡A
+            // æ¥ç¶šå¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯ãŒå­˜åœ¨ã™ã‚‹å ´åˆã€
             if (_currentSpot != null) {
                 HandleDropToCurrentSpot();
             }
-            // Ú‘±‘ÎÛ‚ÌƒuƒƒbƒN‚ª‘¶İ‚µ‚È‚¢ê‡A
+            // æ¥ç¶šå¯¾è±¡ã®ãƒ–ãƒ­ãƒƒã‚¯ãŒå­˜åœ¨ã—ãªã„å ´åˆã€
             else {
                 DropToRaycastedFreeSpot(eventData);
             }
@@ -44,19 +44,19 @@ namespace nitou.BlockPG.DragDrop{
         // Private Method
 
         /// <summary>
-        /// Œ»İ‚Ìƒ|ƒCƒ“ƒ^[À•W‚Å‚Ì<see cref="I_BE2_Spot">ƒXƒ|ƒbƒg</see>‚ğŒŸo‚·‚é
-        /// ¦<see cref="BE2_DragDropManager"/>‚É‚æ‚Á‚ÄƒtƒŒ[ƒ€I—¹‚ÉÀs‚³‚ê‚é
+        /// ç¾åœ¨ã®ãƒã‚¤ãƒ³ã‚¿ãƒ¼åº§æ¨™ã§ã®<see cref="I_BE2_Spot">ã‚¹ãƒãƒƒãƒˆ</see>ã‚’æ¤œå‡ºã™ã‚‹
+        /// â€»<see cref="BE2_DragDropManager"/>ã«ã‚ˆã£ã¦ãƒ•ãƒ¬ãƒ¼ãƒ çµ‚äº†æ™‚ã«å®Ÿè¡Œã•ã‚Œã‚‹
         /// </summary>
         private void DetectConectableBlockSpot() {
             
             // 
             var spot = _system.FindClosestBlockSpot(this, _system.DetectionDistance);
 
-            //// Ú‘±‰Â”Û”»’è‚Ìƒfƒ‚ƒR[ƒh
+            //// æ¥ç¶šå¯å¦åˆ¤å®šã®ãƒ‡ãƒ¢ã‚³ãƒ¼ãƒ‰
             //if (spot != null && spot.Block != null && this.Block.IsConditionBlock()) {
             //    bool canConnect = true;
 
-            //    // ConditionƒuƒƒbƒN“ü‚êq‚É‚·‚é‚±‚Æ‚Ío—ˆ‚È‚¢
+            //    // Conditionãƒ–ãƒ­ãƒƒã‚¯å…¥ã‚Œå­ã«ã™ã‚‹ã“ã¨ã¯å‡ºæ¥ãªã„
             //    if (spot.Block.IsConditionBlock() && spot is not BE2_SpotOuterArea) {
             //        canConnect = false;
             //    }
@@ -66,7 +66,7 @@ namespace nitou.BlockPG.DragDrop{
             //        canConnect = false;
             //    }
 
-            //    // Ú‘±•s‰Â‚Ìê‡,
+            //    // æ¥ç¶šä¸å¯ã®å ´åˆ,
             //    if (!canConnect) {
             //        _dragDropManager.GhostBlock.Hide();
             //        _dragDropManager.SetCurrentSpot(null);
@@ -84,12 +84,12 @@ namespace nitou.BlockPG.DragDrop{
                 // cache spot
                 _currentSpot = spot;
             }
-            // OuterArea (ƒuƒƒbƒN‰º•”)
+            // OuterArea (ãƒ–ãƒ­ãƒƒã‚¯ä¸‹éƒ¨)
             else if (spot is BPG_SpotOuterArea) {
                 _system.GhostBlock.Show(
                     parent: spot.Block.RectTransform.parent,
                     localScale: Vector3.one,
-                    siblingIndex: spot.Block.RectTransform.GetSiblingIndex() + 1);  // ¦‘ÎÛƒuƒƒbƒN‚Ìˆê‚Â‰º‚É”z’u‚·‚é
+                    siblingIndex: spot.Block.RectTransform.GetSiblingIndex() + 1);  // â€»å¯¾è±¡ãƒ–ãƒ­ãƒƒã‚¯ã®ä¸€ã¤ä¸‹ã«é…ç½®ã™ã‚‹
 
                 // 
                 spot.Block.ParentSection.UpdateLayout();
@@ -97,7 +97,7 @@ namespace nitou.BlockPG.DragDrop{
                 // cache spot
                 _currentSpot = spot;
             }
-            // ‚»‚Ì‘¼
+            // ãã®ä»–
             else {
                 _system.GhostBlock.Hide();
                 _currentSpot = null;
@@ -107,7 +107,7 @@ namespace nitou.BlockPG.DragDrop{
         }
 
         /// <summary>
-        /// Spot‚É”z’u‚·‚é
+        /// Spotã«é…ç½®ã™ã‚‹
         /// </summary>
         private void HandleDropToCurrentSpot() {
             var spot = _currentSpot;

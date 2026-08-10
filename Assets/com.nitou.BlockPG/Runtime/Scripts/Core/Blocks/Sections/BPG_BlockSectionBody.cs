@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
@@ -13,8 +13,8 @@ namespace nitou.BlockPG.Blocks.Section {
         I_BPG_BlockSectionBody {
 
         // [NOTE]
-        // - ƒuƒƒbƒN‚Ì•\¦‡‚ğLayoutGroup‚É‚æ‚Á‚ÄŠÇ—‚µ‚Ä‚¢‚é‚½‚ßAƒŠƒXƒg‚Í–ˆƒtƒŒ[ƒ€XV‚·‚éÀ‘•‚Æ‚È‚Á‚Ä‚¢‚éD
-        // - “¯—l‚ÉƒTƒCƒYXV‚àLayoutGroup‚ÉˆË‘¶‚·‚é‚½‚ßAê‡‚É‚æ‚Á‚Ä‚Í‚PF’x‰„‚·‚é‚©‚àD
+        // - ãƒ–ãƒ­ãƒƒã‚¯ã®è¡¨ç¤ºé †ã‚’LayoutGroupã«ã‚ˆã£ã¦ç®¡ç†ã—ã¦ã„ã‚‹ãŸã‚ã€ãƒªã‚¹ãƒˆã¯æ¯ãƒ•ãƒ¬ãƒ¼ãƒ æ›´æ–°ã™ã‚‹å®Ÿè£…ã¨ãªã£ã¦ã„ã‚‹ï¼
+        // - åŒæ§˜ã«ã‚µã‚¤ã‚ºæ›´æ–°ã‚‚LayoutGroupã«ä¾å­˜ã™ã‚‹ãŸã‚ã€å ´åˆã«ã‚ˆã£ã¦ã¯ï¼‘Fé…å»¶ã™ã‚‹ã‹ã‚‚ï¼
 
         private Image _image;
         private BPG_SpotBlockBody _spot;
@@ -33,7 +33,7 @@ namespace nitou.BlockPG.Blocks.Section {
         // Property
 
         /// <summary>
-        /// ƒTƒCƒYî•ñD
+        /// ã‚µã‚¤ã‚ºæƒ…å ±ï¼
         /// </summary>
         public Vector2 Size {
             get => RectTransform.sizeDelta;
@@ -43,17 +43,17 @@ namespace nitou.BlockPG.Blocks.Section {
         public I_BPG_BlockSection BlockSection => _section;
 
         /// <summary>
-        /// Ú‘±‚³‚ê‚Ä‚¢‚éqƒuƒƒbƒN‚ÌƒŠƒXƒgD
+        /// æ¥ç¶šã•ã‚Œã¦ã„ã‚‹å­ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒªã‚¹ãƒˆï¼
         /// </summary>
         public IReadOnlyList<I_BPG_Block> ChildBlocks => _childBlocks;
 
         /// <summary>
-        /// ƒuƒƒbƒNÚ‘±‚Ì‰Â”Û”»’è—pƒRƒ“ƒ|[ƒlƒ“ƒgD
+        /// ãƒ–ãƒ­ãƒƒã‚¯æ¥ç¶šã®å¯å¦åˆ¤å®šç”¨ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆï¼
         /// </summary>
         public I_BPG_Spot Spot => _spot;
 
         /// <summary>
-        /// ‰Šú‰»ˆ—‚ªŠ®—¹‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©D
+        /// åˆæœŸåŒ–å‡¦ç†ãŒå®Œäº†ã—ã¦ã„ã‚‹ã‹ã©ã†ã‹ï¼
         /// </summary>
         public bool IsInitialized { get; private set; } = false;
 
@@ -62,7 +62,7 @@ namespace nitou.BlockPG.Blocks.Section {
         // Public Method
 
         /// <summary>
-        /// ŠJnˆ—D
+        /// é–‹å§‹å‡¦ç†ï¼
         /// </summary>
         internal void Initialize() {
             if (IsInitialized)
@@ -83,7 +83,7 @@ namespace nitou.BlockPG.Blocks.Section {
         /// </summary>
         [ContextMenu("Update Layout")]
         public void UpdateLayout() {
-            UpdateChildBlocks();    // ¦–ˆƒtƒŒ[ƒ€AƒuƒƒbƒNƒŠƒXƒg‚ÍXV‚·‚é
+            UpdateChildBlocks();    // â€»æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ã€ãƒ–ãƒ­ãƒƒã‚¯ãƒªã‚¹ãƒˆã¯æ›´æ–°ã™ã‚‹
             UpdateSelfSize();
             ApplyColor();
         }
@@ -94,7 +94,7 @@ namespace nitou.BlockPG.Blocks.Section {
         public void UpdateChildBlocks() {
             _childBlocks.Clear();
 
-            // ’¼‰º‚ÌƒAƒNƒeƒBƒu‚ÈƒuƒƒbƒN‚ğæ“¾‚·‚é
+            // ç›´ä¸‹ã®ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªãƒ–ãƒ­ãƒƒã‚¯ã‚’å–å¾—ã™ã‚‹
             foreach (Transform chiled in transform) {
                 if (chiled.gameObject.activeSelf
                     && chiled.TryGetComponent<I_BPG_Block>(out var block)) {
@@ -132,7 +132,7 @@ namespace nitou.BlockPG.Blocks.Section {
             height = Mathf.Max(minHeight, height);
 
 
-            // “Á’èğŒ‰º‚Å‚‚³‚ğ‰ÁZ
+            // ç‰¹å®šæ¡ä»¶ä¸‹ã§é«˜ã•ã‚’åŠ ç®—
             bool isSecondLastSibling =
                 _section.RectTransform.GetSiblingIndex() == _section.RectTransform.parent.childCount - 2;
 

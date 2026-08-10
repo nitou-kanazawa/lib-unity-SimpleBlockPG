@@ -1,4 +1,4 @@
-using nitou.BlockPG.Events;
+﻿using nitou.BlockPG.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -39,7 +39,9 @@ namespace nitou.BlockPG.DragDrop {
         /// ----------------------------------------------------------------------------
         // Lifcyle Events
 
-        private void OnEnable() {
+        // [NOTE] Unity は同名メッセージを最派生クラスの1つしか呼ばないため、
+        //        派生側で OnEnable() を宣言せず、必ずこれを override すること．
+        protected virtual void OnEnable() {
             Block = GetComponent<I_BPG_Block>();
             _system = DraggingSystem.Instance;
             if (Block is null) {
@@ -117,7 +119,7 @@ namespace nitou.BlockPG.DragDrop {
             var spot = _system.DetectSpotAtPointerPosition(eventData);
             
             if (spot != null) {
-                // ProgramEnv�擾
+                // ProgramEnv取得
                 var programmingEnv = spot.GetBelongedProgEnv();
                 if (programmingEnv != null) {
                     programmingEnv.Append(this);
@@ -131,7 +133,7 @@ namespace nitou.BlockPG.DragDrop {
         }
 
         /// <summary>
-        /// �ʒu�p���𒲐�����D
+        /// 位置姿勢を調整する．
         /// </summary>
         protected void AdjustTransformPositionAndRotation() {
             transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, 0);

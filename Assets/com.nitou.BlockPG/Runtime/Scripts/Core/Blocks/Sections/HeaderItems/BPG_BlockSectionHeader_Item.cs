@@ -1,16 +1,16 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace nitou.BlockPG.Blocks.Section {
     using nitou.BlockPG.Interface;
 
     /// <summary>
-    /// <see cref="BPG_BlockSectionHeader"/>’¼‰º‚É”z’u‚³‚ê‚éƒŒƒCƒAƒEƒg—v‘fD
+    /// <see cref="BPG_BlockSectionHeader"/>ç›´ä¸‹ã«é…ç½®ã•ã‚Œã‚‹ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆè¦ç´ ï¼
     /// </summary>
     public sealed class BPG_BlockSectionHeader_Item : BPG_ComponentBase, 
         I_BPG_BlockSectionHeaderItem {
 
         /// <summary>
-        /// ƒTƒCƒYî•ñD
+        /// ã‚µã‚¤ã‚ºæƒ…å ±ï¼
         /// </summary>
         public Vector2 Size => RectTransform.sizeDelta;
     }

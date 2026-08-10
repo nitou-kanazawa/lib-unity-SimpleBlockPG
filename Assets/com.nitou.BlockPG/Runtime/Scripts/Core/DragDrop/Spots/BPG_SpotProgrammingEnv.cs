@@ -13,7 +13,8 @@ namespace nitou.BlockPG.DragDrop {
         /// ----------------------------------------------------------------------------
         // Lifecycle Events
 
-        private void OnEnable() {
+        protected override void OnEnable() {
+            base.OnEnable();
             _programmingEnv = GetComponent<I_BPG_ProgrammingEnv>();
         }
 

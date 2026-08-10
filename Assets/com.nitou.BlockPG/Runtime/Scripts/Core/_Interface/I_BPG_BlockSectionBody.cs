@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 namespace nitou.BlockPG.Interface{
@@ -6,17 +6,17 @@ namespace nitou.BlockPG.Interface{
     public interface I_BPG_BlockSectionBody : ILayoutable {
         
         /// <summary>
-        /// Š‘®ƒZƒNƒVƒ‡ƒ“D
+        /// æ‰€å±ã‚»ã‚¯ã‚·ãƒ§ãƒ³ï¼
         /// </summary>
         I_BPG_BlockSection BlockSection { get; }
         
         /// <summary>
-        /// Ú‘±‚³‚ê‚Ä‚¢‚éqƒuƒƒbƒN‚ÌƒŠƒXƒgD
+        /// æ¥ç¶šã•ã‚Œã¦ã„ã‚‹å­ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒªã‚¹ãƒˆï¼
         /// </summary>
         IReadOnlyList<I_BPG_Block> ChildBlocks { get; }
         
         /// <summary>
-        /// ƒuƒƒbƒNÚ‘±‚Ì‰Â”Û”»’è—pƒRƒ“ƒ|[ƒlƒ“ƒgD
+        /// ãƒ–ãƒ­ãƒƒã‚¯æ¥ç¶šã®å¯å¦åˆ¤å®šç”¨ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆï¼
         /// </summary>
         I_BPG_Spot Spot { get;}
 
@@ -28,28 +28,28 @@ namespace nitou.BlockPG.Interface{
 
 
     /// <summary>
-    /// <see cref="I_BPG_BlockSectionBody"/>Œ^‚Ì”Ä—p“I‚ÈŠg’£ƒƒ\ƒbƒhWD
+    /// <see cref="I_BPG_BlockSectionBody"/>å‹ã®æ±ç”¨çš„ãªæ‹¡å¼µãƒ¡ã‚½ãƒƒãƒ‰é›†ï¼
     /// </summary>
     public static class BPG_BlockSectionBody_Extensions {
 
         /// <summary>
-        /// ƒZƒNƒVƒ‡ƒ“‚É‘ÎÛƒuƒƒbƒN‚ğÚ‘±‚·‚éD
+        /// ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã«å¯¾è±¡ãƒ–ãƒ­ãƒƒã‚¯ã‚’æ¥ç¶šã™ã‚‹ï¼
         /// </summary>
         public static void Append(this I_BPG_BlockSectionBody self, I_BPG_Block block, int siblingIndex = 0) {
             block.RectTransform.SetParent(self.Spot.RectTransform);
             block.RectTransform.SetSiblingIndex(siblingIndex);
             
-            // qƒuƒƒbƒN‘¤‚ÌXV
+            // å­ãƒ–ãƒ­ãƒƒã‚¯å´ã®æ›´æ–°
             block.SetParentSection(self.BlockSection);
 
-            // ƒZƒNƒVƒ‡ƒ“‘¤‚ÌXV
+            // ã‚»ã‚¯ã‚·ãƒ§ãƒ³å´ã®æ›´æ–°
             self.BlockSection.UpdateLayout();
 
             Debug.Log($"Connect to {self.BlockSection.Block.RectTransform.name} [{block.RectTransform.GetSiblingIndex()}]");
         }
 
         /// <summary>
-        /// ƒZƒNƒVƒ‡ƒ“‚É‘ÎÛƒuƒƒbƒN‚ğÚ‘±‚·‚éD
+        /// ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã«å¯¾è±¡ãƒ–ãƒ­ãƒƒã‚¯ã‚’æ¥ç¶šã™ã‚‹ï¼
         /// </summary>
         public static void AppendFirst(this I_BPG_BlockSectionBody self, I_BPG_Block block) {
             int siblingIndex = 0;
@@ -57,7 +57,7 @@ namespace nitou.BlockPG.Interface{
         }
 
         /// <summary>
-        /// ƒZƒNƒVƒ‡ƒ“‚É‘ÎÛƒuƒƒbƒN‚ğÚ‘±‚·‚éD
+        /// ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã«å¯¾è±¡ãƒ–ãƒ­ãƒƒã‚¯ã‚’æ¥ç¶šã™ã‚‹ï¼
         /// </summary>
         public static void AppendLast(this I_BPG_BlockSectionBody self, I_BPG_Block block) {
             int siblingIndex = self.RectTransform.childCount;

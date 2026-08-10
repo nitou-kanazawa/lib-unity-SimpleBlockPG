@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UniRx;
@@ -47,7 +47,7 @@ namespace State {
 
             try {
                 while (!token.IsCancellationRequested) {
-                    // ‰½‚ç‚©‚Ì”ñ“¯Šúˆ—‚ğÀs
+                    // ä½•ã‚‰ã‹ã®éåŒæœŸå‡¦ç†ã‚’å®Ÿè¡Œ
                     await UniTask.Delay(1000, cancellationToken: token);
                     Debug.Log("Async process running...");
                 }

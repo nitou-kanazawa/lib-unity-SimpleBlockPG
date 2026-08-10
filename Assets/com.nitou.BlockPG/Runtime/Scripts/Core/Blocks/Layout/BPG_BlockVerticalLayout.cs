@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 //using UniRx;
@@ -73,9 +72,10 @@ namespace nitou.BlockPG.Blocks {
         }
 
         private void LateUpdate() {
-                UpdateLayout();
+            UpdateLayout();
 #if UNITY_EDITOR
-            if (!EditorApplication.isPlaying) {
+            // [NOTE] 編集モードでは LayoutGroup の自動更新が走らないため、明示的に再構築する．
+            if (!Application.isPlaying) {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(RectTransform);
             }
 #endif

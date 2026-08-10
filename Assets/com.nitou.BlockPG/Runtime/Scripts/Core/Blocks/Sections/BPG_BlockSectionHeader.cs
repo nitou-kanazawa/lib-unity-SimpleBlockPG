@@ -1,4 +1,4 @@
-using System.Linq;
+ï»¿using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ namespace nitou.BlockPG.Blocks.Section {
         // Property
 
         /// <summary>
-        /// ƒTƒCƒYî•ñD
+        /// ã‚µã‚¤ã‚ºæƒ…å ±ï¼
         /// </summary>
         public Vector2 Size {
             get => RectTransform.sizeDelta;
@@ -46,7 +46,7 @@ namespace nitou.BlockPG.Blocks.Section {
         public IList<I_BPG_BlockSectionHeaderItem> Items => _items;
 
         /// <summary>
-        /// ‰Šú‰»ˆ—‚ªŠ®—¹‚µ‚Ä‚¢‚é‚©‚Ç‚¤‚©D
+        /// åˆæœŸåŒ–å‡¦ç†ãŒå®Œäº†ã—ã¦ã„ã‚‹ã‹ã©ã†ã‹ï¼
         /// </summary>
         public bool IsInitialized { get; private set; } = false;
 
@@ -55,7 +55,7 @@ namespace nitou.BlockPG.Blocks.Section {
         // Public Method
 
         /// <summary>
-        /// ŠJnˆ—D
+        /// é–‹å§‹å‡¦ç†ï¼
         /// </summary>
         internal void Initialize() {
             if (IsInitialized)
@@ -94,7 +94,7 @@ namespace nitou.BlockPG.Blocks.Section {
         public void UpdateItems() {
             _items.Clear();
 
-            // ’¼‰º‚ÌƒAƒNƒeƒBƒu‚ÈƒAƒCƒeƒ€‚ğæ“¾‚·‚é
+            // ç›´ä¸‹ã®ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªã‚¢ã‚¤ãƒ†ãƒ ã‚’å–å¾—ã™ã‚‹
             foreach (Transform chiled in transform) {
                 if(chiled.TryGetComponent<I_BPG_BlockSectionHeaderItem>(out var item)
                     && item.RectTransform.gameObject.activeSelf) {
@@ -165,7 +165,7 @@ namespace nitou.BlockPG.Blocks.Section {
 public static class TransformExtensions {
 
     /// <summary>
-    /// q—v‘f‚Ì‚ğ IEnumerable<Transform> ‚Æ‚µ‚Ä•Ô‚µ‚Ü‚·B
+    /// å­è¦ç´ ã®ã‚’ IEnumerable<Transform> ã¨ã—ã¦è¿”ã—ã¾ã™ã€‚
     /// </summary>
     public static IEnumerable<Transform> GetChildren(this Transform transform) {
         return transform.Cast<Transform>();

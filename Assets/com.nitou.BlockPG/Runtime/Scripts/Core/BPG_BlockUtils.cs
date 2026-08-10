@@ -10,7 +10,20 @@ namespace nitou.BlockPG{
 
         public static TBlock LoadBlockPrefab<TBlock>(string prefabName)
             where TBlock : BPG_BlockBase {
-            var prefab = Resources.Load<GameObject>($"{folderPath}/{prefabName}") as TBlock;
+
+            // [NOTE] Resources.Load<GameObject>() の戻り値を TBlock へ直接キャストすると常に null になるため、
+            //        GameObject を取得してからコンポーネントを引く．
+            var prefabObj = Resources.Load<GameObject>($"{folderPath}/{prefabName}");
+            if (prefabObj == null) {
+                Debug.LogWarning($"Block prefab is not found. (path: {folderPath}/{prefabName})");
+                return null;
+            }
+
+            if (!prefabObj.TryGetComponent<TBlock>(out var prefab)) {
+                Debug.LogWarning($"Loaded prefab does not have {typeof(TBlock).Name}. (path: {folderPath}/{prefabName})");
+                return null;
+            }
+
             return prefab;
         }
 
