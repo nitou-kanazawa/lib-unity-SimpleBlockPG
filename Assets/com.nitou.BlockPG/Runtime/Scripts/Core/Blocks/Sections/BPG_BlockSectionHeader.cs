@@ -119,17 +119,33 @@ namespace nitou.BlockPG.Blocks.Section {
             _image = GetComponent<Image>();
 
             // parents
-            _section = transform.parent.GetComponent<I_BPG_BlockSection>();
-            _blockLayout = transform.parent.parent.GetComponent<I_BPG_BlockLayout>();
+            // [NOTE] 階層構造は Block > Section > Header を前提とする．
+            //        ドラッグ中の再ペアレントなどで前提が崩れる場合があるため、各階層を確認する．
+            var sectionTransform = transform.parent;
+            if (sectionTransform != null) {
+                _section = sectionTransform.GetComponent<I_BPG_BlockSection>();
+
+                var blockTransform = sectionTransform.parent;
+                _blockLayout = (blockTransform != null)
+                    ? blockTransform.GetComponent<I_BPG_BlockLayout>()
+                    : null;
+            } else {
+                _section = null;
+                _blockLayout = null;
+            }
         }
 
         private void ApplyColor() {
-            if (_image.sprite != null && _blockLayout != null) {
+            if (_image != null && _image.sprite != null && _blockLayout != null) {
                 _image.color = _blockLayout.Color;
             }
         }
 
         private void UpdateSelfSize() {
+            // 所属セクションが不明な場合はサイズを決定できない
+            if (_section == null)
+                return;
+
             bool isFirstSection = _section.RectTransform.GetSiblingIndex() == 0;
 
             float width = 0, height = 0;
@@ -143,7 +159,13 @@ namespace nitou.BlockPG.Blocks.Section {
                 height = Mathf.Max(_minHeight, (_minHeight - 40) + h);
 
             } else {
-                width = _blockLayout.Sections[0].Header.Size.x;
+                // ※2つ目以降のセクションは、1つ目のヘッダーに幅を揃える
+                var firstHeader = (_blockLayout != null && _blockLayout.Sections.Count > 0)
+                    ? _blockLayout.Sections[0].Header
+                    : null;
+
+                // 参照できない場合は現在の幅を維持する
+                width = (firstHeader != null) ? firstHeader.Size.x : RectTransform.sizeDelta.x;
                 height = RectTransform.sizeDelta.y;
             }
 
