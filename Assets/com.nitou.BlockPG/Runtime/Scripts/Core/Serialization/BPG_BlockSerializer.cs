@@ -135,12 +135,12 @@ namespace nitou.BlockPG.Serialization {
                 var body = sections[s].Body;
                 if (body != null) {
                     // Add children
-                    foreach (var sChaildBlock in sBlock.sections[s].childBlocks) {
-                        var childBlock = SerializableBlockToBlock(sChaildBlock, programmingEnv);
+                    foreach (var sChildBlock in sBlock.sections[s].childBlocks) {
+                        var childBlock = SerializableBlockToBlock(sChildBlock, programmingEnv);
 
                         // ※プレハブが見つからない場合は null が返る
                         if (childBlock == null) {
-                            Debug.LogWarning($"Failed to restore child block. (name: {sChaildBlock?.name})");
+                            Debug.LogWarning($"Failed to restore child block. (name: {sChildBlock?.name})");
                             continue;
                         }
 

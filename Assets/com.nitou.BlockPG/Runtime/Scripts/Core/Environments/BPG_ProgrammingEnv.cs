@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace nitou.BlockPG.Enviorment{
+namespace nitou.BlockPG.Environments{
     using nitou.BlockPG.Interface;
     using nitou.BlockPG.DragDrop;
 

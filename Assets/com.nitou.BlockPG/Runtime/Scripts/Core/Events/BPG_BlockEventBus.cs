@@ -13,7 +13,7 @@ namespace nitou.BlockPG.Events{
     {
         // creation and destruction events
         private static Subject<I_BPG_Block> _onCreatedSubject = new();
-        private static Subject<I_BPG_Block> _onDestoryedSubject = new();
+        private static Subject<I_BPG_Block> _onDestroyedSubject = new();
 
         // selection and editing events
         private static Subject<I_BPG_Block> _onTouchedSubject = new();
@@ -28,7 +28,7 @@ namespace nitou.BlockPG.Events{
 
         // misc
         private static readonly bool debugMode = false;
-        private static BlockLocation fromAreaCash = BlockLocation.Outside;
+        private static BlockLocation fromAreaCache = BlockLocation.Outside;
 
 
         /// ----------------------------------------------------------------------------
@@ -42,7 +42,7 @@ namespace nitou.BlockPG.Events{
         /// <summary>
         /// Observable to notify just before a block is destroyed.
         /// </summary>
-        public static IObservable<I_BPG_Block> OnDestroyed => _onDestoryedSubject;
+        public static IObservable<I_BPG_Block> OnDestroyed => _onDestroyedSubject;
 
         /// <summary>
         /// Observable to notify when a block is touched.
@@ -92,7 +92,7 @@ namespace nitou.BlockPG.Events{
         private static void ResetStaticState()
         {
             _onCreatedSubject.Dispose();
-            _onDestoryedSubject.Dispose();
+            _onDestroyedSubject.Dispose();
             _onTouchedSubject.Dispose();
             _onFocusedSubject.Dispose();
             _onSelectedSubject.Dispose();
@@ -102,7 +102,7 @@ namespace nitou.BlockPG.Events{
             _onMoveSubject.Dispose();
 
             _onCreatedSubject = new();
-            _onDestoryedSubject = new();
+            _onDestroyedSubject = new();
             _onTouchedSubject = new();
             _onFocusedSubject = new();
             _onSelectedSubject = new();
@@ -111,7 +111,7 @@ namespace nitou.BlockPG.Events{
             _onEndDragSubject = new();
             _onMoveSubject = new();
 
-            fromAreaCash = BlockLocation.Outside;
+            fromAreaCache = BlockLocation.Outside;
 
             SetUpDebugLog();
         }
@@ -122,7 +122,7 @@ namespace nitou.BlockPG.Events{
             {
                 // イベント実行時にログ出力
                 _onCreatedSubject.Subscribe(block => Debug.Log($"[Create Block] {block}"));
-                _onDestoryedSubject.Subscribe(block => Debug.Log($"[Destroy Block]: {block}"));
+                _onDestroyedSubject.Subscribe(block => Debug.Log($"[Destroy Block]: {block}"));
                 _onTouchedSubject.Subscribe(block => Debug.Log($"[Touch Block]: {block}"));
                 _onFocusedSubject.Subscribe(block => Debug.Log($"[Focus Block]: {block}"));
                 _onSelectedSubject.Subscribe(blockSelectEvent => Debug.Log(blockSelectEvent));
@@ -158,7 +158,7 @@ namespace nitou.BlockPG.Events{
                 Debug.LogWarning($"{block} is null.");
                 return;
             }
-            _onDestoryedSubject.OnNext(block);
+            _onDestroyedSubject.OnNext(block);
         }
 
         // -----
@@ -227,7 +227,7 @@ namespace nitou.BlockPG.Events{
             _onStartDragSubject.OnNext(new BlockLocationEvent(block, location));
 
             // cash
-            fromAreaCash = location;
+            fromAreaCache = location;
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace nitou.BlockPG.Events{
         internal static void PublishEndDragEvent(I_BPG_Block block, BlockLocation location)
         {
             _onEndDragSubject.OnNext(new BlockLocationEvent(block, location));
-            _onMoveSubject.OnNext(new BlockMoveEvent( block, fromAreaCash, location));
+            _onMoveSubject.OnNext(new BlockMoveEvent( block, fromAreaCache, location));
         }
 
     }

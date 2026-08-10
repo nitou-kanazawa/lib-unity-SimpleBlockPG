@@ -27,9 +27,6 @@ namespace nitou.BlockPG.Blocks.Section {
         private readonly List<I_BPG_Block> _childBlocks = new();
 
 
-        private static float HEIGHT_SPCING = 10;
-
-
         /// ----------------------------------------------------------------------------
         // Property
 
@@ -96,9 +93,9 @@ namespace nitou.BlockPG.Blocks.Section {
             _childBlocks.Clear();
 
             // 直下のアクティブなブロックを取得する
-            foreach (Transform chiled in transform) {
-                if (chiled.gameObject.activeSelf
-                    && chiled.TryGetComponent<I_BPG_Block>(out var block)) {
+            foreach (Transform child in transform) {
+                if (child.gameObject.activeSelf
+                    && child.TryGetComponent<I_BPG_Block>(out var block)) {
                     _childBlocks.Add(block);
                 }
             }

@@ -194,7 +194,7 @@ namespace nitou.BlockPG.Interface {
         /// <summary>
         /// 子階層以下の<see cref="I_BE2_Block"/>を再帰的に取得する．
         /// </summary>
-        public static List<I_BPG_Block> GetAllChaildBlocks(this I_BPG_Block self, bool containSelf = true) {
+        public static List<I_BPG_Block> GetAllChildBlocks(this I_BPG_Block self, bool containSelf = true) {
             if (self == null) return null;
 
             var blockList = new List<I_BPG_Block>();
@@ -205,7 +205,7 @@ namespace nitou.BlockPG.Interface {
             // 子階層以下
             var childBlocks = self.Layout.Sections
                 .Where(section => section != null)
-                .SelectMany(section => section.GetAllChaildBlocks());
+                .SelectMany(section => section.GetAllChildBlocks());
             blockList.AddRange(childBlocks);
             return blockList;
         }
@@ -213,7 +213,7 @@ namespace nitou.BlockPG.Interface {
         /// <summary>
         /// 子階層以下の<see cref="I_BPG_Block"/>の数を取得する．
         /// </summary>
-        public static int GetAllChaildBlocksCount(this I_BPG_Block self, bool containSelf = true) {
+        public static int GetAllChildBlocksCount(this I_BPG_Block self, bool containSelf = true) {
             if (self == null)
                 throw new System.ArgumentNullException(nameof(self));
 
@@ -224,7 +224,7 @@ namespace nitou.BlockPG.Interface {
             return additional +
                 self.Layout.Sections
                 .Where(section => section != null)
-                .Select(section => section.GetAllChaildBlocksCount())
+                .Select(section => section.GetAllChildBlocksCount())
                 .Sum();
         }
 
@@ -270,7 +270,7 @@ namespace nitou.BlockPG.Interface {
         /// <summary>
         /// 指定された親ブロックに接続する．
         /// </summary>
-        public static bool AppendTo(this I_BPG_Block self, I_BPG_Block parentBlock, int sectionIndex = 0, int siblinIndex = 0) {
+        public static bool AppendTo(this I_BPG_Block self, I_BPG_Block parentBlock, int sectionIndex = 0, int siblingIndex = 0) {
             var sectionArray = parentBlock.Layout.Sections;
             if (sectionArray is null || sectionIndex.IsOutOfRange(sectionArray) || sectionArray[sectionIndex].Body is null) {
                 return false;
@@ -278,7 +278,7 @@ namespace nitou.BlockPG.Interface {
 
             // 接続
             var sectionBody = sectionArray[sectionIndex].Body;
-            sectionBody.Append(self, siblinIndex);
+            sectionBody.Append(self, siblingIndex);
 
             return true;
         }
