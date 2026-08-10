@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Xml.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -90,7 +91,10 @@ namespace nitou.BlockPG.Serialization {
                 //}
 
                 // 配下のセクションを生成する
-                AddSerializableBlockSectionsAsync(block, sBlock, programmingEnv).Forget();
+                // [NOTE] 生成待ちの間にブロックが破棄されると復元処理が不正になるため、
+                //        対象ブロックの破棄をキャンセル条件として渡す．
+                var cancellationToken = block.RectTransform.gameObject.GetCancellationTokenOnDestroy();
+                AddSerializableBlockSectionsAsync(block, sBlock, programmingEnv, cancellationToken).Forget();
             }
 
             return block;
@@ -100,24 +104,50 @@ namespace nitou.BlockPG.Serialization {
         /// セクションは以下のブロックを生成する．
         /// ※子ブロックは親セクションのインスタンス生成後に処理しないとNullエラーが発生する．
         /// </summary>
-        private static async UniTaskVoid AddSerializableBlockSectionsAsync(I_BPG_Block block, SerializableBlock sBlock, I_BPG_ProgrammingEnv programmingEnv) {
+        private static async UniTaskVoid AddSerializableBlockSectionsAsync(I_BPG_Block block, SerializableBlock sBlock,
+            I_BPG_ProgrammingEnv programmingEnv, CancellationToken cancellationToken) {
+
             // フレームの終了を待つ
-            await UniTask.Yield();
+            await UniTask.Yield(cancellationToken);
+
+            if (block.Layout == null) {
+                Debug.LogWarning($"Block layout is not found. (block: {sBlock.name})");
+                return;
+            }
 
             var sections = block.Layout.Sections;
-            for (int s = 0; s < sections.Count; s++) {
+
+            // [NOTE] プレハブ側のセクション構成が保存時から変わっていると個数が食い違う．
+            //        処理できる範囲だけ復元し、欠落は警告として通知する．
+            if (sections.Count != sBlock.sections.Count) {
+                Debug.LogWarning($"Section count does not match the saved data. " +
+                    $"(block: {sBlock.name}, prefab: {sections.Count}, saved: {sBlock.sections.Count})");
+            }
+
+            int sectionCount = Mathf.Min(sections.Count, sBlock.sections.Count);
+            for (int s = 0; s < sectionCount; s++) {
 
                 var body = sections[s].Body;
                 if (body != null) {
                     // Add children
                     foreach (var sChaildBlock in sBlock.sections[s].childBlocks) {
                         var childBlock = SerializableBlockToBlock(sChaildBlock, programmingEnv);
+
+                        // ※プレハブが見つからない場合は null が返る
+                        if (childBlock == null) {
+                            Debug.LogWarning($"Failed to restore child block. (name: {sChaildBlock?.name})");
+                            continue;
+                        }
+
                         body.Append(childBlock);
                     }
                 }
 
-                sections[s].Header.UpdateItems();
-                sections[s].Header.UpdateInputs();
+                var header = sections[s].Header;
+                if (header != null) {
+                    header.UpdateItems();
+                    header.UpdateInputs();
+                }
             }
 
         }
