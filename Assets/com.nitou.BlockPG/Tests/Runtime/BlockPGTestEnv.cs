@@ -45,7 +45,20 @@ namespace RuntimeTests {
         /// ----------------------------------------------------------------------------
         // Public Method
 
-        public BlockPGTestEnv() {
+        /// <summary>
+        /// ブロックが載る Canvas．
+        /// </summary>
+        public Canvas Canvas { get; }
+
+
+        /// ----------------------------------------------------------------------------
+        // Public Method
+
+        /// <param name="canvasScaleFactor">
+        /// Canvas の表示倍率．CanvasScaler を使う実環境では 1 以外になるため、
+        /// 生成物のスケールが倍率に影響されないことを検証する用途で指定する．
+        /// </param>
+        public BlockPGTestEnv(float canvasScaleFactor = 1f) {
             // EventSystem
             // ※UI操作を伴わないテストでも、EventSystemが無いと一部のUGUI処理が警告を出す
             if (EventSystem.current == null) {
@@ -59,6 +72,8 @@ namespace RuntimeTests {
                 typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var canvas = canvasObj.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.scaleFactor = canvasScaleFactor;
+            Canvas = canvas;
             _roots.Add(canvasObj);
 
             // ProgrammingEnv
