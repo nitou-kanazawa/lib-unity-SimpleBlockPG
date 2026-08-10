@@ -37,6 +37,10 @@ ExportedObj/
 *.sln
 *.slnx
 *.suo
+
+# Unity MCP のスクリーンショット出力
+/[Aa]ssets/Screenshots/
+/[Aa]ssets/Screenshots.meta
 *.tmp
 *.user
 *.userprefs
