@@ -21,6 +21,11 @@ namespace nitou.BlockPG.Interface {
         RectTransform RectTransform { get; }
 
         /// <summary>
+        /// 識別ID．インスタンスごとに一意で、実行をまたいでも保存・復元できる．
+        /// </summary>
+        string Id { get; }
+
+        /// <summary>
         /// ブロック分類．
         /// </summary>
         BlockType Type { get; }
@@ -49,6 +54,11 @@ namespace nitou.BlockPG.Interface {
         /// 親セクションを設定する．
         /// </summary>
         void SetParentSection(I_BPG_BlockSection parentSection);
+
+        /// <summary>
+        /// 識別IDを設定する．（※セーブデータからの復元時に使用する）
+        /// </summary>
+        void SetId(string id);
     }
 
 

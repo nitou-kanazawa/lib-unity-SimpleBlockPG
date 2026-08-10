@@ -30,7 +30,7 @@ namespace nitou.BlockPG.Serialization {
 
             // serializable block
             var sBlock = new SerializableBlock(
-                id: block.GetGameObjectID(),
+                id: block.Id,
                 name: block.RectTransform.name,
                 localPosition: block.RectTransform.localPosition);
 
@@ -85,6 +85,11 @@ namespace nitou.BlockPG.Serialization {
 
                 block = BPG_BlockUtils.CreateBlock(prefab, programmingEnv);
                 block.RectTransform.localPosition = sBlock.localPosition;
+
+                // 保存時の識別IDを復元する
+                if (!string.IsNullOrEmpty(sBlock.id)) {
+                    block.SetId(sBlock.id);
+                }
 
                 //if (sBlock.blockIns != null) {
                 //    block.SetAdditonalData(sBlock.blockIns); // ※カスタムブロックの固有データを設定する

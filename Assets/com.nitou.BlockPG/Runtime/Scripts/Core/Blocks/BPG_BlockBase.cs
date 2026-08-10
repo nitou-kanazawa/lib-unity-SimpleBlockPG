@@ -37,9 +37,20 @@ namespace nitou.BlockPG.Blocks {
         public I_BPG_Instruction Instruction { get; protected set; }
 
         /// <summary>
-        /// 識別ID．
+        /// 識別ID．インスタンスごとに一意．
+        /// [NOTE] 以前は gameObject.GetInstanceID() を使っていたが、実行のたびに値が変わるため
+        ///        セーブデータに保存しても復元できなかった．GUIDに変更している．
         /// </summary>
-        public int Id => gameObject.GetInstanceID();
+        public string Id {
+            get {
+                if (string.IsNullOrEmpty(_id)) {
+                    _id = Guid.NewGuid().ToString("N");
+                }
+                return _id;
+            }
+        }
+
+        private string _id;
 
 
         /// ----------------------------------------------------------------------------
@@ -70,10 +81,21 @@ namespace nitou.BlockPG.Blocks {
         public virtual void SetShadowActive(bool isActive) { }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void SetParentSection(I_BPG_BlockSection parentSection) {
             ParentSection = parentSection;
+        }
+
+        /// <summary>
+        /// 識別IDを設定する．（※セーブデータからの復元時に使用する）
+        /// </summary>
+        public void SetId(string id) {
+            if (string.IsNullOrEmpty(id)) {
+                Debug.LogWarning("Block id must not be null or empty.");
+                return;
+            }
+            _id = id;
         }
 
 

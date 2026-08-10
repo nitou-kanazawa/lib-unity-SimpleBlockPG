@@ -14,7 +14,7 @@ namespace nitou.BlockPG.Serialization {
     [Serializable]
     public sealed class SerializableBlock {
 
-        public int id;
+        public string id;
         public string name;
         public Vector3 localPosition;
         public List<SerializableBlockSection> sections;
@@ -26,7 +26,7 @@ namespace nitou.BlockPG.Serialization {
         /// <summary>
         /// Constructor.
         /// </summary>
-        public SerializableBlock(int id, string name, Vector3 localPosition) {
+        public SerializableBlock(string id, string name, Vector3 localPosition) {
             // Block情報
             this.id = id;
             this.name = name;
@@ -74,7 +74,7 @@ namespace nitou.BlockPG.Serialization {
 
             // [NOTE] 欠落した要素があっても復元を継続できるよう、要素の取得は null 許容で行う．
             var sBlock = new SerializableBlock(
-                id: int.TryParse(xBlock.Element("id")?.Value, out var id) ? id : -1,
+                id: xBlock.Element("id")?.Value ?? string.Empty,
                 name: xBlock.Element("name")?.Value ?? string.Empty,
                 localPosition: XmlUtils.StringToVector3(xBlock.Element("localPosition")?.Value));
 
