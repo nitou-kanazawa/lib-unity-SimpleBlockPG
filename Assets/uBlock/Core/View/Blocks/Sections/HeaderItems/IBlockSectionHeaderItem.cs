@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Nitou.BlockPG.View {
 
@@ -10,7 +10,7 @@ namespace Nitou.BlockPG.View {
         RectTransform RectTransform { get; }
 
         /// <summary>
-        /// ƒTƒCƒYî•ñD
+        /// ã‚µã‚¤ã‚ºæƒ…å ±ï¼
         /// </summary>
         Vector2 Size { get; }
     }

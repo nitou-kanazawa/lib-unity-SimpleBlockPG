@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -36,31 +36,31 @@ namespace nitou.BlockPG.Interface{
         #region Getter
 
         /// <summary>
-        /// Body’¼‰º‚ÌƒuƒƒbƒN‚ğæ“¾‚·‚é
+        /// Bodyç›´ä¸‹ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’å–å¾—ã™ã‚‹
         /// </summary>
         public static IEnumerable<I_BPG_Block> GetBodyBlocks(this I_BPG_BlockSection self) {
             return self.Body.ChildBlocks.Where(b => b != null);
         }
 
         /// <summary>
-        /// qŠK‘wˆÈ‰º‚Ì<see cref="I_BPG_Block"/>‚ğÄ‹A“I‚Éæ“¾‚·‚é
+        /// å­éšå±¤ä»¥ä¸‹ã®<see cref="I_BPG_Block"/>ã‚’å†å¸°çš„ã«å–å¾—ã™ã‚‹
         /// </summary>
         public static List<I_BPG_Block> GetAllChaildBlocks(this I_BPG_BlockSection self) {
             if (self.Body == null) return new List<I_BPG_Block>();
 
-            // qŠK‘wˆÈ‰º
+            // å­éšå±¤ä»¥ä¸‹
             return self.GetBodyBlocks()
                 .SelectMany(block => block.GetAllChaildBlocks())
                 .ToList();
         }
 
         /// <summary>
-        /// qŠK‘wˆÈ‰º‚Ì<see cref="I_BPG_Block"/>‚Ì”‚ğæ“¾‚·‚é
+        /// å­éšå±¤ä»¥ä¸‹ã®<see cref="I_BPG_Block"/>ã®æ•°ã‚’å–å¾—ã™ã‚‹
         /// </summary>
         public static int GetAllChaildBlocksCount(this I_BPG_BlockSection self) {
             if (self == null || self.Body == null) return 0;
 
-            // Block‚Ì‘”
+            // Blockã®ç·æ•°
             return self.GetBodyBlocks()
                 .Select(block => block.GetAllChaildBlocksCount())
                 .Sum();

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using UnityEngine;
@@ -9,13 +9,13 @@ namespace RuntimeTests
     public class BeforeAfterTestAttribute : NUnitAttribute, 
         IOuterUnityTestAction {
 
-        // ƒeƒXƒg‘Oˆ—
+        // ãƒ†ã‚¹ãƒˆå‰å‡¦ç†
         public IEnumerator BeforeTest(ITest test) {
             Debug.Log("Before Test");
             yield break;
         }
 
-        // ƒeƒXƒgŒãˆ—
+        // ãƒ†ã‚¹ãƒˆå¾Œå‡¦ç†
         public IEnumerator AfterTest(ITest test) {
             Debug.Log("After Test");
             yield break;

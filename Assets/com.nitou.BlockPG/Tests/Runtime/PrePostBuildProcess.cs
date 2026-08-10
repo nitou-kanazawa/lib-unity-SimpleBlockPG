@@ -1,4 +1,4 @@
-using NUnit.Framework;
+ï»¿using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 #if UNITY_EDITOR
@@ -6,12 +6,12 @@ using UnityEditor;
 #endif
 
 // [REF]
-//  LIGHT11: Unity Test RunneriTest Frameworkj‚ÅƒeƒXƒg‚Ì‘OŒãˆ—‚ğ‘‚­•û–@‚Ü‚Æ‚ß https://light11.hatenadiary.com/entry/2020/06/14/190752
+//  LIGHT11: Unity Test Runnerï¼ˆTest Frameworkï¼‰ã§ãƒ†ã‚¹ãƒˆã®å‰å¾Œå‡¦ç†ã‚’æ›¸ãæ–¹æ³•ã¾ã¨ã‚ https://light11.hatenadiary.com/entry/2020/06/14/190752
 
 namespace RuntimeTests {
 
     /// <summary>
-    /// ƒeƒXƒg—p‚ÌƒŠƒ\[ƒX¶¬Eíœ‚ğ’S‚¤ƒNƒ‰ƒXD
+    /// ãƒ†ã‚¹ãƒˆç”¨ã®ãƒªã‚½ãƒ¼ã‚¹ç”Ÿæˆãƒ»å‰Šé™¤ã‚’æ‹…ã†ã‚¯ãƒ©ã‚¹ï¼
     /// </summary>
     public class PrePostBuildProcess : IPrebuildSetup, IPostBuildCleanup {
 

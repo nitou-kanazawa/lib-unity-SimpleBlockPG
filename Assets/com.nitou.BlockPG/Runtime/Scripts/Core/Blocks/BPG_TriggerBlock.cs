@@ -18,7 +18,8 @@ namespace nitou.BlockPG.Blocks {
         /// ----------------------------------------------------------------------------
         // Lifecycle Events
 
-        private void Awake() {
+        // [NOTE] Awake() を直接宣言すると基底の Awake() が呼ばれなくなるため、OnInitialize() を override する．
+        protected override void OnInitialize() {
             GatherComponents();
         }
 

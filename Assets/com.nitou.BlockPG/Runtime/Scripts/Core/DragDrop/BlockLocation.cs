@@ -1,69 +1,69 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace nitou.BlockPG.DragDrop{
     using Location = BlockLocation;
 
     /// <summary>
-	/// �u���b�N�z�u�ꏊ�̕���.
+	/// ブロック配置場所の分類.
 	/// </summary>
 	public enum BlockLocation {
 
-        /// <summary>�h���b�O�\�[�X�̈�</summary>
+        /// <summary>ドラッグソース領域</summary>
         Outside,
 
-        /// <summary>ProgrammingEnv�̃t���[�̈�</summary>
+        /// <summary>ProgrammingEnvのフリー領域</summary>
         ProgEnv,
 
-        /// <summary>ProgrammingEnv��BlockStackr�̈�</summary>
+        /// <summary>ProgrammingEnvのBlockStackr領域</summary>
         Stack,
 
-        /// <summary>���m�F��</summary>
+        /// <summary>※確認中</summary>
         InputSpot,
 	}
 
     /// <summary>
-    /// �h���b�O�����̌���
+    /// ドラッグ処理の結果
     /// </summary>
 	public enum DraggingResult {
 
-		// �u���b�N�𐶐�����
+		// ブロックを生成した
 		CreateBlock,
 
-		// �u���b�N��j������
+		// ブロックを破棄した
 		DestroyBlock,
 
-		// �u���b�N���ړ����ꂽ
+		// ブロックを移動された
 		Move,
 
-		// �u���b�N���ړ����� (���ڑ��֌W�ɕω��Ȃ�)
+		// ブロックを移動した (※接続関係に変化なし)
 		FreeMove,
 	}
 
 
 	/// <summary>
-	/// <see cref="I_BE2_Block"/>�̃h���b�O����Ɋւ���ėp���\�b�h�W
+	/// <see cref="I_BE2_Block"/>のドラッグ操作に関する汎用メソッド集
 	/// </summary>
 	public static class DraggingUtil {
 
 		/// <summary>
-		/// �h���b�O����ɂ�錋�ʂ𔻒肷��
+		/// ドラッグ操作による結果を判定する
 		/// </summary>
 		public static DraggingResult CheckResult(Location from, Location to) {
 			return (from, to) switch {
-				// �u���b�N�̐��� (��Outside����u���b�N�̃h���b�O���J�n���ꂽ�ꍇ)
+				// ブロックの生成 (※Outsideからブロックのドラッグが開始された場合)
 				(Location.Outside, Location.ProgEnv) => DraggingResult.CreateBlock,
 				(Location.Outside, Location.Stack) => DraggingResult.CreateBlock,
 				(Location.Outside, Location.InputSpot) => DraggingResult.CreateBlock,
 
-				// �u���b�N�̍폜 (��Outside�Ƀu���b�N���h���b�v����ꍇ)
+				// ブロックの削除 (※Outsideにブロックをドロップする場合)
 				(Location.ProgEnv, Location.Outside) => DraggingResult.DestroyBlock,
 				(Location.Stack, Location.Outside) => DraggingResult.DestroyBlock,
 				(Location.InputSpot, Location.Outside) => DraggingResult.DestroyBlock,
 
-				// �u���b�N�̈ړ� (���ڑ��֌W�̕ω��Ȃ�)
+				// ブロックの移動 (※接続関係の変化なし)
 				(Location.ProgEnv, Location.ProgEnv) => DraggingResult.FreeMove,
 
-				// �u���b�N�̈ړ�
+				// ブロックの移動
 				_ => DraggingResult.Move
 			};
 		}

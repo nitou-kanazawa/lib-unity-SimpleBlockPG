@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -15,13 +15,13 @@ namespace RuntimeTests {
         /// ----------------------------------------------------------------------------
 
         [UnityTest]
-        public IEnumerator ƒuƒƒbƒN‚Ì¶¬() {
+        public IEnumerator ãƒ–ãƒ­ãƒƒã‚¯ã®ç”Ÿæˆ() {
 
             // 
             var prefab = Resources.Load<BPG_BlockBase>(ResourcePath);
             var block = GameObject.Instantiate<BPG_BlockBase>(prefab);
 
-            // ƒeƒXƒgƒR[ƒh
+            // ãƒ†ã‚¹ãƒˆã‚³ãƒ¼ãƒ‰
             var rootBlock = block.GetRootBlock();
             Debug.Log($"Root : {rootBlock?.RectTransform.name}");
 
@@ -36,14 +36,14 @@ namespace RuntimeTests {
 
 
 
-            // Start()‘O
+            // Start()å‰
             Assert.That(block != null);
             Assert.That(block == rootBlock);
             //Assert.That(hoge.count == 0);
 
             yield return null;
 
-            // Start()Œã
+            // Start()å¾Œ
             Assert.That(block != null);
             Assert.That(block == rootBlock);
         }

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UniRx;
 
 namespace State {
@@ -9,7 +9,7 @@ namespace State {
             Playing
         }
 
-        // ReactiveProperty‚ÅState‚ğŠÇ—
+        // ReactivePropertyã§Stateã‚’ç®¡ç†
         public ReactiveProperty<State> CurrentState { get; } = new (State.Teaching);
     
     }

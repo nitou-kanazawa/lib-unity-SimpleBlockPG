@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UniRx;
 using UnityEngine;
 
@@ -79,6 +79,44 @@ namespace nitou.BlockPG.Events{
         // Public Method
 
         static BPG_BlockEventBus()
+        {
+            SetUpDebugLog();
+        }
+
+        /// <summary>
+        /// 静的状態をリセットする．
+        /// [NOTE] "Enter Play Mode Options" でドメインリロードを無効にした場合、
+        ///        前回の実行で登録された購読が残るため明示的に破棄・再生成する．
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState()
+        {
+            _onCreatedSubject.Dispose();
+            _onDestoryedSubject.Dispose();
+            _onTouchedSubject.Dispose();
+            _onFocusedSubject.Dispose();
+            _onSelectedSubject.Dispose();
+            _onEditSubject.Dispose();
+            _onStartDragSubject.Dispose();
+            _onEndDragSubject.Dispose();
+            _onMoveSubject.Dispose();
+
+            _onCreatedSubject = new();
+            _onDestoryedSubject = new();
+            _onTouchedSubject = new();
+            _onFocusedSubject = new();
+            _onSelectedSubject = new();
+            _onEditSubject = new();
+            _onStartDragSubject = new();
+            _onEndDragSubject = new();
+            _onMoveSubject = new();
+
+            fromAreaCash = BlockLocation.Outside;
+
+            SetUpDebugLog();
+        }
+
+        private static void SetUpDebugLog()
         {
             if (debugMode)
             {

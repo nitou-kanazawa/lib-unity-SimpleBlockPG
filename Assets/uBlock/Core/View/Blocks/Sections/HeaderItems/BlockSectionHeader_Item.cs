@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Nitou.BlockPG.View {
 
@@ -6,7 +6,7 @@ namespace Nitou.BlockPG.View {
         IBlockSectionHeaderItem {
 
         /// <summary>
-        /// ƒTƒCƒYî•ñD
+        /// ã‚µã‚¤ã‚ºæƒ…å ±ï¼
         /// </summary>
         public Vector2 Size => RectTransform.sizeDelta;
     }

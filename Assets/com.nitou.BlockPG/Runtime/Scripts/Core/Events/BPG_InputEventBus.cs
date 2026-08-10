@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UniRx;
 using UnityEngine;
 
@@ -19,6 +19,34 @@ namespace nitou.BlockPG.Events {
 
         // misc
         private static readonly bool debugMode = false;
+
+
+        /// ----------------------------------------------------------------------------
+        // Static Method
+
+        /// <summary>
+        /// 静的状態をリセットする．
+        /// [NOTE] "Enter Play Mode Options" でドメインリロードを無効にした場合、
+        ///        前回の実行で登録された購読が残るため明示的に破棄・再生成する．
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStaticState() {
+            _onPrimaryKeyDown.Dispose();
+            _onPrimaryKeyHold.Dispose();
+            _onPrimaryKeyUp.Dispose();
+            _onPrimaryKeyUpEnd.Dispose();
+            _onSecondaryKeyDown.Dispose();
+            _onSecondaryKeyUp.Dispose();
+            _onDrag.Dispose();
+
+            _onPrimaryKeyDown = new();
+            _onPrimaryKeyHold = new();
+            _onPrimaryKeyUp = new();
+            _onPrimaryKeyUpEnd = new();
+            _onSecondaryKeyDown = new();
+            _onSecondaryKeyUp = new();
+            _onDrag = new();
+        }
 
 
         /// ----------------------------------------------------------------------------

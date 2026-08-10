@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -72,13 +72,13 @@ namespace nitou.BlockPG.DragDrop {
         }
 
         /// <summary>
-        /// w’è‚³‚ê‚½‹——£“à‚ÅAÅ‚à‹ß‚¢Spot‚ğ’T‚µ‚Ü‚·B
+        /// æŒ‡å®šã•ã‚ŒãŸè·é›¢å†…ã§ã€æœ€ã‚‚è¿‘ã„Spotã‚’æ¢ã—ã¾ã™ã€‚
         /// </summary>
         public I_BPG_Spot FindClosestBlockSpot(I_BPG_Draggable draggable, float maxDistance) {
             return FindClosestSpot(draggable, maxDistance, spot =>
-                // Block body A
+                // Block body ã€
                 (spot is BPG_SpotBlockBody ||
-                // ‚Ü‚½‚Í‘ÎÛƒuƒƒbƒN‚ªe‚ğ‚Á‚Ä‚¢‚é
+                // ã¾ãŸã¯å¯¾è±¡ãƒ–ãƒ­ãƒƒã‚¯ãŒè¦ªã‚’æŒã£ã¦ã„ã‚‹
                 (spot is BPG_SpotOuterArea && spot.Block.ParentSection != null))
             );
         }
@@ -88,7 +88,7 @@ namespace nitou.BlockPG.DragDrop {
         // Private Method
 
         /// <summary>
-        /// Spot‚ğ’T‚·‹¤’Êƒƒ\ƒbƒh.
+        /// Spotã‚’æ¢ã™å…±é€šãƒ¡ã‚½ãƒƒãƒ‰.
         /// </summary>
         private I_BPG_Spot FindClosestSpot(I_BPG_Draggable draggable, float maxDistance, Func<I_BPG_Spot, bool> condition) {
             I_BPG_Spot foundSpot = null;
@@ -103,7 +103,7 @@ namespace nitou.BlockPG.DragDrop {
                 var programmingEnv = d.RectTransform.GetComponentInParent<I_BPG_ProgrammingEnv>();
 
                 if (d != draggable) {
-                    // ‹——£”»’è
+                    // è·é›¢åˆ¤å®š
                     float distance = Vector2.Distance(draggable.RayPoint, spot.DropPosition);
                     if (distance < minDistance && distance <= maxDistance) {
                         foundSpot = spot;
