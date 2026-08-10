@@ -95,8 +95,8 @@ namespace nitou.BlockPG.Blocks.Section {
             _items.Clear();
 
             // 直下のアクティブなアイテムを取得する
-            foreach (Transform chiled in transform) {
-                if(chiled.TryGetComponent<I_BPG_BlockSectionHeaderItem>(out var item)
+            foreach (Transform child in transform) {
+                if(child.TryGetComponent<I_BPG_BlockSectionHeaderItem>(out var item)
                     && item.RectTransform.gameObject.activeSelf) {
                         _items.Add(item);
                 }                

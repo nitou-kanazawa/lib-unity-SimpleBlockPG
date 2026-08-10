@@ -270,7 +270,7 @@ namespace nitou.BlockPG.Interface {
         /// <summary>
         /// 指定された親ブロックに接続する．
         /// </summary>
-        public static bool AppendTo(this I_BPG_Block self, I_BPG_Block parentBlock, int sectionIndex = 0, int siblinIndex = 0) {
+        public static bool AppendTo(this I_BPG_Block self, I_BPG_Block parentBlock, int sectionIndex = 0, int siblingIndex = 0) {
             var sectionArray = parentBlock.Layout.Sections;
             if (sectionArray is null || sectionIndex.IsOutOfRange(sectionArray) || sectionArray[sectionIndex].Body is null) {
                 return false;
@@ -278,7 +278,7 @@ namespace nitou.BlockPG.Interface {
 
             // 接続
             var sectionBody = sectionArray[sectionIndex].Body;
-            sectionBody.Append(self, siblinIndex);
+            sectionBody.Append(self, siblingIndex);
 
             return true;
         }

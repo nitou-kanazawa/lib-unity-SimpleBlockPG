@@ -105,8 +105,8 @@ namespace nitou.BlockPG.Blocks {
 
         public void GatherSections() {
             _sections.Clear();
-            foreach (Transform chiled in transform) {
-                if (chiled.TryGetComponent<I_BPG_BlockSection>(out var section)) {
+            foreach (Transform child in transform) {
+                if (child.TryGetComponent<I_BPG_BlockSection>(out var section)) {
                     _sections.Add(section);
                 }
             }
