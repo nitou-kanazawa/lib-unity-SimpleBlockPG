@@ -47,13 +47,20 @@ namespace nitou.BlockPG.DragDrop {
         //        派生側で OnEnable() を宣言せず、必ずこれを override すること．
         protected virtual void OnEnable() {
             Block = GetComponent<I_BPG_Block>();
-            _system = DraggingSystem.Instance;
             if (Block is null) {
-                Debug.LogWarning("Block is not attched.");
+                Debug.LogWarning("Block is not attached.", this);
                 this.enabled = false;
                 return;
             }
 
+            // [NOTE] シーン内に DraggingSystem が無いとドラッグ処理が一切成立しないため、
+            //        取得できなければ自身を無効化する（各ハンドラでのnull参照を防ぐ）．
+            _system = DraggingSystem.Instance;
+            if (_system == null) {
+                Debug.LogWarning($"{nameof(DraggingSystem)} is not found in the scene.", this);
+                this.enabled = false;
+                return;
+            }
         }
 
 
@@ -91,8 +98,11 @@ namespace nitou.BlockPG.DragDrop {
             }
 
             // Hide ghost block
-            _system.GhostBlock.Hide();
-            _system.GhostBlock.RectTransform.SetParent(null);
+            // [NOTE] GhostBlock はインスペクタ未設定だとnullになる．
+            if (_system.GhostBlock != null) {
+                _system.GhostBlock.Hide();
+                _system.GhostBlock.RectTransform.SetParent(null);
+            }
 
             // [NOTE] ドロップ先が見つからずブロックを破棄した場合、以降は破棄済みインスタンスの操作になる．
             if (_isRemoved)

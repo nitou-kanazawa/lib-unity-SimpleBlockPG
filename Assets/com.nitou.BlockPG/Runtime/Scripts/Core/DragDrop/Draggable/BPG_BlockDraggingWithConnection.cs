@@ -48,8 +48,13 @@ namespace nitou.BlockPG.DragDrop{
         /// ※<see cref="BE2_DragDropManager"/>によってフレーム終了時に実行される
         /// </summary>
         private void DetectConectableBlockSpot() {
-            
-            // 
+
+            // [NOTE] GhostBlock はインスペクタ未設定だとnullになる．
+            var ghostBlock = _system.GhostBlock;
+            if (ghostBlock == null)
+                return;
+
+            //
             var spot = _system.FindClosestBlockSpot(this, _system.DetectionDistance);
 
             //// 接続可否判定のデモコード
@@ -76,7 +81,7 @@ namespace nitou.BlockPG.DragDrop{
 
             // BlockBody
             if (spot is BPG_SpotBlockBody && spot.Block != this.Block) {
-                _system.GhostBlock.Show(
+                ghostBlock.Show(
                     parent: spot.RectTransform,
                     localScale: Vector3.one,
                     siblingIndex: 0);
@@ -85,21 +90,22 @@ namespace nitou.BlockPG.DragDrop{
                 _currentSpot = spot;
             }
             // OuterArea (ブロック下部)
-            else if (spot is BPG_SpotOuterArea) {
-                _system.GhostBlock.Show(
+            // ※スポットの所属ブロックを基準に配置するため、未設定の場合は接続対象にできない
+            else if (spot is BPG_SpotOuterArea && spot.Block != null) {
+                ghostBlock.Show(
                     parent: spot.Block.RectTransform.parent,
                     localScale: Vector3.one,
                     siblingIndex: spot.Block.RectTransform.GetSiblingIndex() + 1);  // ※対象ブロックの一つ下に配置する
 
-                // 
-                spot.Block.ParentSection.UpdateLayout();
+                // ※ルートブロックの場合、親セクションは存在しない
+                spot.Block.ParentSection?.UpdateLayout();
 
                 // cache spot
                 _currentSpot = spot;
             }
             // その他
             else {
-                _system.GhostBlock.Hide();
+                ghostBlock.Hide();
                 _currentSpot = null;
             }
 
