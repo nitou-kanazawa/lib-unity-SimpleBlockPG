@@ -10,7 +10,7 @@ namespace nitou.BlockPG.DragDrop
 {
     using nitou.BlockPG.Interface;
     using nitou.BlockPG.Events;
-    //using nitou.BlockPG.Enviorment;
+    //using nitou.BlockPG.Environments;
 
     /// <summary>
     /// <see cref="I_BE2_ProgrammingEnv"/>内の<see cref="BE2_Block"/>群の構成変化を監視するコンポーネント．
