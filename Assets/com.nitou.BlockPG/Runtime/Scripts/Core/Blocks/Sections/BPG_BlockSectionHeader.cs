@@ -112,7 +112,27 @@ namespace nitou.BlockPG.Blocks.Section {
 
 
         /// ----------------------------------------------------------------------------
+        // Lifecycle Events
+
+        /// <summary>
+        /// 子オブジェクト（ヘッダーアイテム）の追加・削除・並び替えを検知する．
+        /// </summary>
+        private void OnTransformChildrenChanged() {
+            UpdateItems();
+            MarkLayoutDirty();
+        }
+
+
+        /// ----------------------------------------------------------------------------
         // Private Method
+
+        private void MarkLayoutDirty() {
+            // ※Initialize前に呼ばれる場合があるため、未取得なら取得を試みる
+            if (_blockLayout == null) {
+                GatherComponents();
+            }
+            _blockLayout?.SetLayoutDirty();
+        }
 
         private void GatherComponents() {
 

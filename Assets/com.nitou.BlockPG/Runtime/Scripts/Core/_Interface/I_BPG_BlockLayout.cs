@@ -17,5 +17,11 @@ namespace nitou.BlockPG.Interface{
         /// ブロックカラー．.
         /// </summary>
         Color Color { get; set; }
+
+        /// <summary>
+        /// レイアウトの再計算を予約する．
+        /// 予約は祖先ブロックへも伝播し、次のフレームでまとめて更新される．
+        /// </summary>
+        void SetLayoutDirty();
     }
 }

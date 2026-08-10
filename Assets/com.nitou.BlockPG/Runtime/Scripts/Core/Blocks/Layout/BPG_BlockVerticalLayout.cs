@@ -17,6 +17,10 @@ namespace nitou.BlockPG.Blocks {
 
         private readonly List<I_BPG_BlockSection> _sections = new();
 
+        // [NOTE] レイアウト更新はブロックの部分木全体を走査するため、毎フレーム実行すると
+        //        ブロック数に対して計算量が急増する．構成が変化した時だけ更新する．
+        private bool _isLayoutDirty = true;
+
         /// <summary>
         /// Block visible color.
         /// </summary>
@@ -72,13 +76,27 @@ namespace nitou.BlockPG.Blocks {
         }
 
         private void LateUpdate() {
-            UpdateLayout();
 #if UNITY_EDITOR
-            // [NOTE] 編集モードでは LayoutGroup の自動更新が走らないため、明示的に再構築する．
+            // [NOTE] 編集モードではインスペクタ操作を即座に反映したいため、常に更新する．
+            //        また LayoutGroup の自動更新が走らないため、明示的に再構築する．
             if (!Application.isPlaying) {
+                UpdateLayout();
                 LayoutRebuilder.ForceRebuildLayoutImmediate(RectTransform);
+                return;
             }
 #endif
+            if (!_isLayoutDirty)
+                return;
+
+            _isLayoutDirty = false;
+
+            // [NOTE] 子孫の変更は SetLayoutDirty() で祖先まで伝播するため、
+            //        ルート側から一度だけ再帰更新すれば部分木全体が揃う．
+            //        （各ブロックが個別に更新すると同じ部分木を何度も走査してしまう）
+            if (HasParentLayout())
+                return;
+
+            UpdateLayout();
         }
 
 
@@ -95,12 +113,36 @@ namespace nitou.BlockPG.Blocks {
         }
 
         /// <summary>
+        /// レイアウトの再計算を予約する．
+        /// </summary>
+        public void SetLayoutDirty() {
+            _isLayoutDirty = true;
+
+            // 自身のサイズ変化は祖先のサイズにも影響するため、親方向へ伝播する
+            GetParentLayout()?.SetLayoutDirty();
+        }
+
+        /// <summary>
         /// Updates the layout of the block. Used to correctly resize the blocks after adding child and operation blocks
         /// </summary>
         public void UpdateLayout() {
             RectTransform.sizeDelta = Size;
             _sections.ForEach(section => section.UpdateLayout());
         }
+
+
+        /// ----------------------------------------------------------------------------
+        // Private Method
+
+        /// <summary>
+        /// 親ブロックのレイアウトを取得する．（※ルートブロックの場合はnull）
+        /// </summary>
+        private I_BPG_BlockLayout GetParentLayout() {
+            var parent = transform.parent;
+            return (parent != null) ? parent.GetComponentInParent<I_BPG_BlockLayout>() : null;
+        }
+
+        private bool HasParentLayout() => GetParentLayout() != null;
 
 
         /// ----------------------------------------------------------------------------

@@ -1,8 +1,9 @@
 using UnityEngine;
 
 namespace nitou.BlockPG.Blocks{
+    using nitou.BlockPG.Interface;
 
-    // [NOTE] 
+    // [NOTE]
 
     /// <summary>
     /// Dummy block instance for visual effect.
@@ -38,6 +39,8 @@ namespace nitou.BlockPG.Blocks{
             AdjustTransform();
 
             gameObject.SetActive(true);
+
+            MarkParentLayoutDirty();
         }
 
         /// <summary>
@@ -46,7 +49,26 @@ namespace nitou.BlockPG.Blocks{
         public void Hide() {
             AdjustTransform();
 
+            // ※非アクティブ化すると親を辿れなくなるため、先に更新を予約する
+            MarkParentLayoutDirty();
+
             gameObject.SetActive(false);
+        }
+
+
+        /// ----------------------------------------------------------------------------
+        // Private Method
+
+        /// <summary>
+        /// 配置先ブロックのレイアウト更新を予約する．
+        /// [NOTE] 表示／非表示の切り替えは再ペアレントを伴わないため、
+        ///        セクション側の OnTransformChildrenChanged では検知できない．
+        /// </summary>
+        private void MarkParentLayoutDirty() {
+            var parent = transform.parent;
+            if (parent != null) {
+                parent.GetComponentInParent<I_BPG_BlockLayout>()?.SetLayoutDirty();
+            }
         }
     }
 }
