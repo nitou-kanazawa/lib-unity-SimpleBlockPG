@@ -28,14 +28,14 @@ namespace nitou.BlockPG.DragDrop{
             // 接続対象のブロックが存在する場合、
             if (_currentSpot != null) {
                 HandleDropToCurrentSpot();
+                AdjustTransformPositionAndRotation();
             }
             // 接続対象のブロックが存在しない場合、
-            else {
-                DropToRaycastedFreeSpot(eventData);
+            // [NOTE] ドロップ先が無いとブロックは破棄されるため、成功時のみ位置を調整する．
+            else if (DropToRaycastedFreeSpot(eventData)) {
+                AdjustTransformPositionAndRotation();
             }
 
-            // 
-            AdjustTransformPositionAndRotation();
             _currentSpot = null;
         }
 

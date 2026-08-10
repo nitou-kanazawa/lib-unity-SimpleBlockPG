@@ -16,6 +16,10 @@ namespace nitou.BlockPG.DragDrop {
         // misc
         private Vector2 _offset;
 
+        // [NOTE] Object.Destroy() はフレーム終了まで遅延されるため、破棄済みかどうかを
+        //        Unityのnull判定で見分けられない．明示的にフラグで管理する．
+        private bool _isRemoved = false;
+
 
         /// ----------------------------------------------------------------------------
         // Property
@@ -63,8 +67,9 @@ namespace nitou.BlockPG.DragDrop {
 
         void IBeginDragHandler.OnBeginDrag(PointerEventData eventData) {
             _offset = RayPoint - eventData.position;
+            _isRemoved = false;
 
-            // 
+            //
             if (_system.CanDrag(this)) {
                 IsDragging = true;
                 OnBegineDrag(eventData);
@@ -89,7 +94,11 @@ namespace nitou.BlockPG.DragDrop {
             _system.GhostBlock.Hide();
             _system.GhostBlock.RectTransform.SetParent(null);
 
-            // 
+            // [NOTE] ドロップ先が見つからずブロックを破棄した場合、以降は破棄済みインスタンスの操作になる．
+            if (_isRemoved)
+                return;
+
+            //
             this.Block.UpdateParentSection();
         }
         #endregion
@@ -111,7 +120,8 @@ namespace nitou.BlockPG.DragDrop {
         // Protected Method
 
         /// <summary>
-        /// 
+        /// レイキャストで検出した空きスポットへドロップする．
+        /// ドロップ先が見つからない場合はブロックを破棄し、falseを返す．
         /// </summary>
         protected bool DropToRaycastedFreeSpot(PointerEventData eventData) {
 
@@ -128,6 +138,7 @@ namespace nitou.BlockPG.DragDrop {
             }
 
             // if can`t find any spot, remove block.
+            _isRemoved = true;
             BPG_BlockUtils.RemoveBlock(Block);
             return false;
         }
