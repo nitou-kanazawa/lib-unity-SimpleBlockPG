@@ -38,6 +38,18 @@ namespace nitou.BlockPG.Blocks{
         }
 
         /// <summary>
+        /// レイアウトの再計算を予約する．
+        /// [NOTE] サイズが常に zero のダミー実装のため、自身の更新予約は不要．
+        ///        祖先のサイズには影響しうるので、伝播のみ行う．
+        /// </summary>
+        public void SetLayoutDirty() {
+            var parent = transform.parent;
+            if (parent != null) {
+                parent.GetComponentInParent<I_BPG_BlockLayout>()?.SetLayoutDirty();
+            }
+        }
+
+        /// <summary>
         /// Updates the layout of the block. Used to correctly resize the blocks after adding child and operation blocks
         /// </summary>
         public void UpdateLayout() {
