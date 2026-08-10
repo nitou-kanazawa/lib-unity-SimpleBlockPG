@@ -35,14 +35,24 @@ namespace nitou.BlockPG{
 
         public static TBlock CreateBlock<TBlock>(TBlock blockPrefab, I_BPG_ProgrammingEnv programmingEnv)
             where TBlock : BPG_BlockBase {
-            
+
+            if (blockPrefab == null)
+                throw new System.ArgumentNullException(nameof(blockPrefab));
+            if (programmingEnv == null)
+                throw new System.ArgumentNullException(nameof(programmingEnv));
+
             // create instance
-            var block = MonoBehaviour.Instantiate<TBlock>(blockPrefab);
+            // [NOTE] 配置先を指定して生成する．シーンルートに生成してから付け替えると、
+            //        Append() が worldPositionStays: true で再ペアレントする際に
+            //        Canvas のスケールを打ち消す localScale が入ってしまう
+            //        （scaleFactor が 1 でない環境ではブロックが 1/scaleFactor 倍に拡大される）．
+            var block = MonoBehaviour.Instantiate<TBlock>(blockPrefab, programmingEnv.RectTransform);
 
             // setup param
             block.name = blockPrefab.name;
             block.transform.localPosition = Vector3.zero;
             block.transform.localEulerAngles = Vector3.zero;
+            block.transform.localScale = Vector3.one;
 
             programmingEnv.Append(block);
             return block;
