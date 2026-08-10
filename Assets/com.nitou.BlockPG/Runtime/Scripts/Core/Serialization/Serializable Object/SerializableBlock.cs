@@ -55,7 +55,7 @@ namespace nitou.BlockPG.Serialization {
                 // params
                 xBlock.Add(new XElement("id", sBlock.id));
                 xBlock.Add(new XElement("name", sBlock.name));
-                xBlock.Add(new XElement("localPosition", sBlock.localPosition));
+                xBlock.Add(new XElement("localPosition", XmlUtils.Vector3ToString(sBlock.localPosition)));
 
                 // section list
                 var xSections = new XElement("sections");
