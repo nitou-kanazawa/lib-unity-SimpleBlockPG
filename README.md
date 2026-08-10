@@ -29,6 +29,24 @@
 これによりロジック単体でのテストが可能になり、シリアライズやレイアウト更新も
 構造の変化から直接導けるようになります．
 
+### uBlock の名前空間
+
+　View は将来的に uGUI / UI Toolkit / 3D Mesh など複数のバックエンドへ対応させる構想のため、
+**バックエンドごとに asmdef を分けられる粒度**で名前空間を切っています．
+名前空間とアセンブリを 1:1 に対応させ、依存の境界がコード上で見えるようにする方針です．
+
+| 名前空間 | フォルダ | 役割 |
+|---|---|---|
+| `Nitou.uBlock` | `Core/Logic` | 純粋 C#．UnityEngine に依存しない |
+| `Nitou.uBlock.View` | `Core/View` | バックエンド非依存の抽象（未実装） |
+| `Nitou.uBlock.View.UGUI` | `Core/View/UGUI` | uGUI 実装 |
+| `Nitou.uBlock.View.UIToolkit` | `Core/View/UIToolkit` | （将来） |
+| `Nitou.uBlock.View.Mesh` | `Core/View/Mesh` | （将来） |
+
+　バックエンド固有の型（`RectTransform` / `Image` / `VisualElement` など）を
+`Nitou.uBlock` および `Nitou.uBlock.View` に持ち込まないでください．
+持ち込むと、そのバックエンドを使わない利用者にも依存が波及します．
+
 ### 今後の方針
 
 - 旧実装（`com.nitou.BlockPG`）は**削除しません**．uBlock が実用に足りるまで現行実装として維持します．
