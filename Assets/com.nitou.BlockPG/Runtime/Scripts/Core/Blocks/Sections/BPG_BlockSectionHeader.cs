@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 namespace nitou.BlockPG.Blocks.Section {
     using nitou.BlockPG.Interface;
@@ -24,7 +25,9 @@ namespace nitou.BlockPG.Blocks.Section {
         private readonly List<I_BPG_BlockSectionHeaderItem> _items = new();
 
         [SerializeField] float _minHeight = 105f;
-        [SerializeField] float _minWidht = 105f;
+        // [NOTE] 綴りを修正したため、既存プレハブの設定値を引き継ぐよう旧名を指定する．
+        [FormerlySerializedAs("_minWidht")]
+        [SerializeField] float _minWidth = 105f;
         [SerializeField] float _paddingRight = 0f;
         [SerializeField] float _spacing = 15f;
 
@@ -172,7 +175,7 @@ namespace nitou.BlockPG.Blocks.Section {
             if (isFirstSection) {
                 // width
                 float w = _items.Sum(item => item.Size.x + _spacing) + _spacing + _paddingRight;
-                width = Mathf.Max(_minWidht, w);
+                width = Mathf.Max(_minWidth, w);
 
                 // height
                 float h = _items.Any() ? _items.Max(item => item.Size.y) : 0;
