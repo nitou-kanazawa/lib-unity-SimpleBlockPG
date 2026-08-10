@@ -105,7 +105,29 @@ namespace nitou.BlockPG.Blocks.Section {
 
 
         /// ----------------------------------------------------------------------------
+        // Lifecycle Events
+
+        /// <summary>
+        /// 子オブジェクトの追加・削除・並び替えを検知する．
+        /// [NOTE] ブロックの接続／切断はすべて再ペアレントとして現れるため、
+        ///        個々の操作を呼び出し元で追跡せずにここで一括検知する．
+        /// </summary>
+        private void OnTransformChildrenChanged() {
+            UpdateChildBlocks();
+            MarkLayoutDirty();
+        }
+
+
+        /// ----------------------------------------------------------------------------
         // Private Method
+
+        private void MarkLayoutDirty() {
+            // ※Initialize前に呼ばれる場合があるため、未取得なら取得を試みる
+            if (_blockLayout == null) {
+                GatherComponents();
+            }
+            _blockLayout?.SetLayoutDirty();
+        }
 
         private void GatherComponents() {
             _image = GetComponent<Image>();
