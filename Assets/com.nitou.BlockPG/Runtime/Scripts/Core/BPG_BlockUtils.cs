@@ -6,7 +6,9 @@ namespace nitou.BlockPG{
 
     public static class BPG_BlockUtils {
 
-        private static readonly string folderPath = "BlockPG/Blocks";
+        // [NOTE] Resources 直下からの相対パス．
+        //        実体は Runtime/Resources/BlockPG/ にあるため、末尾に "Blocks" は付かない．
+        private static readonly string folderPath = "BlockPG";
 
         public static TBlock LoadBlockPrefab<TBlock>(string prefabName)
             where TBlock : BPG_BlockBase {
