@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Nitou.BlockPG.View {
+namespace Nitou.uBlock {
 
     public class BlockSectionHeader_Item : ComponentBase ,
         IBlockSectionHeaderItem {
