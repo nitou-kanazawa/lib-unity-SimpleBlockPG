@@ -85,8 +85,22 @@ namespace nitou.BlockPG.Blocks.Section {
         [ContextMenu("Update Layout")]
         public void UpdateLayout() {
             UpdateChildBlocks();    // ※親からの再帰更新時にもリストを取り直す
+            UpdateChildLayouts();
             UpdateSelfSize();
             ApplyColor();
+        }
+
+        /// <summary>
+        /// 子ブロックのレイアウトを更新する．
+        /// [NOTE] レイアウト更新はルートブロックからの一度の再帰で部分木全体を揃える設計のため、
+        ///        ここで子ブロックへ降りないと入れ子のブロックが一切更新されない．
+        ///        （子ブロック自身の LateUpdate は、親を持つ場合に早期リターンする）
+        ///        また自身のサイズは子のサイズの合計に依存するため、必ず子を先に更新する．
+        /// </summary>
+        private void UpdateChildLayouts() {
+            foreach (var childBlock in _childBlocks) {
+                childBlock?.Layout?.UpdateLayout();
+            }
         }
 
         /// <summary>
