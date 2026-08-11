@@ -1,0 +1,73 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 同じブランチで新しい push があれば古い実行を打ち切る
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: ${{ matrix.testMode }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        testMode:
+          - editmode
+          - playmode
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Library をキャッシュしないと毎回インポートからやり直しになる
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ matrix.testMode }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.testMode }}-
+            Library-
+
+      - uses: game-ci/unity-test-runner@v4
+        id: tests
+        env:
+          # [NOTE] Personal ライセンスの場合はこの3つ、Pro の場合は UNITY_SERIAL を使う．
+          #        未登録だとこのステップでライセンス認証に失敗する．
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          # ProjectSettings/ProjectVersion.txt から自動で解決する
+          unityVersion: auto
+          testMode: ${{ matrix.testMode }}
+          artifactsPath: ${{ matrix.testMode }}-artifacts
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: ${{ matrix.testMode }} results
+          coverageOptions: generateAdditionalMetrics;generateHtmlReport;dontClear
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Test results (${{ matrix.testMode }})
+          path: ${{ steps.tests.outputs.artifactsPath }}
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Coverage results (${{ matrix.testMode }})
+          path: ${{ steps.tests.outputs.coveragePath }}
+          retention-days: 14
