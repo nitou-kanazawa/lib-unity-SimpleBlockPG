@@ -30,6 +30,16 @@ namespace RuntimeTests {
             public const string Scope = "Block [Scope]";
             /// <summary>2セクションのブロック．各セクションに子ブロックを持てる．</summary>
             public const string MultiScope = "Block [MultiScope]";
+
+            /// <summary>
+            /// 検証用のブロック．ヘッダーに入力要素、ルートにブロック固有データの受け手を持つ．
+            /// </summary>
+            /// <remarks>
+            /// [NOTE] 復元はプレハブからの生成で行うため、入力や固有データの受け手が
+            ///        プレハブ側に無いと保存と復元を通しで検証できない．
+            ///        同梱プレハブに入力を足すと見た目が変わるため、テスト専用に用意している．
+            /// </remarks>
+            public const string TestInput = "Block [TestInput]";
         }
 
 

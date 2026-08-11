@@ -19,6 +19,9 @@ namespace nitou.BlockPG.Serialization {
         public Vector3 localPosition;
         public List<SerializableBlockSection> sections;
 
+        /// <summary>ブロック固有のデータ．（※持たない場合は空）</summary>
+        public string customData = string.Empty;
+
 
         /// ----------------------------------------------------------------------------
         // Public Method
@@ -57,6 +60,11 @@ namespace nitou.BlockPG.Serialization {
                 xBlock.Add(new XElement("name", sBlock.name));
                 xBlock.Add(new XElement("localPosition", XmlUtils.Vector3ToString(sBlock.localPosition)));
 
+                // ※持たないブロックの方が多いため、空の場合は要素ごと省く
+                if (!string.IsNullOrEmpty(sBlock.customData)) {
+                    xBlock.Add(new XElement("customData", sBlock.customData));
+                }
+
                 // section list
                 var xSections = new XElement("sections");
                 xSections.Add(sBlock.sections.Select(sSection => SerializableBlockSection.ToXElement(sSection)));
@@ -77,6 +85,8 @@ namespace nitou.BlockPG.Serialization {
                 id: xBlock.Element("id")?.Value ?? string.Empty,
                 name: xBlock.Element("name")?.Value ?? string.Empty,
                 localPosition: XmlUtils.StringToVector3(xBlock.Element("localPosition")?.Value));
+
+            sBlock.customData = xBlock.Element("customData")?.Value ?? string.Empty;
 
             // section List
             var xSections = xBlock.Element("sections")?.Elements(SerializableBlockSection.NAME_KEY);
