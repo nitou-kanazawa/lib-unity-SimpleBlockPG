@@ -112,21 +112,11 @@ namespace RuntimeTests {
             DraggingLayer = dragRect;
 
             // DraggingSystem
-            // [NOTE] 参照は private な SerializeField のため、リフレクションで設定する．
-            //        （ドラッグ処理は配置先が未設定だと親なしへ飛ばされて成立しない）
+            // ※ドラッグ処理は配置先が未設定だと親なしへ飛ばされて成立しない
             var systemObj = new GameObject("[Test] DraggingSystem");
             var system = systemObj.AddComponent<DraggingSystem>();
-            SetPrivateField(system, "_draggingObjHolder", dragRect);
+            system.Setup(dragRect);
             _roots.Add(systemObj);
-        }
-
-        private static void SetPrivateField(object target, string fieldName, object value) {
-            var field = target.GetType().GetField(fieldName,
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            if (field == null)
-                throw new InvalidOperationException($"Field '{fieldName}' is not found on {target.GetType().Name}.");
-
-            field.SetValue(target, value);
         }
 
         public void Dispose() {
