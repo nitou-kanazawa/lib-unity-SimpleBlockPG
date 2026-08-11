@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,10 +7,6 @@ using nitou.BlockPG.Blocks.Section;
 using nitou.BlockPG.Enviorment;
 using nitou.BlockPG.Interface;
 using nitou.BlockPG.Serialization;
-
-// [NOTE] BPG_BlockUtils は nitou.BlockPG（生成）と nitou.BlockPG.Blocks（破棄）の
-//        2つの名前空間に同名で存在するため、明示的に解決する．
-using BlockUtils = nitou.BlockPG.BPG_BlockUtils;
 
 namespace nitou.BlockPG.Demo {
 
@@ -249,13 +245,13 @@ namespace nitou.BlockPG.Demo {
         /// ブロックを生成してワークスペースへ置く．
         /// </summary>
         public void Spawn(string prefabName) {
-            var prefab = BlockUtils.LoadBlockPrefab(prefabName);
+            var prefab = BPG_BlockUtils.LoadBlockPrefab(prefabName);
             if (prefab == null) {
                 SetStatus($"プレハブが見つかりません: {prefabName}");
                 return;
             }
 
-            var block = BlockUtils.CreateBlock(prefab, _workspace);
+            var block = BPG_BlockUtils.CreateBlock(prefab, _workspace);
 
             // 少しずつずらして重ならないようにする
             int step = _spawnCount++ % 8;

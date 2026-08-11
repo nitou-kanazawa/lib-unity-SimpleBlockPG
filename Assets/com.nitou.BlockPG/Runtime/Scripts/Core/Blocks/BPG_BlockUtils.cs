@@ -1,9 +1,13 @@
+using System.Linq;
 using UnityEngine;
 
-namespace nitou.BlockPG{
+namespace nitou.BlockPG.Blocks {
     using nitou.BlockPG.Interface;
-    using nitou.BlockPG.Blocks;
+    using nitou.BlockPG.Events;
 
+    /// <summary>
+    /// ブロックの生成と破棄．
+    /// </summary>
     public static class BPG_BlockUtils {
 
         // [NOTE] Resources 直下の実配置は "BlockPG/" のため、"BlockPG/Blocks" では常にロードに失敗していた．
@@ -58,5 +62,20 @@ namespace nitou.BlockPG{
             return block;
         }
 
+        /// <summary>
+        /// ブロックを子孫ごと破棄する．
+        /// </summary>
+        public static void RemoveBlock(I_BPG_Block block) {
+            if (block is null)
+                return;
+
+            // 子のブロックから逆順で破棄イベントを発火
+            foreach (var childBlock in block.GetAllChaildBlocks(containSelf: true).Reverse<I_BPG_Block>()) {
+                BPG_BlockEventBus.PublishDestroyEvent(childBlock);
+            }
+
+            // 破棄
+            Object.Destroy(block.RectTransform.gameObject);
+        }
     }
 }

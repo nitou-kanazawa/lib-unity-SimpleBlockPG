@@ -1,6 +1,7 @@
 using System;
 using System.Xml.Linq;
 using UnityEngine;
+using nitou.BlockPG.Blocks;
 using nitou.BlockPG.Interface;
 
 namespace nitou.BlockPG.Serialization {
