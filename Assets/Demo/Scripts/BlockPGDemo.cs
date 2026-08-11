@@ -93,10 +93,9 @@ namespace nitou.BlockPG.Demo {
             // ※復元でインスタンスが作り直されるため、テーマを再適用する
             _history.OnRestored += _ => ApplyThemeToBlocks(CurrentTheme);
 
-            // ブロックを掴んだ時点の状態を履歴へ積む
-            // [NOTE] ドラッグ開始のイベントが現状発火しないため、タッチを代用している．
-            //        掴んだだけで動かさなかった場合は、状態が変わらないので記録されない．
-            BPG_BlockEventBus.OnTouched
+            // ドラッグ開始時点の状態を履歴へ積む
+            // ※動かさずに元の位置へ戻した場合は、状態が変わらないので記録されない
+            BPG_BlockEventBus.OnStartDrag
                 .Subscribe(_ => _history.Record("ブロックの移動"))
                 .AddTo(this);
 

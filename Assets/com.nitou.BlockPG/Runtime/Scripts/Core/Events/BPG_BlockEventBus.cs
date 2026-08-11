@@ -28,7 +28,6 @@ namespace nitou.BlockPG.Events{
 
         // misc
         private static readonly bool debugMode = false;
-        private static BlockLocation fromAreaCash = BlockLocation.Outside;
 
 
         /// ----------------------------------------------------------------------------
@@ -110,8 +109,6 @@ namespace nitou.BlockPG.Events{
             _onStartDragSubject = new();
             _onEndDragSubject = new();
             _onMoveSubject = new();
-
-            fromAreaCash = BlockLocation.Outside;
 
             SetUpDebugLog();
         }
@@ -225,18 +222,19 @@ namespace nitou.BlockPG.Events{
             // ドラッグ開始イベントは"Block == null"も許容
             // ※このイベントを受けてインスタンスが生成される
             _onStartDragSubject.OnNext(new BlockLocationEvent(block, location));
-
-            // cash
-            fromAreaCash = location;
         }
 
         /// <summary>
         /// ブロックのドラッグ終了イベント．
         /// </summary>
-        internal static void PublishEndDragEvent(I_BPG_Block block, BlockLocation location)
+        /// <remarks>
+        /// [NOTE] 開始位置は引数で受け取る．静的な変数に控える方式では、
+        ///        複数のポインタで同時にドラッグされた場合に取り違える．
+        /// </remarks>
+        internal static void PublishEndDragEvent(I_BPG_Block block, BlockLocation from, BlockLocation to)
         {
-            _onEndDragSubject.OnNext(new BlockLocationEvent(block, location));
-            _onMoveSubject.OnNext(new BlockMoveEvent( block, fromAreaCash, location));
+            _onEndDragSubject.OnNext(new BlockLocationEvent(block, to));
+            _onMoveSubject.OnNext(new BlockMoveEvent(block, from, to));
         }
 
     }

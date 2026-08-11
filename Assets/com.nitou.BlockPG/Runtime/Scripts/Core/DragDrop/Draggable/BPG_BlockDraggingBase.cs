@@ -20,6 +20,9 @@ namespace nitou.BlockPG.DragDrop {
         //        Unityのnull判定で見分けられない．明示的にフラグで管理する．
         private bool _isRemoved = false;
 
+        // ※つかんだ時点の配置場所．ドロップ先との比較に使う．
+        private BlockLocation _locationOnBeginDrag = BlockLocation.Outside;
+
 
         /// ----------------------------------------------------------------------------
         // Property
@@ -81,6 +84,10 @@ namespace nitou.BlockPG.DragDrop {
 
             //
             if (_system.CanDrag(this)) {
+                // ※つかんだ時点の配置場所を、移動先との比較用に控える
+                _locationOnBeginDrag = DraggingUtil.GetLocation(Block);
+                BPG_BlockEventBus.PublishStartDragEvent(Block, _locationOnBeginDrag);
+
                 IsDragging = true;
                 OnBegineDrag(eventData);
             }
@@ -100,6 +107,7 @@ namespace nitou.BlockPG.DragDrop {
         }
 
         void IEndDragHandler.OnEndDrag(PointerEventData eventData) {
+            bool wasDragging = IsDragging;
             if (IsDragging) {
                 OnEndDrag(eventData);
                 IsDragging = false;
@@ -113,11 +121,15 @@ namespace nitou.BlockPG.DragDrop {
             }
 
             // [NOTE] ドロップ先が見つからずブロックを破棄した場合、以降は破棄済みインスタンスの操作になる．
-            if (_isRemoved)
-                return;
+            if (!_isRemoved) {
+                this.Block.UpdateParentSection();
+            }
 
-            //
-            this.Block.UpdateParentSection();
+            // ※破棄された場合は Outside として通知する
+            if (wasDragging) {
+                var location = _isRemoved ? BlockLocation.Outside : DraggingUtil.GetLocation(Block);
+                BPG_BlockEventBus.PublishEndDragEvent(Block, _locationOnBeginDrag, location);
+            }
         }
         #endregion
 

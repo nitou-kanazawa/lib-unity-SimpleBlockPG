@@ -59,6 +59,8 @@ namespace nitou.BlockPG.Blocks {
             block.transform.localScale = Vector3.one;
 
             programmingEnv.Append(block);
+
+            BPG_BlockEventBus.PublishCreateEvent(block);
             return block;
         }
 

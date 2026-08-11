@@ -41,9 +41,33 @@ namespace nitou.BlockPG.DragDrop{
 
 
 	/// <summary>
-	/// <see cref="I_BE2_Block"/>のドラッグ操作に関する汎用メソッド集
+	/// ブロックのドラッグ操作に関する汎用メソッド集
 	/// </summary>
 	public static class DraggingUtil {
+
+        /// <summary>
+        /// ブロックが現在どこに置かれているか判定する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 破棄済みのブロックは <see cref="Location.Outside"/> として扱う．
+        ///        インターフェース型の等値比較は UnityEngine.Object の比較演算子を
+        ///        通らないため、Object へキャストして判定する．
+        /// </remarks>
+        public static Location GetLocation(Interface.I_BPG_Block block) {
+            if (block is not UnityEngine.Object obj || obj == null)
+                return Location.Outside;
+
+            var parent = block.RectTransform.parent;
+            if (parent == null)
+                return Location.Outside;
+
+            // ヘッダー直下に置かれている場合は入力スポット
+            if (parent.GetComponent<Interface.I_BPG_BlockSectionHeader>() != null)
+                return Location.InputSpot;
+
+            // 親セクションを持つ場合はブロックの連なりの中
+            return block.ParentSection != null ? Location.Stack : Location.ProgEnv;
+        }
 
 		/// <summary>
 		/// ドラッグ操作による結果を判定する
