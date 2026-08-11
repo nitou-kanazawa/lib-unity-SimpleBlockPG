@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Pool;
 
 namespace nitou.BlockPG.Blocks {
 
@@ -25,6 +27,9 @@ namespace nitou.BlockPG.Blocks {
         /// </summary>
         /// <remarks>
         /// サイズは変更しないため、呼び出し前に各子のサイズが確定している必要がある．
+        ///
+        /// 積み上げから外したい子には <see cref="UnityEngine.UI.LayoutElement"/> を付けて
+        /// ignoreLayout を有効にする．（※選択枠やバッジなどの装飾を重ねる用途を想定）
         /// </remarks>
         internal static void StackChildrenVertically(Transform parent) {
             if (parent == null)
@@ -32,11 +37,9 @@ namespace nitou.BlockPG.Blocks {
 
             float cursor = 0f;
             foreach (Transform child in parent) {
-                // ※LayoutGroup と同様に非アクティブな子は積み上げ対象から外す
-                if (!child.gameObject.activeSelf)
-                    continue;
-
                 if (child is not RectTransform rect)
+                    continue;
+                if (IsIgnored(rect))
                     continue;
 
                 var size = rect.sizeDelta;
@@ -50,6 +53,36 @@ namespace nitou.BlockPG.Blocks {
 
                 cursor += size.y;
             }
+        }
+
+        /// <summary>
+        /// 積み上げ対象から外すべき子かどうか判定する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] LayoutGroup と同じ条件に揃える．
+        ///        非アクティブな子と、ignoreLayout が有効な子を対象外とする．
+        /// </remarks>
+        private static bool IsIgnored(RectTransform rect) {
+            if (!rect.gameObject.activeSelf)
+                return true;
+
+            // [NOTE] LayoutGroup と同様、無効化されたコンポーネントの指定は尊重しない．
+            var ignorers = ListPool<Component>.Get();
+            rect.GetComponents(typeof(ILayoutIgnorer), ignorers);
+
+            bool ignored = false;
+            for (int i = 0; i < ignorers.Count; i++) {
+                if (ignorers[i] is Behaviour { isActiveAndEnabled: false })
+                    continue;
+
+                if (ignorers[i] is ILayoutIgnorer { ignoreLayout: true }) {
+                    ignored = true;
+                    break;
+                }
+            }
+
+            ListPool<Component>.Release(ignorers);
+            return ignored;
         }
     }
 }
