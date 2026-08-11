@@ -107,6 +107,27 @@ namespace nitou.BlockPG.Serialization {
         }
 
         /// <summary>
+        /// ブロックを子孫ごと複製する．
+        /// </summary>
+        /// <remarks>
+        /// 複製されたブロックはルートブロックとして配置される．
+        ///
+        /// [NOTE] 識別IDは振り直す．保存データからの復元と違い、複製では元と同じIDを
+        ///        使い回せない（同じIDのブロックが2つ存在すると、IDによる参照が壊れる）．
+        /// </remarks>
+        public static I_BPG_Block Duplicate(I_BPG_Block block, I_BPG_ProgrammingEnv programmingEnv) {
+            if (block == null)
+                throw new ArgumentNullException(nameof(block));
+            if (programmingEnv == null)
+                throw new ArgumentNullException(nameof(programmingEnv));
+
+            var sBlock = BlockToSerializableBlock(block);
+            ClearIds(sBlock);
+
+            return SerializableBlockToBlock(sBlock, programmingEnv);
+        }
+
+        /// <summary>
         /// シリアライズ用オブジェクトからブロック階層を復元する．
         /// [NOTE] 生成は同期的に完了するため、戻り値の時点で子孫まで組み上がっている．
         /// </summary>
@@ -144,6 +165,19 @@ namespace nitou.BlockPG.Serialization {
 
         /// ----------------------------------------------------------------------------
         // Private Method
+
+        /// <summary>
+        /// 識別IDを空にする．（※空のIDは復元時に新しく採番される）
+        /// </summary>
+        private static void ClearIds(SerializableBlock sBlock) {
+            sBlock.id = string.Empty;
+
+            foreach (var section in sBlock.sections) {
+                foreach (var child in section.childBlocks) {
+                    ClearIds(child);
+                }
+            }
+        }
 
         /// <summary>
         /// セクション以下のブロックを復元する．

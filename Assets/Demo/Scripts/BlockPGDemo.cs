@@ -74,6 +74,9 @@ namespace nitou.BlockPG.Demo {
         // 操作履歴
         private BPG_UndoHistory _history;
 
+        // コンテキストメニュー
+        private DemoContextMenu _contextMenu;
+
         private string SavePath => BPG_BlockStorage.GetDefaultPath("demo-workspace");
 
 
@@ -97,6 +100,12 @@ namespace nitou.BlockPG.Demo {
             // ※動かさずに元の位置へ戻した場合は、状態が変わらないので記録されない
             BPG_BlockEventBus.OnStartDrag
                 .Subscribe(_ => _history.Record("ブロックの移動"))
+                .AddTo(this);
+
+            // 副次操作（右クリック / 長押し）でコンテキストメニューを開く
+            // ※プラットフォームの違いはライブラリ側で吸収済み
+            BPG_BlockEventBus.OnSecondaryAction
+                .Subscribe(OpenContextMenu)
                 .AddTo(this);
 
             BuildUI();
@@ -129,6 +138,8 @@ namespace nitou.BlockPG.Demo {
             BuildTopBar();
             BuildPalette();
             BuildThemeBar();
+
+            _contextMenu = new DemoContextMenu(_canvasRoot);
 
             // 描画順を整える
             _background.rectTransform.SetAsFirstSibling();
@@ -216,11 +227,12 @@ namespace nitou.BlockPG.Demo {
             }
 
             _hintText = DemoUIFactory.CreateText("Hint", _palette.transform,
-                "ブロックをドラッグして\n重ねると連結します。\n\nワークスペースの外へ\n出すと削除されます。",
+                "ブロックをドラッグして\n重ねると連結します。\n\nワークスペースの外へ\n出すと削除されます。\n\n"
+                + "右クリック（スマホでは\n長押し）でメニューが\n開きます。",
                 16, FontStyle.Normal, TextAnchor.LowerLeft);
             _hintText.horizontalOverflow = HorizontalWrapMode.Wrap;
             DemoUIFactory.SetAnchored(_hintText.rectTransform,
-                new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(22f, 20f), new Vector2(-16f, 160f));
+                new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(22f, 20f), new Vector2(-16f, 230f));
         }
 
         private void BuildThemeBar() {
@@ -318,6 +330,73 @@ namespace nitou.BlockPG.Demo {
             }
             ClearBlocks();
             SetStatus(count > 0 ? $"{count} 個のブロックを削除しました。" : "ワークスペースは空です。");
+        }
+
+        /// <summary>
+        /// ブロックへのコンテキストメニューを開く．
+        /// </summary>
+        private void OpenContextMenu(BlockPointerEvent e) {
+            var block = e.Block;
+            if (block == null)
+                return;
+
+            var section = block.GetFirstSection();
+            bool canCollapse = section?.Body != null;
+
+            var items = new List<(string, System.Action)> {
+                ("複製", () => Duplicate(block)),
+                ("削除", () => Remove(block)),
+            };
+            if (canCollapse) {
+                items.Add((section.IsCollapsed ? "展開" : "折り畳む", () => ToggleCollapse(section)));
+            }
+
+            _contextMenu.ApplyTheme(CurrentTheme);
+            _contextMenu.Open(e.ScreenPosition, items);
+
+            SetStatus($"{block.RectTransform.name} を{(e.Source == PointerSource.Touch ? "長押し" : "右クリック")}しました。");
+        }
+
+        /// <summary>
+        /// ブロックを子孫ごと複製する．
+        /// </summary>
+        public void Duplicate(I_BPG_Block block) {
+            _history.Record("複製");
+
+            var clone = BPG_BlockSerializer.Duplicate(block, _workspace);
+            if (clone == null) {
+                SetStatus("複製に失敗しました。");
+                return;
+            }
+
+            // ※元のブロックと重ならないようずらす
+            clone.RectTransform.anchoredPosition =
+                block.RectTransform.anchoredPosition + new Vector2(32f, -32f);
+
+            ApplyThemeToBlocks(CurrentTheme);
+            SetStatus($"{block.RectTransform.name} を複製しました。");
+        }
+
+        /// <summary>
+        /// ブロックを子孫ごと削除する．
+        /// </summary>
+        public void Remove(I_BPG_Block block) {
+            _history.Record("削除");
+
+            int count = block.GetAllChaildBlocksCount(containSelf: true);
+            BPG_BlockUtils.RemoveBlock(block);
+            block.RectTransform.gameObject.SetActive(false);
+
+            SetStatus($"{count} 個のブロックを削除しました。");
+        }
+
+        /// <summary>
+        /// セクションの折り畳みを切り替える．
+        /// </summary>
+        public void ToggleCollapse(I_BPG_BlockSection section) {
+            _history.Record(section.IsCollapsed ? "展開" : "折り畳み");
+            section.SetCollapsed(!section.IsCollapsed);
+            SetStatus(section.IsCollapsed ? "折り畳みました。" : "展開しました。");
         }
 
         /// <summary>
