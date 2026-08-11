@@ -1,46 +1,15 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace nitou.BlockPG.Blocks {
-    using nitou.BlockPG.Interface;
 
+    /// <summary>
+    /// セクションを左から右へ並べるレイアウト．（※式を組み立てるブロック）
+    /// </summary>
+    [ExecuteInEditMode]
     [DisallowMultipleComponent]
-    public sealed class BPG_BlockHorizontalLayout : BPG_ComponentBase {
+    [AddComponentMenu("BlockPG/Block Horizontal Layout")]
+    public sealed class BPG_BlockHorizontalLayout : BPG_BlockLayoutBase {
 
-        [SerializeField] Color _blockColor = Color.white;
-        [SerializeField] bool _highlight = false;
-
-        private readonly List<I_BPG_BlockSection> _sections = new();
-
-
-        /// ----------------------------------------------------------------------------
-        // Public Method
-
-        public void GatherSections() {
-            _sections.Clear();
-            foreach (Transform chiled in transform) {
-                if (chiled.TryGetComponent<I_BPG_BlockSection>(out var section)) {
-                    _sections.Add(section);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates the layout of the block. Used to correctly resize the blocks after adding child and operation blocks
-        /// </summary>
-        public void UpdateLayout() {
-            //RectTransform.sizeDelta = Size;
-            _sections.ForEach(section => section.UpdateLayout());
-        }
-
-
-        /// ----------------------------------------------------------------------------
-#if UNITY_EDITOR
-
-
-        void OnValidate() {
-            GatherSections();
-        }
-#endif
+        public override BlockLayoutAxis Axis => BlockLayoutAxis.Horizontal;
     }
 }

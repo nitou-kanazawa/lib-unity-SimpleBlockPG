@@ -9,6 +9,13 @@ namespace nitou.BlockPG.Interface{
     public interface I_BPG_BlockLayout : ILayoutable{
 
         /// <summary>
+        /// 積み上げ方向．
+        /// セクションの並び、ヘッダーとボディの並び、子ブロックの並びが
+        /// すべてこの方向に従う．
+        /// </summary>
+        Blocks.BlockLayoutAxis Axis { get; }
+
+        /// <summary>
         /// 子セクション．
         /// </summary>
         IReadOnlyList<I_BPG_BlockSection> Sections { get; }
