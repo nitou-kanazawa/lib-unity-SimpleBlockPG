@@ -39,6 +39,12 @@ namespace nitou.BlockPG.Blocks.Section {
         // ※アイテムは縦中央に揃える（撤去した LayoutGroup の MiddleLeft 相当）
         private static readonly Vector2 ItemAlignment = new(0f, 0.5f);
 
+        /// <summary>
+        /// 最小高さのときに収まると想定しているアイテムの高さ．
+        /// これを超えたぶんだけヘッダーが縦に伸びる．
+        /// </summary>
+        private const float BASE_ITEM_HEIGHT = 40f;
+
 
         /// ----------------------------------------------------------------------------
         // Property
@@ -187,17 +193,16 @@ namespace nitou.BlockPG.Blocks.Section {
             if (_section == null)
                 return;
 
-            bool isFirstSection = _section.RectTransform.GetSiblingIndex() == 0;
-
             float width = 0, height = 0;
-            if (isFirstSection) {
-                // width
-                float w = _items.Sum(item => item.Size.x + _spacing) + _spacing + _paddingRight;
+            if (IsFirstSection()) {
+                // 幅：アイテムを横に並べるのに必要な長さ
+                // ※各アイテムの後ろに間隔を取るため、末尾にも余白が残る（意図的）
+                float w = _paddingLeft + _items.Sum(item => item.Size.x + _spacing) + _paddingRight;
                 width = Mathf.Max(_minWidth, w);
 
-                // height
-                float h = _items.Any() ? _items.Max(item => item.Size.y) : 0;
-                height = Mathf.Max(_minHeight, (_minHeight - 40) + h);
+                // 高さ：想定より大きいアイテムがある場合だけ、その超過分を伸ばす
+                float itemHeight = _items.Any() ? _items.Max(item => item.Size.y) : 0f;
+                height = _minHeight + Mathf.Max(0f, itemHeight - BASE_ITEM_HEIGHT);
 
             } else {
                 // ※2つ目以降のセクションは、1つ目のヘッダーに幅を揃える
@@ -212,6 +217,22 @@ namespace nitou.BlockPG.Blocks.Section {
 
             // apply
             RectTransform.sizeDelta = new Vector2(width, height);
+        }
+
+        /// <summary>
+        /// 所属セクションがブロック内の最初のセクションかどうか．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 兄弟インデックスではなくセクションの並びで判定する．
+        ///        ブロック直下にセクション以外の子（OuterArea など）が増えても壊れないようにするため．
+        /// </remarks>
+        private bool IsFirstSection() {
+            if (_blockLayout == null)
+                return _section.RectTransform.GetSiblingIndex() == 0;
+
+            var sections = _blockLayout.Sections;
+            return sections.Count > 0
+                && ReferenceEquals(sections[0], _section);
         }
 
 

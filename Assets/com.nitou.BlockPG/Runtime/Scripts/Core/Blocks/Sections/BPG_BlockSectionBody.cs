@@ -210,18 +210,30 @@ namespace nitou.BlockPG.Blocks.Section {
             length = Mathf.Max(minLength, length);
 
 
-            // 特定条件下で長さを加算
-            // ※セクションがルート直下にある場合、親を持たない
-            var sectionParent = _section.RectTransform.parent;
-            bool isSecondLastSibling = sectionParent != null
-                && _section.RectTransform.GetSiblingIndex() == sectionParent.childCount - 2;
-
-            if (isSecondLastSibling && !isTriggerBlock) {
+            // 末端の見た目（スコープブロックの下辺）は最後のセクションが担うため、そのぶんを足す
+            if (IsLastSection() && !isTriggerBlock) {
                 length += END_CAP_LENGTH;
             }
 
             // apply
             RectTransform.sizeDelta = axis.ToSize(length, axis.Across(_section.Size));
+        }
+
+        /// <summary>
+        /// 所属セクションがブロック内の最後のセクションかどうか．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 以前は「兄弟の末尾から2番目か」で判定していたが、これは
+        ///        ブロック直下の最後の子が OuterArea であることへの暗黙の依存だった．
+        ///        プレハブに子を1つ足すだけで壊れるため、セクションの並びで判定する．
+        /// </remarks>
+        private bool IsLastSection() {
+            if (_blockLayout == null)
+                return false;
+
+            var sections = _blockLayout.Sections;
+            return sections.Count > 0
+                && ReferenceEquals(sections[sections.Count - 1], _section);
         }
 
 
