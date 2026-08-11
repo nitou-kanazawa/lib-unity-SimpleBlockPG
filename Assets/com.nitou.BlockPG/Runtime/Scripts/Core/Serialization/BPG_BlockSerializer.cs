@@ -53,8 +53,8 @@ namespace nitou.BlockPG.Serialization {
                 name: block.RectTransform.name,
                 localPosition: block.RectTransform.localPosition);
 
-            // Custom Data
-            //sBlock.blockIns = block.GetAdditonalData();
+            // ブロック固有のデータ（※持たない場合は空）
+            sBlock.customData = block.GetCustomData() ?? string.Empty;
 
             // [NOTE] Layout が無いブロックは子階層を持てないため、セクション変換をスキップする．
             if (block.Layout == null) {
@@ -71,10 +71,13 @@ namespace nitou.BlockPG.Serialization {
                 // [NOTE] 畳んだ状態でも子ブロックは保持されているため、中身は失われない
                 sSection.isCollapsed = section != null && section.IsCollapsed;
 
-                // input
-                //foreach (var input in section.Header.Inputs) {
-                //    sSection.inputs.Add(new SerializableInput(input.InputValues.stringValue));
-                //}
+                // ヘッダーの入力値
+                // [NOTE] 入力は順序で対応づける．保存側と復元側でヘッダーの構成が同じであることが前提．
+                if (section?.Header != null) {
+                    foreach (var input in section.Header.Inputs) {
+                        sSection.inputs.Add(new SerializableInput(input.Value));
+                    }
+                }
 
                 // blocks
                 if (section?.Body != null) {
@@ -151,9 +154,8 @@ namespace nitou.BlockPG.Serialization {
                 block.SetId(sBlock.id);
             }
 
-            //if (sBlock.blockIns != null) {
-            //    block.SetAdditonalData(sBlock.blockIns); // ※カスタムブロックの固有データを設定する
-            //}
+            // ブロック固有のデータを復元する
+            block.SetCustomData(sBlock.customData);
 
             // 配下のセクションを復元する
             RestoreSections(block, sBlock, programmingEnv);
@@ -229,10 +231,36 @@ namespace nitou.BlockPG.Serialization {
                 if (header != null) {
                     header.UpdateItems();
                     header.UpdateInputs();
+                    RestoreInputs(header, sBlock, s);
                 }
 
                 // ※折り畳み状態は子ブロックを配置し終えてから反映する
                 section.SetCollapsed(sBlock.sections[s].isCollapsed);
+            }
+        }
+
+        /// <summary>
+        /// ヘッダーの入力値を復元する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 入力は順序で対応づける．プレハブ側の入力構成が保存時から変わっていると
+        ///        個数が食い違うため、処理できる範囲だけ復元して欠落を警告する．
+        ///        セクション数の食い違いと同じ扱い．
+        /// </remarks>
+        private static void RestoreInputs(I_BPG_BlockSectionHeader header, SerializableBlock sBlock, int sectionIndex) {
+
+            var inputs = header.Inputs;
+            var sInputs = sBlock.sections[sectionIndex].inputs;
+
+            if (inputs.Count != sInputs.Count) {
+                Debug.LogWarning($"Input count does not match the saved data. " +
+                    $"(block: {sBlock.name}, section: {sectionIndex}, " +
+                    $"prefab: {inputs.Count}, saved: {sInputs.Count})");
+            }
+
+            int count = Mathf.Min(inputs.Count, sInputs.Count);
+            for (int i = 0; i < count; i++) {
+                inputs[i].SetValue(sInputs[i].value);
             }
         }
     }

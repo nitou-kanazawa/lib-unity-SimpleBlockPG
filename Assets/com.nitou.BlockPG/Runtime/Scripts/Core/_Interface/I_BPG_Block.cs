@@ -107,6 +107,34 @@ namespace nitou.BlockPG.Interface {
         }
 
         /// <summary>
+        /// ブロック固有のデータを取得する．（※持たない場合はnull）
+        /// </summary>
+        public static string GetCustomData(this I_BPG_Block self) {
+            var holder = self.RectTransform.GetComponent<I_BPG_BlockCustomData>();
+            return (holder != null) ? holder.SaveCustomData() : null;
+        }
+
+        /// <summary>
+        /// ブロック固有のデータを復元する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 保存データに固有データがあるのに受け手が居ない場合は、
+        ///        黙って捨てず警告する．プレハブ側の構成変更で失われる事故を見つけるため．
+        /// </remarks>
+        public static void SetCustomData(this I_BPG_Block self, string data) {
+            if (string.IsNullOrEmpty(data))
+                return;
+
+            var holder = self.RectTransform.GetComponent<I_BPG_BlockCustomData>();
+            if (holder == null) {
+                Debug.LogWarning($"Custom data is saved but no receiver is attached. " +
+                    $"(block: {self.RectTransform.name})", self.RectTransform);
+                return;
+            }
+            holder.LoadCustomData(data);
+        }
+
+        /// <summary>
         /// ルートブロックかどうか判定する．
         /// </summary>
         public static bool IsRootBlock(this I_BPG_Block self) {

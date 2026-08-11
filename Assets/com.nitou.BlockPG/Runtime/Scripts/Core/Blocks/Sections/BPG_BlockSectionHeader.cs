@@ -22,6 +22,7 @@ namespace nitou.BlockPG.Blocks.Section {
         
         // references (children)
         private readonly List<I_BPG_BlockSectionHeaderItem> _items = new();
+        private readonly List<I_BPG_BlockSectionHeaderInput> _inputs = new();
 
         [SerializeField] float _minHeight = 105f;
         // [NOTE] 誤字を直した際、既存プレハブの値を失わないよう旧名を残す．
@@ -61,6 +62,11 @@ namespace nitou.BlockPG.Blocks.Section {
         /// Header items exist in target section header.
         /// </summary>
         public IList<I_BPG_BlockSectionHeaderItem> Items => _items;
+
+        /// <summary>
+        /// ヘッダー直下の入力要素．
+        /// </summary>
+        public IList<I_BPG_BlockSectionHeaderInput> Inputs => _inputs;
 
         /// <summary>
         /// 初期化処理が完了しているかどうか．
@@ -134,7 +140,14 @@ namespace nitou.BlockPG.Blocks.Section {
         /// Updates the InputsArray with all the current I_BE2_BlockSectionHeaderInput (inputs only) in the header 
         /// </summary>
         public void UpdateInputs() {
+            _inputs.Clear();
 
+            // ※入力要素はアイテムでもあるため、収集済みのアイテムから拾う
+            for (int i = 0; i < _items.Count; i++) {
+                if (_items[i] is I_BPG_BlockSectionHeaderInput input) {
+                    _inputs.Add(input);
+                }
+            }
         }
 
 
@@ -146,6 +159,7 @@ namespace nitou.BlockPG.Blocks.Section {
         /// </summary>
         private void OnTransformChildrenChanged() {
             UpdateItems();
+            UpdateInputs();
             MarkLayoutDirty();
         }
 
