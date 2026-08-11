@@ -36,6 +36,12 @@ namespace nitou.BlockPG.Blocks.Section {
         [SerializeField] float _paddingTop = -10f;
         [SerializeField] float _paddingBottom = 0f;
 
+        /// <summary>子ブロックが無い場合に確保する最小の長さ．（※接続先として掴める大きさ）</summary>
+        private const float MIN_LENGTH = 50f;
+
+        /// <summary>最後のセクションで末端の見た目のぶん加算する長さ．</summary>
+        private const float END_CAP_LENGTH = 50f;
+
 
         /// ----------------------------------------------------------------------------
         // Property
@@ -96,10 +102,9 @@ namespace nitou.BlockPG.Blocks.Section {
             UpdateSelfSize();
             ApplyColor();
 
-            // ※子ブロックを縦に並べる（サイズ確定後に行う）
-            // [TODO] UpdateSelfSize() の高さ計算にも同じ意味の定数が直書きされている（#38）
+            // ※子ブロックを並べる（サイズ確定後に行う）
             BPG_LayoutUtils.StackChildren(RectTransform, new BPG_StackSettings(
-                vertical: true,
+                vertical: (_section?.Axis ?? BlockLayoutAxis.Vertical).IsVertical(),
                 spacing: _spacing,
                 paddingLeft: _paddingLeft,
                 paddingRight: _paddingRight,
@@ -193,27 +198,30 @@ namespace nitou.BlockPG.Blocks.Section {
             if (_section == null)
                 return;
 
+            var axis = _section.Axis;
+
             // ※所属ブロックが未設定の場合はトリガーブロックとして扱わない
             bool isTriggerBlock = _section.Block != null && _section.Block.IsTrigger();
 
-            float minHeight = isTriggerBlock ? 0f : 50f;
-            float height = _childBlocks.Sum(child => (child.Layout != null ? child.Layout.Size.y : 0f) - 10) - 10;
+            float minLength = isTriggerBlock ? 0f : MIN_LENGTH;
+            float length = _childBlocks.Sum(child =>
+                (child.Layout != null ? axis.Along(child.Layout.Size) : 0f) + _spacing) + _spacing;
 
-            height = Mathf.Max(minHeight, height);
+            length = Mathf.Max(minLength, length);
 
 
-            // 特定条件下で高さを加算
+            // 特定条件下で長さを加算
             // ※セクションがルート直下にある場合、親を持たない
             var sectionParent = _section.RectTransform.parent;
             bool isSecondLastSibling = sectionParent != null
                 && _section.RectTransform.GetSiblingIndex() == sectionParent.childCount - 2;
 
             if (isSecondLastSibling && !isTriggerBlock) {
-                height += 50;
+                length += END_CAP_LENGTH;
             }
 
             // apply
-            RectTransform.sizeDelta = new Vector2(_section.Size.x, height);
+            RectTransform.sizeDelta = axis.ToSize(length, axis.Across(_section.Size));
         }
 
 

@@ -26,17 +26,32 @@ namespace nitou.BlockPG.Blocks.Section {
         public I_BPG_BlockSectionBody Body => _body;
 
 
+        /// <summary>
+        /// 積み上げ方向．（※所属ブロックのレイアウトに従う）
+        /// </summary>
+        public BlockLayoutAxis Axis => Block?.Layout?.Axis ?? BlockLayoutAxis.Vertical;
+
+        /// <summary>
+        /// セクション全体のサイズ．
+        /// </summary>
+        /// <remarks>
+        /// ヘッダーを基準に、積み上げ方向へボディのぶんを足す．
+        /// 直交方向はヘッダーの値をそのまま使う．
+        /// </remarks>
         public Vector2 Size {
             get {
-                if (_header != null) {
-                    var size = _header.Size;
-                    if (_body != null) {
-                        size.y += _body.Size.y;
-                    }
-                    return size;
-                } else {
+                if (_header == null)
                     return RectTransform.sizeDelta;
+
+                var axis = Axis;
+                var headerSize = _header.Size;
+                float along = axis.Along(headerSize);
+
+                // ※折り畳みなどで非表示にされたボディは寸法に含めない
+                if (_body != null && _body.gameObject.activeSelf) {
+                    along += axis.Along(_body.Size);
                 }
+                return axis.ToSize(along, axis.Across(headerSize));
             }
         }
 
@@ -68,8 +83,8 @@ namespace nitou.BlockPG.Blocks.Section {
 
             RectTransform.sizeDelta = Size;
 
-            // ※ヘッダーとボディを縦に積む（サイズ確定後に行う）
-            BPG_LayoutUtils.StackChildrenVertically(transform);
+            // ※ヘッダーとボディを並べる（サイズ確定後に行う）
+            BPG_LayoutUtils.StackChildren(RectTransform, new BPG_StackSettings(vertical: Axis.IsVertical()));
         }
 
 

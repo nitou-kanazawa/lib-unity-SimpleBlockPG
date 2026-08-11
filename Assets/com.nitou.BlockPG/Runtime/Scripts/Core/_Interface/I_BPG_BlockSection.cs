@@ -5,7 +5,12 @@ using UnityEngine;
 namespace nitou.BlockPG.Interface{
 
     public interface I_BPG_BlockSection : ILayoutable {
-        
+
+        /// <summary>
+        /// 積み上げ方向．（※所属ブロックのレイアウトに従う）
+        /// </summary>
+        Blocks.BlockLayoutAxis Axis { get; }
+
         I_BPG_Block Block { get; }
 
         I_BPG_BlockSectionHeader Header { get; }

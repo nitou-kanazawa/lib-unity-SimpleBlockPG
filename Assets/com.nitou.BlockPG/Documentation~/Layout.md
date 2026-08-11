@@ -117,13 +117,34 @@ public sealed class SelectionFrame : MonoBehaviour, I_BPG_LayoutIgnore {
 
 ボディの間隔と上余白が負なのは、**ブロック同士を接続部の凹凸ぶん食い込ませる**ため。
 
+## 積み上げ方向
+
+ブロックは縦横どちらの方向にも構成できる。方向はブロックのレイアウトコンポーネントが決め、**セクション・ヘッダーとボディ・子ブロックのすべてがその方向に従う。**
+
+| コンポーネント | 方向 | 想定 |
+| --- | --- | --- |
+| `BPG_BlockVerticalLayout` | 上から下 | 文を並べるブロック |
+| `BPG_BlockHorizontalLayout` | 左から右 | 式を組み立てるブロック |
+
+共通の挙動（更新の予約と伝播、セクションの収集、再帰更新）は `BPG_BlockLayoutBase` にまとまっており、派生クラスは `Axis` を返すだけでよい。
+
+サイズの合成は方向に応じて入れ替わる。
+
+| | 積み上げ方向 | 直交方向 |
+| --- | --- | --- |
+| ブロック | セクションの合計 | セクションの最大値 |
+| セクション | ヘッダー + ボディ | ヘッダーの値 |
+| ボディ | 子ブロックの合計（間隔込み） | セクションの値 |
+
+軸の扱いは `BlockLayoutAxis` の `Along` / `Across` / `ToSize` に閉じている。x と y を直接書かず、これらを通すこと。
+
+現時点で横レイアウトを使うプレハブは同梱していない。利用する場合は、ブロックのルートに `BPG_BlockHorizontalLayout` を付ける。
+
 ## 現状と今後
 
 **ブロック階層に LayoutGroup は存在しない。** `BlockLayoutPerformanceTest` が 0 個であることを検証している。
 
-横方向のレイアウト（`BPG_BlockHorizontalLayout`）に対応する際は、`BPG_LayoutUtils.StackChildren()` が既に方向を引数で受けるため、積み上げ自体はそのまま使える。ただし `BPG_BlockSection.Size` と `BPG_BlockSectionBody.UpdateSelfSize` には縦積み前提が埋まっているため、合成軸の切り替えが必要になる。
-
-`BPG_BlockSectionBody.UpdateSelfSize()` の高さ計算には、余白・間隔と同じ意味の数値がまだ直書きされている。配置側とは独立しているため、整理は別途行う。
+`BPG_BlockSectionBody.UpdateSelfSize()` の長さ計算には、間隔と同じ意味の数値がまだ直書きされている。配置側とは独立しているため、整理は別途行う。
 
 ## 計測
 

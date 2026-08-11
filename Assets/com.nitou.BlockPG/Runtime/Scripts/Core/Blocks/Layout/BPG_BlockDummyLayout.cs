@@ -10,6 +10,13 @@ namespace nitou.BlockPG.Blocks{
         private readonly List<I_BPG_BlockSection> _sections = new();
 
         /// <summary>
+        /// 積み上げ方向．
+        /// [NOTE] サイズが常に zero のダミー実装のため方向に意味は無いが、
+        ///        参照側が既定として扱えるよう縦を返す．
+        /// </summary>
+        public BlockLayoutAxis Axis => BlockLayoutAxis.Vertical;
+
+        /// <summary>
         /// Block visible color.
         /// </summary>
         public Color Color {get; set;}
