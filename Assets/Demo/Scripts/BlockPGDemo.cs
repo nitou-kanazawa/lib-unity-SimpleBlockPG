@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using nitou.BlockPG.Blocks;
+using nitou.BlockPG.Events;
 using nitou.BlockPG.Blocks.Section;
 using nitou.BlockPG.Enviorment;
 using nitou.BlockPG.Interface;
@@ -69,6 +71,9 @@ namespace nitou.BlockPG.Demo {
         // 生成位置のずらし幅
         private int _spawnCount = 0;
 
+        // 操作履歴
+        private BPG_UndoHistory _history;
+
         private string SavePath => BPG_BlockStorage.GetDefaultPath("demo-workspace");
 
 
@@ -83,6 +88,17 @@ namespace nitou.BlockPG.Demo {
             }
 
             _themes = DemoTheme.CreateAll();
+            _history = new BPG_UndoHistory(_workspace);
+
+            // ※復元でインスタンスが作り直されるため、テーマを再適用する
+            _history.OnRestored += _ => ApplyThemeToBlocks(CurrentTheme);
+
+            // ブロックを掴んだ時点の状態を履歴へ積む
+            // [NOTE] ドラッグ開始のイベントが現状発火しないため、タッチを代用している．
+            //        掴んだだけで動かさなかった場合は、状態が変わらないので記録されない．
+            BPG_BlockEventBus.OnTouched
+                .Subscribe(_ => _history.Record("ブロックの移動"))
+                .AddTo(this);
 
             BuildUI();
             ApplyTheme(_themes[_themeIndex]);
@@ -141,9 +157,11 @@ namespace nitou.BlockPG.Demo {
                 ("Load",  Load),
                 ("Clear", Clear),
                 ("Fold",  ToggleFold),
+                ("Redo",  Redo),
+                ("Undo",  Undo),
             };
 
-            const float buttonWidth = 132f;
+            const float buttonWidth = 92f;
             const float spacing = 12f;
             for (int i = 0; i < actions.Length; i++) {
                 var button = DemoUIFactory.CreateButton($"Button ({actions[i].label})", _topBar.transform, actions[i].label);
@@ -252,6 +270,7 @@ namespace nitou.BlockPG.Demo {
                 return;
             }
 
+            _history.Record($"{prefabName} の追加");
             var block = BPG_BlockUtils.CreateBlock(prefab, _workspace);
 
             // 少しずつずらして重ならないようにする
@@ -280,6 +299,7 @@ namespace nitou.BlockPG.Demo {
                 return;
             }
 
+            _history.Record("読み込み");
             ClearBlocks();
 
             // [NOTE] 復元は同期的に完了するため、この行の直後には階層が組み上がっている．
@@ -294,8 +314,29 @@ namespace nitou.BlockPG.Demo {
         /// </summary>
         public void Clear() {
             int count = GetRootBlocks().Count;
+            if (count > 0) {
+                _history.Record("全消去");
+            }
             ClearBlocks();
             SetStatus(count > 0 ? $"{count} 個のブロックを削除しました。" : "ワークスペースは空です。");
+        }
+
+        /// <summary>
+        /// 直前の操作を取り消す．
+        /// </summary>
+        public void Undo() {
+            SetStatus(_history.Undo()
+                ? "元に戻しました。"
+                : "取り消せる操作がありません。");
+        }
+
+        /// <summary>
+        /// 取り消した操作をやり直す．
+        /// </summary>
+        public void Redo() {
+            SetStatus(_history.Redo()
+                ? "やり直しました。"
+                : "やり直せる操作がありません。");
         }
 
         /// <summary>
@@ -323,6 +364,7 @@ namespace nitou.BlockPG.Demo {
 
             // ※1つでも開いていれば畳む、全部畳まれていれば開く
             bool collapse = sections.Any(s => !s.IsCollapsed);
+            _history.Record(collapse ? "折り畳み" : "展開");
             foreach (var section in sections) {
                 section.SetCollapsed(collapse);
             }
