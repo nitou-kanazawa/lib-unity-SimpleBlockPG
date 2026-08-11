@@ -54,9 +54,11 @@ jobs:
           unityVersion: auto
           testMode: ${{ matrix.testMode }}
           artifactsPath: ${{ matrix.testMode }}-artifacts
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          checkName: ${{ matrix.testMode }} results
           coverageOptions: generateAdditionalMetrics;generateHtmlReport;dontClear
+          # [NOTE] githubToken を渡すとレポート用のチェックが別途作られるが、
+          #        結果が neutral で返るため必須チェックには使えず、
+          #        ジョブ名の editmode / playmode と紛らわしいだけになる．
+          #        テスト結果は artifact に残るため省略する．
 
       - uses: actions/upload-artifact@v4
         if: always()
