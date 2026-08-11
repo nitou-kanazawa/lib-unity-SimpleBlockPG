@@ -140,6 +140,7 @@ namespace nitou.BlockPG.Demo {
                 ("Save",  Save),
                 ("Load",  Load),
                 ("Clear", Clear),
+                ("Fold",  ToggleFold),
             };
 
             const float buttonWidth = 132f;
@@ -295,6 +296,40 @@ namespace nitou.BlockPG.Demo {
             int count = GetRootBlocks().Count;
             ClearBlocks();
             SetStatus(count > 0 ? $"{count} 個のブロックを削除しました。" : "ワークスペースは空です。");
+        }
+
+        /// <summary>
+        /// 子ブロックを持てるセクションを、まとめて折り畳む／展開する．
+        /// </summary>
+        public void ToggleFold() {
+            var sections = new List<I_BPG_BlockSection>();
+            foreach (var block in GetRootBlocks()) {
+                foreach (var descendant in block.GetAllChaildBlocks(containSelf: true)) {
+                    if (descendant.Layout == null) continue;
+
+                    foreach (var section in descendant.Layout.Sections) {
+                        // ※ボディを持たないセクションは畳めない
+                        if (section?.Body != null) {
+                            sections.Add(section);
+                        }
+                    }
+                }
+            }
+
+            if (sections.Count == 0) {
+                SetStatus("折り畳めるブロックがありません。");
+                return;
+            }
+
+            // ※1つでも開いていれば畳む、全部畳まれていれば開く
+            bool collapse = sections.Any(s => !s.IsCollapsed);
+            foreach (var section in sections) {
+                section.SetCollapsed(collapse);
+            }
+
+            SetStatus(collapse
+                ? $"{sections.Count} 箇所を折り畳みました。"
+                : $"{sections.Count} 箇所を展開しました。");
         }
 
         /// <summary>
