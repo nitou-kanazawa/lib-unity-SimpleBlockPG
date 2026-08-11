@@ -140,11 +140,29 @@ public sealed class SelectionFrame : MonoBehaviour, I_BPG_LayoutIgnore {
 
 現時点で横レイアウトを使うプレハブは同梱していない。利用する場合は、ブロックのルートに `BPG_BlockHorizontalLayout` を付ける。
 
+## サイズの補正
+
+積み上げの合計だけでは決まらない補正が 2 つある。どちらも名前付き定数にしてある。
+
+| 定数 | 値 | 意味 |
+| --- | --- | --- |
+| `BPG_BlockSectionBody.MIN_LENGTH` | 50 | 子が無いときに確保する長さ。**接続先として掴める大きさ**を残すため |
+| `BPG_BlockSectionBody.END_CAP_LENGTH` | 50 | 最後のセクションが担う末端（スコープの下辺）の長さ |
+| `BPG_BlockSectionHeader.BASE_ITEM_HEIGHT` | 40 | 最小高さのときに収まると想定するアイテムの高さ |
+
+ヘッダーの高さは `最小高さ + max(0, アイテムの高さ - 40)`。想定サイズ以下では最小高さで頭打ちになり、超えたぶんだけ伸びる。
+
+### 「最初 / 最後のセクションか」は並びで判定する
+
+補正の適用先は**セクションの並び**（`Layout.Sections`）で判定する。兄弟インデックスでは判定しない。
+
+以前は「兄弟の末尾から 2 番目か」で最後のセクションを判定していた。これはブロック直下の最後の子が `OuterArea` であることへの暗黙の依存で、**プレハブに子を 1 つ足すだけで末端ぶんが消える**状態だった。
+
+`BlockSectionSizeTest` が、ブロック直下に子を足してもサイズが変わらないことを検証している。
+
 ## 現状と今後
 
 **ブロック階層に LayoutGroup は存在しない。** `BlockLayoutPerformanceTest` が 0 個であることを検証している。
-
-`BPG_BlockSectionBody.UpdateSelfSize()` の長さ計算には、間隔と同じ意味の数値がまだ直書きされている。配置側とは独立しているため、整理は別途行う。
 
 ## 計測
 
