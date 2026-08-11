@@ -107,6 +107,7 @@ namespace RuntimeTests {
 
             envObj.SetActive(true);
             ProgrammingEnv = env;
+            Env = env;
 
             if (!withDraggingSystem)
                 return;
@@ -150,12 +151,18 @@ namespace RuntimeTests {
         /// 指定名のブロックを生成して環境へ配置する．
         /// </summary>
         public I_BPG_Block CreateBlock(string prefabName) {
-            var prefab = BPG_BlockUtils.LoadBlockPrefab(prefabName);
+            // ※環境のカタログを通す（差し替えたカタログもそのまま効く）
+            var prefab = BPG_BlockUtils.LoadBlockPrefab(prefabName, ProgrammingEnv);
             if (prefab == null)
                 throw new InvalidOperationException($"Block prefab is not found. (name: {prefabName})");
 
             return BPG_BlockUtils.CreateBlock(prefab, ProgrammingEnv);
         }
+
+        /// <summary>
+        /// ブロックの配置先．（※カタログやファクトリの差し替えに使う）
+        /// </summary>
+        public BPG_ProgrammingEnv Env { get; }
 
         /// <summary>
         /// 環境直下のルートブロックを取得する．
