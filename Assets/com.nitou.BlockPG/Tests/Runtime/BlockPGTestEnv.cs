@@ -7,9 +7,7 @@ using nitou.BlockPG.DragDrop;
 using nitou.BlockPG.Enviorment;
 using nitou.BlockPG.Interface;
 
-// [NOTE] BPG_BlockUtils は nitou.BlockPG（生成）と nitou.BlockPG.Blocks（破棄）の
-//        2つの名前空間に同名で存在するため、明示的に解決する．
-using BlockUtils = nitou.BlockPG.BPG_BlockUtils;
+using nitou.BlockPG.Blocks;
 
 namespace RuntimeTests {
 
@@ -152,11 +150,11 @@ namespace RuntimeTests {
         /// 指定名のブロックを生成して環境へ配置する．
         /// </summary>
         public I_BPG_Block CreateBlock(string prefabName) {
-            var prefab = BlockUtils.LoadBlockPrefab(prefabName);
+            var prefab = BPG_BlockUtils.LoadBlockPrefab(prefabName);
             if (prefab == null)
                 throw new InvalidOperationException($"Block prefab is not found. (name: {prefabName})");
 
-            return BlockUtils.CreateBlock(prefab, ProgrammingEnv);
+            return BPG_BlockUtils.CreateBlock(prefab, ProgrammingEnv);
         }
 
         /// <summary>
