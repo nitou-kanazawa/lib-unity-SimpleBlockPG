@@ -32,9 +32,28 @@ namespace nitou.BlockPG.Blocks {
         public I_BPG_Draggable Drag { get; protected set; }
 
         /// <summary>
-        /// ブロックの機能実装．
+        /// ブロックの機能実装．（※持たない場合はnull）
         /// </summary>
-        public I_BPG_Instruction Instruction { get; protected set; }
+        /// <remarks>
+        /// [NOTE] 命令はパレットからの生成後に付けるなど、実行中に増減し得る．
+        ///        そのため <see cref="GatherComponents"/> の時点だけで決めず、未取得なら都度探す．
+        ///        破棄済みのコンポーネントを返さないよう、UnityEngine.Object として比較する．
+        /// </remarks>
+        public I_BPG_Instruction Instruction {
+            get {
+                bool isMissing = _instruction is UnityEngine.Object obj
+                    ? obj == null
+                    : _instruction is null;
+
+                if (isMissing) {
+                    _instruction = gameObject.GetComponent<I_BPG_Instruction>();
+                }
+                return _instruction;
+            }
+            protected set => _instruction = value;
+        }
+
+        private I_BPG_Instruction _instruction;
 
         /// <summary>
         /// 識別ID．インスタンスごとに一意．
@@ -108,6 +127,7 @@ namespace nitou.BlockPG.Blocks {
 		protected void GatherComponents() {
             Layout = gameObject.GetComponent<I_BPG_BlockLayout>();
             Drag = gameObject.GetComponent<I_BPG_Draggable>();
+            Instruction = gameObject.GetComponent<I_BPG_Instruction>();
         }
 
         /// <summary>
