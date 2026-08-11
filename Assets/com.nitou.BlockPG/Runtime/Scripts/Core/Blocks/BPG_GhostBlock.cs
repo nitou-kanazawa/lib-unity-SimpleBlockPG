@@ -20,9 +20,6 @@ namespace nitou.BlockPG.Blocks{
         // [NOTE] Awake() を直接宣言すると基底の Awake() が呼ばれなくなるため、OnInitialize() を override する．
         protected override void OnInitialize() {
             GatherComponents();
-
-            // [NOTE] block which parent section is null was can not connectable.
-            //BPG_InputEventBus.OnPrimaryKeyUpEnd.Subscribe(_ => GatherParentSection()).AddTo(this);
         }
 
 
