@@ -132,6 +132,9 @@ namespace nitou.BlockPG.Blocks {
             //        （dirtyフラグは更新後にクリアされるため、次の変更まで解消されない）
             _sections.ForEach(section => section.UpdateLayout());
             RectTransform.sizeDelta = Size;
+
+            // ※セクションと OuterArea を縦に積む（サイズ確定後に行う）
+            BPG_LayoutUtils.StackChildrenVertically(transform);
         }
 
 
