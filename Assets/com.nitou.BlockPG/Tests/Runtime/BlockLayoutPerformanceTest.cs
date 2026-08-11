@@ -129,32 +129,29 @@ namespace RuntimeTests {
         /// ----------------------------------------------------------------------------
         // 構造上の上限
 
-        [TestCase(PrefabName.Entry, 2)]
-        [TestCase(PrefabName.Normal, 1)]
-        [TestCase(PrefabName.Scope, 2)]
-        [TestCase(PrefabName.MultiScope, 4)]
-        public void ブロックあたりのLayoutGroup数が上限内に収まる(string prefabName, int maxGroups) {
-            // [NOTE] LayoutGroup はブロックの入れ子ぶんだけ再帰的に増える．
-            //        不用意に増えると再構築コストが直接効いてくるため上限で縛る．
-            //        削減する改修を入れたら、この上限も併せて下げること．
+        [TestCase(PrefabName.Entry)]
+        [TestCase(PrefabName.Normal)]
+        [TestCase(PrefabName.Scope)]
+        [TestCase(PrefabName.MultiScope)]
+        public void ブロックはLayoutGroupを持たない(string prefabName) {
+            // [NOTE] サイズも位置もライブラリ側で決めるため、uGUI のレイアウト機構は使わない．
+            //        LayoutGroup が混入すると、確保した領域と描画内容が食い違う原因になる．
             var block = _env.CreateBlock(prefabName);
 
-            int groups = block.RectTransform.GetComponentsInChildren<LayoutGroup>(true).Length;
-            Debug.Log($"[Layout] {prefabName} layoutGroups={groups} (max {maxGroups})");
-
-            Assert.That(groups, Is.LessThanOrEqualTo(maxGroups));
+            var groups = block.RectTransform.GetComponentsInChildren<LayoutGroup>(true);
+            Assert.That(groups, Is.Empty,
+                groups.Length > 0 ? $"{groups[0].name} に {groups[0].GetType().Name} が付いている．" : null);
         }
 
         [Test]
-        public void LayoutGroupは子のサイズを制御しない設定になっている() {
-            // [NOTE] childControl を有効にすると、親子でサイズを問い合わせ合う多段パスが走り、
-            //        入れ子構造では計算量が跳ね上がる．サイズはライブラリ側が決めるため不要．
-            var block = _env.CreateBlock(PrefabName.MultiScope);
+        public void 入れ子のブロックにもLayoutGroupが現れない() {
+            var root = BuildChain(6);
 
-            foreach (var group in block.RectTransform.GetComponentsInChildren<HorizontalOrVerticalLayoutGroup>(true)) {
-                Assert.That(group.childControlWidth, Is.False, $"{group.name} が子の幅を制御している．");
-                Assert.That(group.childControlHeight, Is.False, $"{group.name} が子の高さを制御している．");
-            }
+            int blocks = root.GetAllChaildBlocksCount(containSelf: true);
+            int groups = root.RectTransform.GetComponentsInChildren<LayoutGroup>(true).Length;
+            Debug.Log($"[Layout] blocks={blocks} layoutGroups={groups}");
+
+            Assert.That(groups, Is.Zero);
         }
 
 

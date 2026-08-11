@@ -28,6 +28,15 @@ namespace nitou.BlockPG.Blocks.Section {
         [SerializeField] float _paddingRight = 0f;
         [SerializeField] float _spacing = 15f;
 
+        // [NOTE] アイテムの横並びは自前で行うため、余白もここで持つ．
+        //        既定値は撤去した HorizontalLayoutGroup の設定と同じ．
+        [SerializeField] float _paddingLeft = 15f;
+        [SerializeField] float _paddingTop = 10f;
+        [SerializeField] float _paddingBottom = 20f;
+
+        // ※アイテムは縦中央に揃える（撤去した LayoutGroup の MiddleLeft 相当）
+        private static readonly Vector2 ItemAlignment = new(0f, 0.5f);
+
 
         /// ----------------------------------------------------------------------------
         // Property
@@ -86,6 +95,16 @@ namespace nitou.BlockPG.Blocks.Section {
 #endif
             UpdateSelfSize();
             ApplyColor();
+
+            // ※アイテムを横に並べる（サイズ確定後に行う）
+            BPG_LayoutUtils.StackChildren(RectTransform, new BPG_StackSettings(
+                vertical: false,
+                spacing: _spacing,
+                paddingLeft: _paddingLeft,
+                paddingRight: _paddingRight,
+                paddingTop: _paddingTop,
+                paddingBottom: _paddingBottom,
+                alignment: ItemAlignment));
         }
 
         /// <summary>
@@ -99,7 +118,7 @@ namespace nitou.BlockPG.Blocks.Section {
                 if(chiled.TryGetComponent<I_BPG_BlockSectionHeaderItem>(out var item)
                     && item.RectTransform.gameObject.activeSelf) {
                         _items.Add(item);
-                }                
+                }
             }
         }
 

@@ -27,7 +27,14 @@ namespace nitou.BlockPG.Blocks.Section {
         private readonly List<I_BPG_Block> _childBlocks = new();
 
 
-        private static float HEIGHT_SPCING = 10;
+        // [NOTE] 子ブロックの配置は自前で行うため、余白と間隔もここで持つ．
+        //        既定値は撤去した VerticalLayoutGroup の設定と同じ．
+        //        間隔が負なのは、ブロック同士を接続部の凹凸ぶん食い込ませるため．
+        [SerializeField] float _spacing = -10f;
+        [SerializeField] float _paddingLeft = 20f;
+        [SerializeField] float _paddingRight = 0f;
+        [SerializeField] float _paddingTop = -10f;
+        [SerializeField] float _paddingBottom = 0f;
 
 
         /// ----------------------------------------------------------------------------
@@ -88,6 +95,16 @@ namespace nitou.BlockPG.Blocks.Section {
             UpdateChildLayouts();
             UpdateSelfSize();
             ApplyColor();
+
+            // ※子ブロックを縦に並べる（サイズ確定後に行う）
+            // [TODO] UpdateSelfSize() の高さ計算にも同じ意味の定数が直書きされている（#38）
+            BPG_LayoutUtils.StackChildren(RectTransform, new BPG_StackSettings(
+                vertical: true,
+                spacing: _spacing,
+                paddingLeft: _paddingLeft,
+                paddingRight: _paddingRight,
+                paddingTop: _paddingTop,
+                paddingBottom: _paddingBottom));
         }
 
         /// <summary>
