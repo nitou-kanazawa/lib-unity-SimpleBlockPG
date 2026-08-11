@@ -89,7 +89,7 @@ namespace nitou.BlockPG.DragDrop {
                 BPG_BlockEventBus.PublishStartDragEvent(Block, _locationOnBeginDrag);
 
                 IsDragging = true;
-                OnBegineDrag(eventData);
+                OnBeginDragged(eventData);
             }
         }
 
@@ -139,7 +139,7 @@ namespace nitou.BlockPG.DragDrop {
 
         public virtual void OnPointerDown(PointerEventData eventData) { }
 
-        public virtual void OnBegineDrag(PointerEventData eventData) {}
+        public virtual void OnBeginDragged(PointerEventData eventData) {}
         
         public virtual void OnDrag(PointerEventData eventData) { }
 

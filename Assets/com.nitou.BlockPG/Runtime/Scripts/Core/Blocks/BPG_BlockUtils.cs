@@ -72,7 +72,7 @@ namespace nitou.BlockPG.Blocks {
                 return;
 
             // 子のブロックから逆順で破棄イベントを発火
-            foreach (var childBlock in block.GetAllChaildBlocks(containSelf: true).Reverse<I_BPG_Block>()) {
+            foreach (var childBlock in block.GetAllChildBlocks(containSelf: true).Reverse<I_BPG_Block>()) {
                 BPG_BlockEventBus.PublishDestroyEvent(childBlock);
             }
 

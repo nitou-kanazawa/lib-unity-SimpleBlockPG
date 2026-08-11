@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using nitou.BlockPG.Blocks;
 using nitou.BlockPG.Events;
 using nitou.BlockPG.Blocks.Section;
-using nitou.BlockPG.Enviorment;
+using nitou.BlockPG.Environments;
 using nitou.BlockPG.Interface;
 using nitou.BlockPG.Serialization;
 
@@ -383,7 +383,7 @@ namespace nitou.BlockPG.Demo {
         public void Remove(I_BPG_Block block) {
             _history.Record("削除");
 
-            int count = block.GetAllChaildBlocksCount(containSelf: true);
+            int count = block.GetAllChildBlocksCount(containSelf: true);
             BPG_BlockUtils.RemoveBlock(block);
             block.RectTransform.gameObject.SetActive(false);
 
@@ -423,7 +423,7 @@ namespace nitou.BlockPG.Demo {
         public void ToggleFold() {
             var sections = new List<I_BPG_BlockSection>();
             foreach (var block in GetRootBlocks()) {
-                foreach (var descendant in block.GetAllChaildBlocks(containSelf: true)) {
+                foreach (var descendant in block.GetAllChildBlocks(containSelf: true)) {
                     if (descendant.Layout == null) continue;
 
                     foreach (var section in descendant.Layout.Sections) {

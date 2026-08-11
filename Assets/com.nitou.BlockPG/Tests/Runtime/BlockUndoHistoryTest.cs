@@ -32,7 +32,7 @@ namespace RuntimeTests {
         private int RootCount => _env.ProgrammingEnv.GetRootBlocks().Count;
 
         private int TotalCount => _env.ProgrammingEnv.GetRootBlocks()
-            .Sum(b => b.GetAllChaildBlocksCount(containSelf: true));
+            .Sum(b => b.GetAllChildBlocksCount(containSelf: true));
 
 
         /// ----------------------------------------------------------------------------

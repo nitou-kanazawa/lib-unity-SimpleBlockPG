@@ -65,24 +65,24 @@ namespace nitou.BlockPG.Interface{
         /// <summary>
         /// 子階層以下の<see cref="I_BPG_Block"/>を再帰的に取得する
         /// </summary>
-        public static List<I_BPG_Block> GetAllChaildBlocks(this I_BPG_BlockSection self) {
+        public static List<I_BPG_Block> GetAllChildBlocks(this I_BPG_BlockSection self) {
             if (self.Body == null) return new List<I_BPG_Block>();
 
             // 子階層以下
             return self.GetBodyBlocks()
-                .SelectMany(block => block.GetAllChaildBlocks())
+                .SelectMany(block => block.GetAllChildBlocks())
                 .ToList();
         }
 
         /// <summary>
         /// 子階層以下の<see cref="I_BPG_Block"/>の数を取得する
         /// </summary>
-        public static int GetAllChaildBlocksCount(this I_BPG_BlockSection self) {
+        public static int GetAllChildBlocksCount(this I_BPG_BlockSection self) {
             if (self == null || self.Body == null) return 0;
 
             // Blockの総数
             return self.GetBodyBlocks()
-                .Select(block => block.GetAllChaildBlocksCount())
+                .Select(block => block.GetAllChildBlocksCount())
                 .Sum();
         }
 

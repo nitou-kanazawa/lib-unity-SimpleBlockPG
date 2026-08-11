@@ -34,7 +34,7 @@ namespace RuntimeTests {
         /// 部分木のすべてのブロックについて、実サイズと計算上のサイズの一致を検証する．
         /// </summary>
         private static void AssertSizeIsConsistent(I_BPG_Block root) {
-            foreach (var block in root.GetAllChaildBlocks(containSelf: true)) {
+            foreach (var block in root.GetAllChildBlocks(containSelf: true)) {
                 Assert.That(block.RectTransform.sizeDelta, Is.EqualTo(block.Layout.Size),
                     $"'{block.RectTransform.name}' の実サイズが計算値と一致していない．");
             }

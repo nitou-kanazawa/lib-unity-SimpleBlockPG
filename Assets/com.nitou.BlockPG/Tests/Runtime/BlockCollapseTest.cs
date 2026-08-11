@@ -103,7 +103,7 @@ namespace RuntimeTests {
             scope.Layout.UpdateLayout();
 
             Assert.That(section.Body.ChildBlocks, Has.Count.EqualTo(2));
-            Assert.That(scope.GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(3));
+            Assert.That(scope.GetAllChildBlocksCount(containSelf: true), Is.EqualTo(3));
         }
 
         [Test]
@@ -144,7 +144,7 @@ namespace RuntimeTests {
             var restored = BPG_BlockStorage.Load(_path, _env.ProgrammingEnv);
 
             Assert.That(restored, Has.Count.EqualTo(1));
-            Assert.That(restored[0].GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(3),
+            Assert.That(restored[0].GetAllChildBlocksCount(containSelf: true), Is.EqualTo(3),
                 "折り畳んだ状態で保存すると中身が失われている．");
         }
 

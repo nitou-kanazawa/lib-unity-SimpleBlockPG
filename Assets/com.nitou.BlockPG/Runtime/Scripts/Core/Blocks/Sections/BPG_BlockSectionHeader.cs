@@ -1,11 +1,11 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 namespace nitou.BlockPG.Blocks.Section {
     using nitou.BlockPG.Interface;
-    using System.Collections.Generic;
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Image))]
@@ -24,7 +24,9 @@ namespace nitou.BlockPG.Blocks.Section {
         private readonly List<I_BPG_BlockSectionHeaderItem> _items = new();
 
         [SerializeField] float _minHeight = 105f;
-        [SerializeField] float _minWidht = 105f;
+        // [NOTE] 誤字を直した際、既存プレハブの値を失わないよう旧名を残す．
+        [FormerlySerializedAs("_minWidht")]
+        [SerializeField] float _minWidth = 105f;
         [SerializeField] float _paddingRight = 0f;
         [SerializeField] float _spacing = 15f;
 
@@ -191,7 +193,7 @@ namespace nitou.BlockPG.Blocks.Section {
             if (isFirstSection) {
                 // width
                 float w = _items.Sum(item => item.Size.x + _spacing) + _spacing + _paddingRight;
-                width = Mathf.Max(_minWidht, w);
+                width = Mathf.Max(_minWidth, w);
 
                 // height
                 float h = _items.Any() ? _items.Max(item => item.Size.y) : 0;
@@ -223,13 +225,4 @@ namespace nitou.BlockPG.Blocks.Section {
 }
 
 
-public static class TransformExtensions {
 
-    /// <summary>
-    /// 子要素のを IEnumerable<Transform> として返します。
-    /// </summary>
-    public static IEnumerable<Transform> GetChildren(this Transform transform) {
-        return transform.Cast<Transform>();
-    }
-
-}

@@ -107,9 +107,9 @@ namespace RuntimeTests {
             var block = CreateBlockWithoutLayout();
 
             Assert.That(block.Layout, Is.Null, "前提: Layout を持たないこと");
-            Assert.That(block.GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(1));
-            Assert.That(block.GetAllChaildBlocksCount(containSelf: false), Is.Zero);
-            Assert.That(block.GetAllChaildBlocks(containSelf: true), Has.Count.EqualTo(1));
+            Assert.That(block.GetAllChildBlocksCount(containSelf: true), Is.EqualTo(1));
+            Assert.That(block.GetAllChildBlocksCount(containSelf: false), Is.Zero);
+            Assert.That(block.GetAllChildBlocks(containSelf: true), Has.Count.EqualTo(1));
             Assert.That(block.GetFirstSection(), Is.Null);
         }
 
@@ -121,7 +121,7 @@ namespace RuntimeTests {
             Object.DestroyImmediate((Object)block.Layout);
 
             Assert.That((Object)block.Layout == null, Is.True, "前提: Layout が破棄済みであること");
-            Assert.That(block.GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(1));
+            Assert.That(block.GetAllChildBlocksCount(containSelf: true), Is.EqualTo(1));
             Assert.That(block.GetFirstSection(), Is.Null);
         }
 

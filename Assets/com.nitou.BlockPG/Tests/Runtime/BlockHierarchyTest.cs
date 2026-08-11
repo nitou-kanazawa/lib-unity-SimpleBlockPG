@@ -129,9 +129,9 @@ namespace RuntimeTests {
             root.GetFirstSection().Body.AppendLast(middle);
             middle.GetFirstSection().Body.AppendLast(leaf);
 
-            Assert.That(root.GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(3));
-            Assert.That(root.GetAllChaildBlocksCount(containSelf: false), Is.EqualTo(2));
-            Assert.That(root.GetAllChaildBlocks(containSelf: true), Is.EquivalentTo(new[] { root, middle, leaf }));
+            Assert.That(root.GetAllChildBlocksCount(containSelf: true), Is.EqualTo(3));
+            Assert.That(root.GetAllChildBlocksCount(containSelf: false), Is.EqualTo(2));
+            Assert.That(root.GetAllChildBlocks(containSelf: true), Is.EquivalentTo(new[] { root, middle, leaf }));
         }
 
         [Test]

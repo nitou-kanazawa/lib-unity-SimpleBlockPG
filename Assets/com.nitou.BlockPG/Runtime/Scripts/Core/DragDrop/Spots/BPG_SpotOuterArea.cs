@@ -30,7 +30,7 @@ namespace nitou.BlockPG.DragDrop {
     }
 
 
-    public static partial class BPG_Spot_Extensions {
+    public static partial class BPG_SpotConnect_Extensions {
 
         public static bool InsertNextTo(this I_BPG_Block block, BPG_SpotOuterArea spotOuterArea) {
             // place to the same parent as spot block
