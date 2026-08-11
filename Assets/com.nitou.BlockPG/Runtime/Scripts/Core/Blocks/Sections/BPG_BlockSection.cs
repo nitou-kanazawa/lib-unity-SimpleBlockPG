@@ -32,6 +32,11 @@ namespace nitou.BlockPG.Blocks.Section {
         public BlockLayoutAxis Axis => Block?.Layout?.Axis ?? BlockLayoutAxis.Vertical;
 
         /// <summary>
+        /// 折り畳まれているかどうか．
+        /// </summary>
+        public bool IsCollapsed => _body != null && !_body.gameObject.activeSelf;
+
+        /// <summary>
         /// セクション全体のサイズ．
         /// </summary>
         /// <remarks>
@@ -85,6 +90,29 @@ namespace nitou.BlockPG.Blocks.Section {
 
             // ※ヘッダーとボディを並べる（サイズ確定後に行う）
             BPG_LayoutUtils.StackChildren(RectTransform, new BPG_StackSettings(vertical: Axis.IsVertical()));
+        }
+
+        /// <summary>
+        /// 折り畳み状態を設定する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] ボディを非表示にすることで実現する．子ブロックの activeSelf は
+        ///        true のまま残るため、畳んだ状態で保存しても中身は失われない．
+        ///        非表示化は階層の変化を伴わないため、更新は明示的に予約する．
+        /// </remarks>
+        public void SetCollapsed(bool collapsed) {
+            // ※ボディを持たないセクションは畳めない
+            if (_body == null)
+                return;
+
+            if (_body.gameObject.activeSelf != collapsed)
+                return;
+
+            _body.gameObject.SetActive(!collapsed);
+
+            if (Block?.Layout != null) {
+                Block.Layout.SetLayoutDirty();
+            }
         }
 
 

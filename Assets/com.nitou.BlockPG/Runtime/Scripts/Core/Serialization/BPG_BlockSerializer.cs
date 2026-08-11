@@ -67,6 +67,10 @@ namespace nitou.BlockPG.Serialization {
 
                 var sSection = new SerializableBlockSection();
 
+                // ※折り畳み状態
+                // [NOTE] 畳んだ状態でも子ブロックは保持されているため、中身は失われない
+                sSection.isCollapsed = section != null && section.IsCollapsed;
+
                 // input
                 //foreach (var input in section.Header.Inputs) {
                 //    sSection.inputs.Add(new SerializableInput(input.InputValues.stringValue));
@@ -192,6 +196,9 @@ namespace nitou.BlockPG.Serialization {
                     header.UpdateItems();
                     header.UpdateInputs();
                 }
+
+                // ※折り畳み状態は子ブロックを配置し終えてから反映する
+                section.SetCollapsed(sBlock.sections[s].isCollapsed);
             }
         }
     }
