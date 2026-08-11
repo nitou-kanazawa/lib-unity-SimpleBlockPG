@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7919367196641760759}
   - component: {fileID: 5681985788205273135}
   - component: {fileID: 1732825934124817370}
+  - component: {fileID: 2793732322014473168}
   m_Layer: 5
   m_Name: 'Block [MultiScope]'
   m_TagString: Untagged
@@ -89,6 +90,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4482fa155f3c3134eb2b281c7fc5191b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2793732322014473168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 254729657800569767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b733fac0bb6b7f448550b2de09ddb35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nitou.BlockPG::nitou.BlockPG.Events.BPG_BlockInteraction
+  _mouseHoldSeconds: 0.5
+  _touchHoldSeconds: 0.6
 --- !u!1 &456997385148520841
 GameObject:
   m_ObjectHideFlags: 0

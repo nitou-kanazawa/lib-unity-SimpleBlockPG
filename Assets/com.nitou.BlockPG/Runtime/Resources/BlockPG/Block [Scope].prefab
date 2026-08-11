@@ -508,6 +508,7 @@ GameObject:
   - component: {fileID: 7160315090543816493}
   - component: {fileID: 8608398428143227614}
   - component: {fileID: 5561565907030551286}
+  - component: {fileID: 7960805942732292777}
   m_Layer: 5
   m_Name: 'Block [Scope]'
   m_TagString: Untagged
@@ -583,3 +584,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4482fa155f3c3134eb2b281c7fc5191b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7960805942732292777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9045751582999669274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b733fac0bb6b7f448550b2de09ddb35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Nitou.BlockPG::nitou.BlockPG.Events.BPG_BlockInteraction
+  _mouseHoldSeconds: 0.5
+  _touchHoldSeconds: 0.6

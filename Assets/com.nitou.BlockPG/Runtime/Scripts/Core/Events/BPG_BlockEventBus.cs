@@ -21,6 +21,13 @@ namespace nitou.BlockPG.Events{
         private static Subject<BlockSelectEvent> _onSelectedSubject = new();
         private static Subject<I_BPG_Block> _onEditSubject = new();
 
+        // pointer events
+        private static Subject<BlockPointerEvent> _onPrimaryActionSubject = new();
+        private static Subject<BlockPointerEvent> _onSecondaryActionSubject = new();
+        private static Subject<BlockPointerEvent> _onDoubleActionSubject = new();
+        private static Subject<BlockPointerEvent> _onHoverEnterSubject = new();
+        private static Subject<BlockPointerEvent> _onHoverExitSubject = new();
+
         // movement events
         private static Subject<BlockLocationEvent> _onStartDragSubject = new();
         private static Subject<BlockLocationEvent> _onEndDragSubject = new();
@@ -57,6 +64,40 @@ namespace nitou.BlockPG.Events{
         /// Observable to notify when a block is edited.
         /// </summary>
         public static IObservable<I_BPG_Block> OnEdit => _onEditSubject;
+
+        /// <summary>
+        /// 主操作（クリック / タップ）を通知する．
+        /// </summary>
+        public static IObservable<BlockPointerEvent> OnPrimaryAction => _onPrimaryActionSubject;
+
+        /// <summary>
+        /// 副次操作（右クリック / 長押し）を通知する．
+        /// </summary>
+        /// <remarks>
+        /// マウスとタッチの違いを吸収した1本のイベント．
+        /// コンテキストメニューはこれを購読すれば両プラットフォームに対応できる．
+        /// </remarks>
+        public static IObservable<BlockPointerEvent> OnSecondaryAction => _onSecondaryActionSubject;
+
+        /// <summary>
+        /// 二度押し（ダブルクリック / ダブルタップ）を通知する．
+        /// </summary>
+        public static IObservable<BlockPointerEvent> OnDoubleAction => _onDoubleActionSubject;
+
+        /// <summary>
+        /// ポインタがブロックへ乗ったことを通知する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] マウス操作でのみ発火する．タッチでは発火しない．
+        ///        装飾には使えるが、**機能の前提にしてはならない．**
+        ///        「ホバーしないと操作できない」設計はモバイルで詰む．
+        /// </remarks>
+        public static IObservable<BlockPointerEvent> OnHoverEnter => _onHoverEnterSubject;
+
+        /// <summary>
+        /// ポインタがブロックから外れたことを通知する．（※マウス操作でのみ発火する）
+        /// </summary>
+        public static IObservable<BlockPointerEvent> OnHoverExit => _onHoverExitSubject;
 
         /// <summary>
         /// Observable to notify when block dragging starts.
@@ -96,6 +137,11 @@ namespace nitou.BlockPG.Events{
             _onFocusedSubject.Dispose();
             _onSelectedSubject.Dispose();
             _onEditSubject.Dispose();
+            _onPrimaryActionSubject.Dispose();
+            _onSecondaryActionSubject.Dispose();
+            _onDoubleActionSubject.Dispose();
+            _onHoverEnterSubject.Dispose();
+            _onHoverExitSubject.Dispose();
             _onStartDragSubject.Dispose();
             _onEndDragSubject.Dispose();
             _onMoveSubject.Dispose();
@@ -106,6 +152,11 @@ namespace nitou.BlockPG.Events{
             _onFocusedSubject = new();
             _onSelectedSubject = new();
             _onEditSubject = new();
+            _onPrimaryActionSubject = new();
+            _onSecondaryActionSubject = new();
+            _onDoubleActionSubject = new();
+            _onHoverEnterSubject = new();
+            _onHoverExitSubject = new();
             _onStartDragSubject = new();
             _onEndDragSubject = new();
             _onMoveSubject = new();
@@ -211,6 +262,33 @@ namespace nitou.BlockPG.Events{
             }
             _onEditSubject.OnNext(block);
         }
+
+        // -----
+
+        /// <summary>
+        /// 主操作（クリック / タップ）．
+        /// </summary>
+        internal static void PublishPrimaryAction(in BlockPointerEvent e) => _onPrimaryActionSubject.OnNext(e);
+
+        /// <summary>
+        /// 副次操作（右クリック / 長押し）．
+        /// </summary>
+        internal static void PublishSecondaryAction(in BlockPointerEvent e) => _onSecondaryActionSubject.OnNext(e);
+
+        /// <summary>
+        /// 二度押し（ダブルクリック / ダブルタップ）．
+        /// </summary>
+        internal static void PublishDoubleAction(in BlockPointerEvent e) => _onDoubleActionSubject.OnNext(e);
+
+        /// <summary>
+        /// ポインタがブロックへ乗った．
+        /// </summary>
+        internal static void PublishHoverEnter(in BlockPointerEvent e) => _onHoverEnterSubject.OnNext(e);
+
+        /// <summary>
+        /// ポインタがブロックから外れた．
+        /// </summary>
+        internal static void PublishHoverExit(in BlockPointerEvent e) => _onHoverExitSubject.OnNext(e);
 
         // -----
 
