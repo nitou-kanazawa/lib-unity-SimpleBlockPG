@@ -66,7 +66,7 @@ namespace RuntimeTests {
 
             // Assert : 戻り値の時点で子孫まで組み上がっている（yieldを挟まずに検証する）
             Assert.That(block, Is.Not.Null);
-            var all = block.GetAllChaildBlocks(containSelf: true);
+            var all = block.GetAllChildBlocks(containSelf: true);
             Assert.That(all.Count, Is.EqualTo(3), "子孫ブロックが生成されていない．");
             Assert.That(all.Select(b => b.Id), Is.EquivalentTo(new[] { "root", "middle", "leaf" }));
         }
@@ -80,12 +80,12 @@ namespace RuntimeTests {
                     Block(PrefabName.Normal, "leaf")));
 
             var block = BPG_BlockSerializer.SerializableBlockToBlock(data, _env.ProgrammingEnv);
-            var countAtRestore = block.GetAllChaildBlocksCount(containSelf: true);
+            var countAtRestore = block.GetAllChildBlocksCount(containSelf: true);
 
             yield return null;
             yield return null;
 
-            Assert.That(block.GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(countAtRestore));
+            Assert.That(block.GetAllChildBlocksCount(containSelf: true), Is.EqualTo(countAtRestore));
             Assert.That(countAtRestore, Is.EqualTo(3));
         }
 

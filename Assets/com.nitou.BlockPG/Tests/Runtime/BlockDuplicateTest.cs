@@ -34,8 +34,8 @@ namespace RuntimeTests {
 
             Assert.That(clone, Is.Not.Null);
             Assert.That(clone.RectTransform.name, Is.EqualTo(scope.RectTransform.name));
-            Assert.That(clone.GetAllChaildBlocksCount(containSelf: true),
-                Is.EqualTo(scope.GetAllChaildBlocksCount(containSelf: true)));
+            Assert.That(clone.GetAllChildBlocksCount(containSelf: true),
+                Is.EqualTo(scope.GetAllChildBlocksCount(containSelf: true)));
         }
 
         [Test]
@@ -56,8 +56,8 @@ namespace RuntimeTests {
 
             var clone = BPG_BlockSerializer.Duplicate(scope, _env.ProgrammingEnv);
 
-            var originalIds = scope.GetAllChaildBlocks(containSelf: true).Select(b => b.Id).ToArray();
-            var cloneIds = clone.GetAllChaildBlocks(containSelf: true).Select(b => b.Id).ToArray();
+            var originalIds = scope.GetAllChildBlocks(containSelf: true).Select(b => b.Id).ToArray();
+            var cloneIds = clone.GetAllChildBlocks(containSelf: true).Select(b => b.Id).ToArray();
 
             Assert.That(cloneIds, Is.All.Not.Empty);
             Assert.That(cloneIds.Intersect(originalIds), Is.Empty, "元と同じIDが使い回されている．");
@@ -72,7 +72,7 @@ namespace RuntimeTests {
 
             var clone = BPG_BlockSerializer.Duplicate(scope, _env.ProgrammingEnv);
 
-            var ids = clone.GetAllChaildBlocks(containSelf: true).Select(b => b.Id).ToArray();
+            var ids = clone.GetAllChildBlocks(containSelf: true).Select(b => b.Id).ToArray();
             Assert.That(ids.Distinct().Count(), Is.EqualTo(ids.Length));
         }
 

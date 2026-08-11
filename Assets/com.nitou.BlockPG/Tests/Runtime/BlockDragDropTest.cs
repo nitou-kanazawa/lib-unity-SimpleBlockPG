@@ -81,7 +81,7 @@ namespace RuntimeTests {
             // Assert
             Assert.That(normal.IsRootBlock(), Is.False);
             Assert.That(normal.GetParentBlock(), Is.EqualTo(scope));
-            Assert.That(scope.GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(2));
+            Assert.That(scope.GetAllChildBlocksCount(containSelf: true), Is.EqualTo(2));
         }
 
         [UnityTest]
@@ -111,7 +111,7 @@ namespace RuntimeTests {
             yield return null;
 
             Assert.That(normal.RectTransform.parent, Is.EqualTo(_env.DraggingLayer));
-            Assert.That(scope.GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(1));
+            Assert.That(scope.GetAllChildBlocksCount(containSelf: true), Is.EqualTo(1));
         }
     }
 }

@@ -13,12 +13,17 @@ namespace nitou.BlockPG.Interface{
 
 
     /// <summary>
-    /// Extension methods for type of <see cref="I_BPG_Spot"/>.
+    /// <see cref="I_BPG_Spot"/>型の汎用的な拡張メソッド集．
     /// </summary>
+    /// <remarks>
+    /// [NOTE] スポットの種類ごとの接続処理は nitou.BlockPG.DragDrop 側に
+    ///        <c>BPG_SpotConnect_Extensions</c> として置いている．
+    ///        以前は両方が同名だったため、どちらの拡張メソッドなのか追いづらかった．
+    /// </remarks>
     public static class BPG_Spot_Extensions {
 
         /// <summary>
-        /// <see cref="I_BPG_ProgrammingEnv"/> whitch spot is belong.
+        /// スポットが所属する<see cref="I_BPG_ProgrammingEnv"/>を取得する．
         /// </summary>
         public static I_BPG_ProgrammingEnv GetBelongedProgEnv(this I_BPG_Spot self) {
             

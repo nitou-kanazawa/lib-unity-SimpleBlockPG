@@ -7,7 +7,7 @@ namespace nitou.BlockPG.Interface {
 
         void OnPointerDown(PointerEventData eventData);
 
-        void OnBegineDrag(PointerEventData eventData);
+        void OnBeginDragged(PointerEventData eventData);
         
         void OnDrag(PointerEventData eventData);
         

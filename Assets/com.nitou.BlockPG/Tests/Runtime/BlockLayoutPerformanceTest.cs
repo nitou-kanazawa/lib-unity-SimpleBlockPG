@@ -79,11 +79,11 @@ namespace RuntimeTests {
             // [NOTE] ブロック数を約2倍にしたとき、線形なら約2倍、
             //        計算量が悪化していれば4倍前後になる．3.0倍を境界とする．
             var small = BuildChain(4);
-            int smallCount = small.GetAllChaildBlocksCount(containSelf: true);
+            int smallCount = small.GetAllChildBlocksCount(containSelf: true);
             double smallMs = MeasureMinMs(() => small.Layout.UpdateLayout());
 
             var large = BuildChain(9);
-            int largeCount = large.GetAllChaildBlocksCount(containSelf: true);
+            int largeCount = large.GetAllChildBlocksCount(containSelf: true);
             double largeMs = MeasureMinMs(() => large.Layout.UpdateLayout());
 
             double sizeRatio = largeCount / (double)smallCount;
@@ -115,7 +115,7 @@ namespace RuntimeTests {
             double customMs = MeasureMinMs(() => root.Layout.UpdateLayout());
             double ugui = MeasureMinMs(() => LayoutRebuilder.ForceRebuildLayoutImmediate(rect));
 
-            int blocks = root.GetAllChaildBlocksCount(containSelf: true);
+            int blocks = root.GetAllChildBlocksCount(containSelf: true);
             int groups = rect.GetComponentsInChildren<LayoutGroup>(true).Length;
 
             Debug.Log($"[Layout] blocks={blocks} layoutGroups={groups} / " +
@@ -147,7 +147,7 @@ namespace RuntimeTests {
         public void 入れ子のブロックにもLayoutGroupが現れない() {
             var root = BuildChain(6);
 
-            int blocks = root.GetAllChaildBlocksCount(containSelf: true);
+            int blocks = root.GetAllChildBlocksCount(containSelf: true);
             int groups = root.RectTransform.GetComponentsInChildren<LayoutGroup>(true).Length;
             Debug.Log($"[Layout] blocks={blocks} layoutGroups={groups}");
 

@@ -95,7 +95,7 @@ namespace RuntimeTests {
         [Test]
         public void 識別IDが保存と復元をまたいで維持される() {
             var original = BuildSampleTree();
-            var expectedIds = original.GetAllChaildBlocks(containSelf: true)
+            var expectedIds = original.GetAllChildBlocks(containSelf: true)
                 .Select(b => b.Id).OrderBy(id => id).ToArray();
 
             BPG_BlockStorage.Save(_path, new[] { original });
@@ -103,7 +103,7 @@ namespace RuntimeTests {
 
             var restored = BPG_BlockStorage.Load(_path, _env.ProgrammingEnv);
 
-            var actualIds = restored[0].GetAllChaildBlocks(containSelf: true)
+            var actualIds = restored[0].GetAllChildBlocks(containSelf: true)
                 .Select(b => b.Id).OrderBy(id => id).ToArray();
             Assert.That(actualIds, Is.EqualTo(expectedIds));
         }
@@ -134,7 +134,7 @@ namespace RuntimeTests {
             var restored = BPG_BlockStorage.Load(_path, _env.ProgrammingEnv);
 
             Assert.That(Time.frameCount, Is.EqualTo(frameBefore));
-            Assert.That(restored[0].GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(4));
+            Assert.That(restored[0].GetAllChildBlocksCount(containSelf: true), Is.EqualTo(4));
         }
 
 
@@ -179,7 +179,7 @@ namespace RuntimeTests {
                 .ToArray();
 
             Assert.That(Time.frameCount, Is.EqualTo(frameBefore));
-            Assert.That(restored[0].GetAllChaildBlocksCount(containSelf: true), Is.EqualTo(4));
+            Assert.That(restored[0].GetAllChildBlocksCount(containSelf: true), Is.EqualTo(4));
         });
 
         [UnityTest]

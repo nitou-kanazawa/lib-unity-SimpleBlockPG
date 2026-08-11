@@ -33,7 +33,7 @@ namespace nitou.BlockPG.DragDrop {
     }
 
 
-    public static partial class BPG_Spot_Extensions {
+    public static partial class BPG_SpotConnect_Extensions {
 
         public static void ConnectTo(this I_BPG_Block block, BPG_SpotBlockBody spotBlockBody) {
             spotBlockBody.SectionBody.AppendFirst(block);

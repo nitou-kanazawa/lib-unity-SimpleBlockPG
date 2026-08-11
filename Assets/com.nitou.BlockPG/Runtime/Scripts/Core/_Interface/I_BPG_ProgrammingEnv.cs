@@ -64,7 +64,7 @@ namespace nitou.BlockPG.Interface {
                 return null;
 
             foreach (var root in self.GetRootBlocks()) {
-                foreach (var block in root.GetAllChaildBlocks(containSelf: true)) {
+                foreach (var block in root.GetAllChildBlocks(containSelf: true)) {
                     if (block.Id == id) {
                         return block;
                     }

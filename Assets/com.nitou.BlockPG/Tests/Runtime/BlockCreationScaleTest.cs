@@ -63,7 +63,7 @@ namespace RuntimeTests {
 
             var block = BPG_BlockSerializer.SerializableBlockToBlock(data, _env.ProgrammingEnv);
 
-            var scales = block.GetAllChaildBlocks(containSelf: true)
+            var scales = block.GetAllChildBlocks(containSelf: true)
                 .Select(b => b.RectTransform.localScale);
             Assert.That(scales, Is.All.EqualTo(Vector3.one));
         }
