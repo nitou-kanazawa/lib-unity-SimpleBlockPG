@@ -275,7 +275,7 @@ namespace nitou.BlockPG.Demo {
         /// ブロックを生成してワークスペースへ置く．
         /// </summary>
         public void Spawn(string prefabName) {
-            var prefab = BPG_BlockUtils.LoadBlockPrefab(prefabName);
+            var prefab = BPG_BlockUtils.LoadBlockPrefab(prefabName, _workspace);
             if (prefab == null) {
                 SetStatus($"プレハブが見つかりません: {prefabName}");
                 return;

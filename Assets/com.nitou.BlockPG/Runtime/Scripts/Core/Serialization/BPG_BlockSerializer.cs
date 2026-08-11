@@ -140,13 +140,17 @@ namespace nitou.BlockPG.Serialization {
             if (programmingEnv == null)
                 throw new ArgumentNullException(nameof(programmingEnv));
 
-            var prefab = BPG_BlockUtils.LoadBlockPrefab(sBlock.name);
+            // ※プレハブの解決は環境のカタログに委ねる（既定は Resources）
+            var prefab = BPG_BlockUtils.LoadBlockPrefab(sBlock.name, programmingEnv);
             if (prefab == null) {
-                // ※LoadBlockPrefab側で警告を出力済み
+                // ※カタログ側で警告を出力済み
                 return null;
             }
 
             var block = BPG_BlockUtils.CreateBlock(prefab, programmingEnv);
+            if (block == null) {
+                return null;
+            }
             block.RectTransform.localPosition = sBlock.localPosition;
 
             // 保存時の識別IDを復元する

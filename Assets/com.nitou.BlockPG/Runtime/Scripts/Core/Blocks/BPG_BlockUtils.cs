@@ -8,61 +8,109 @@ namespace nitou.BlockPG.Blocks {
     /// <summary>
     /// ブロックの生成と破棄．
     /// </summary>
+    /// <remarks>
+    /// [NOTE] プレハブの解決（<see cref="I_BPG_BlockCatalog"/>）と実体の生成
+    ///        （<see cref="I_BPG_BlockFactory"/>）は環境ごとに差し替えられる．
+    ///        ここに残すのは、生成後の整理・環境への接続・イベント発行という
+    ///        ライブラリ側の決めごとだけ．
+    /// </remarks>
     public static class BPG_BlockUtils {
 
-        // [NOTE] Resources 直下の実配置は "BlockPG/" のため、"BlockPG/Blocks" では常にロードに失敗していた．
-        private static readonly string folderPath = "BlockPG";
+        // ※環境を渡さない経路のための既定．Resources から引く．
+        private static readonly BPG_ResourcesBlockCatalog DefaultCatalog = new();
 
+
+        /// ----------------------------------------------------------------------------
+        // プレハブの解決
+
+        /// <summary>
+        /// ブロック名からプレハブを取得する．（※見つからない場合はnull）
+        /// </summary>
+        public static I_BPG_Block LoadBlockPrefab(string prefabName, I_BPG_ProgrammingEnv programmingEnv) {
+            var catalog = (programmingEnv != null && programmingEnv.BlockCatalog != null)
+                ? programmingEnv.BlockCatalog
+                : DefaultCatalog;
+
+            return catalog.GetPrefab(prefabName);
+        }
+
+        /// <summary>
+        /// ブロック名からプレハブを取得する．（※Resources から引く）
+        /// </summary>
         public static TBlock LoadBlockPrefab<TBlock>(string prefabName)
             where TBlock : BPG_BlockBase {
 
-            // [NOTE] Resources.Load<GameObject>() の戻り値を TBlock へ直接キャストすると常に null になるため、
-            //        GameObject を取得してからコンポーネントを引く．
-            var prefabObj = Resources.Load<GameObject>($"{folderPath}/{prefabName}");
-            if (prefabObj == null) {
-                Debug.LogWarning($"Block prefab is not found. (path: {folderPath}/{prefabName})");
-                return null;
-            }
-
-            if (!prefabObj.TryGetComponent<TBlock>(out var prefab)) {
-                Debug.LogWarning($"Loaded prefab does not have {typeof(TBlock).Name}. (path: {folderPath}/{prefabName})");
-                return null;
-            }
-
-            return prefab;
+            return DefaultCatalog.GetPrefab(prefabName) as TBlock;
         }
 
+        /// <summary>
+        /// ブロック名からプレハブを取得する．（※Resources から引く）
+        /// </summary>
         public static BPG_BlockBase LoadBlockPrefab(string prefabName) {
             return LoadBlockPrefab<BPG_BlockBase>(prefabName);
         }
 
 
-        public static TBlock CreateBlock<TBlock>(TBlock blockPrefab, I_BPG_ProgrammingEnv programmingEnv)
-            where TBlock : BPG_BlockBase {
+        /// ----------------------------------------------------------------------------
+        // 生成
 
+        /// <summary>
+        /// プレハブからブロックを生成し、環境へ配置する．
+        /// </summary>
+        public static I_BPG_Block CreateBlock(I_BPG_Block blockPrefab, I_BPG_ProgrammingEnv programmingEnv) {
             if (blockPrefab == null)
                 throw new System.ArgumentNullException(nameof(blockPrefab));
             if (programmingEnv == null)
                 throw new System.ArgumentNullException(nameof(programmingEnv));
 
-            // create instance
-            // [NOTE] 配置先を指定して生成する．シーンルートに生成してから付け替えると、
-            //        Append() が worldPositionStays: true で再ペアレントする際に
-            //        Canvas のスケールを打ち消す localScale が入ってしまう
-            //        （scaleFactor が 1 でない環境ではブロックが 1/scaleFactor 倍に拡大される）．
-            var block = MonoBehaviour.Instantiate<TBlock>(blockPrefab, programmingEnv.RectTransform);
+            var factory = programmingEnv.BlockFactory;
+            if (factory == null) {
+                Debug.LogWarning("Block factory is not available.");
+                return null;
+            }
+
+            // ※配置先を指定して生成させる（後から付け替えると Canvas のスケールが混入する）
+            var block = factory.Create(blockPrefab, programmingEnv.RectTransform);
+            if (block == null) {
+                Debug.LogWarning($"Failed to create block. (prefab: {blockPrefab.RectTransform.name})");
+                return null;
+            }
 
             // setup param
-            block.name = blockPrefab.name;
-            block.transform.localPosition = Vector3.zero;
-            block.transform.localEulerAngles = Vector3.zero;
-            block.transform.localScale = Vector3.one;
+            // [NOTE] 名前は復元時にプレハブを引く鍵になるため、プレハブ名をそのまま付ける．
+            block.RectTransform.name = blockPrefab.RectTransform.name;
+            block.RectTransform.localPosition = Vector3.zero;
+            block.RectTransform.localEulerAngles = Vector3.zero;
+            block.RectTransform.localScale = Vector3.one;
 
             programmingEnv.Append(block);
 
             BPG_BlockEventBus.PublishCreateEvent(block);
             return block;
         }
+
+        /// <summary>
+        /// プレハブからブロックを生成し、環境へ配置する．
+        /// </summary>
+        public static TBlock CreateBlock<TBlock>(TBlock blockPrefab, I_BPG_ProgrammingEnv programmingEnv)
+            where TBlock : BPG_BlockBase {
+
+            var block = CreateBlock((I_BPG_Block)blockPrefab, programmingEnv);
+            if (block == null)
+                return null;
+
+            // ※差し替えたファクトリが別の型を返した場合は、呼び出し側の期待と食い違う
+            if (block is TBlock typed)
+                return typed;
+
+            Debug.LogWarning($"Created block is not {typeof(TBlock).Name}. " +
+                $"(prefab: {blockPrefab.name}, actual: {block.GetType().Name})");
+            return null;
+        }
+
+
+        /// ----------------------------------------------------------------------------
+        // 破棄
 
         /// <summary>
         /// ブロックを子孫ごと破棄する．

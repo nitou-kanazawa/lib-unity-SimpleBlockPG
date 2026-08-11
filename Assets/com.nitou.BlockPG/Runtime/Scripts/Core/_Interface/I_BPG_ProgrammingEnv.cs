@@ -6,6 +6,21 @@ namespace nitou.BlockPG.Interface {
     public interface I_BPG_ProgrammingEnv {
 
         RectTransform RectTransform { get; }
+
+        /// <summary>
+        /// ブロック名からプレハブを引くカタログ．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 静的なグローバルではなく環境に持たせている．生成と復元の経路には
+        ///        いずれも環境が渡ってくるため、差し替えの単位を環境に揃えられる．
+        ///        （テストごとに使い捨ての環境を作れば、差し替えも自然に分離される）
+        /// </remarks>
+        I_BPG_BlockCatalog BlockCatalog { get; }
+
+        /// <summary>
+        /// プレハブからブロックの実体を作るファクトリ．
+        /// </summary>
+        I_BPG_BlockFactory BlockFactory { get; }
     }
 
 
