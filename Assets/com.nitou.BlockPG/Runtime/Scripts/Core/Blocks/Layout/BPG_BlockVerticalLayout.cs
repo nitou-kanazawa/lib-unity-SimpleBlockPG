@@ -126,8 +126,12 @@ namespace nitou.BlockPG.Blocks {
         /// Updates the layout of the block. Used to correctly resize the blocks after adding child and operation blocks
         /// </summary>
         public void UpdateLayout() {
-            RectTransform.sizeDelta = Size;
+            // [NOTE] Size はセクションの現在のサイズを合計した値のため、必ずセクションを先に更新する．
+            //        逆順にすると自身のサイズだけが1回前の値のまま残り、
+            //        親が確保した高さと実際の描画サイズがずれて隙間になる．
+            //        （dirtyフラグは更新後にクリアされるため、次の変更まで解消されない）
             _sections.ForEach(section => section.UpdateLayout());
+            RectTransform.sizeDelta = Size;
         }
 
 
