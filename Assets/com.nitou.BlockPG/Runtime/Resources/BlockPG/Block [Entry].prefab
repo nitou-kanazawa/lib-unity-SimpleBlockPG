@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 555284738440884994}
   - component: {fileID: 9133470211453982312}
-  - component: {fileID: 99921526051333076}
   - component: {fileID: 4888877972138030681}
   - component: {fileID: 7602161413010762145}
   - component: {fileID: 8550509831688521169}
@@ -48,32 +47,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008690969248800442}
   m_CullTransparentMesh: 1
---- !u!114 &99921526051333076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1008690969248800442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: -10
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: -10
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &4888877972138030681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,6 +89,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dee38b1dca18a294d8f40d8bd975c0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spacing: -10
+  _paddingLeft: 0
+  _paddingRight: 0
+  _paddingTop: -10
+  _paddingBottom: 0
 --- !u!114 &8550509831688521169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,7 +339,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2545504551794516078}
   - component: {fileID: 6796663975441279176}
-  - component: {fileID: 2423962848802388052}
   - component: {fileID: 957917477813273815}
   - component: {fileID: 5838641467614022038}
   - component: {fileID: 2541998813198516912}
@@ -401,32 +378,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5572226710390894594}
   m_CullTransparentMesh: 1
---- !u!114 &2423962848802388052
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5572226710390894594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 15
-    m_Right: 0
-    m_Top: 30
-    m_Bottom: 20
-  m_ChildAlignment: 3
-  m_Spacing: 15
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &957917477813273815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -488,6 +439,9 @@ MonoBehaviour:
   _minWidht: 180
   _paddingRight: 0
   _spacing: 15
+  _paddingLeft: 15
+  _paddingTop: 30
+  _paddingBottom: 20
 --- !u!1 &7434867287132660112
 GameObject:
   m_ObjectHideFlags: 0

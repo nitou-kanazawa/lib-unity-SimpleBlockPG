@@ -150,7 +150,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6648603237153961893}
   - component: {fileID: 3978818646314313616}
-  - component: {fileID: 2293680068040833630}
   - component: {fileID: 1736144325900701156}
   - component: {fileID: 6430210083048117811}
   - component: {fileID: 3406821674189794914}
@@ -190,32 +189,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3833468567611430851}
   m_CullTransparentMesh: 1
---- !u!114 &2293680068040833630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3833468567611430851}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 15
-    m_Right: 0
-    m_Top: 10
-    m_Bottom: 20
-  m_ChildAlignment: 3
-  m_Spacing: 15
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &1736144325900701156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,6 +250,9 @@ MonoBehaviour:
   _minWidht: 200
   _paddingRight: 0
   _spacing: 15
+  _paddingLeft: 15
+  _paddingTop: 10
+  _paddingBottom: 20
 --- !u!1 &5637226717161121303
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,7 +399,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4659895260069237635}
   - component: {fileID: 8920969121616130649}
-  - component: {fileID: 47811399352823723}
   - component: {fileID: 8415496314957780789}
   - component: {fileID: 7146340535325541347}
   - component: {fileID: 2752951219425905152}
@@ -461,32 +436,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7631944776182269769}
   m_CullTransparentMesh: 1
---- !u!114 &47811399352823723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7631944776182269769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 20
-    m_Right: 0
-    m_Top: -10
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: -10
-  m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &8415496314957780789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -529,6 +478,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dee38b1dca18a294d8f40d8bd975c0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spacing: -10
+  _paddingLeft: 20
+  _paddingRight: 0
+  _paddingTop: -10
+  _paddingBottom: 0
 --- !u!114 &2752951219425905152
 MonoBehaviour:
   m_ObjectHideFlags: 0

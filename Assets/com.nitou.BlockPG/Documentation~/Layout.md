@@ -104,21 +104,26 @@ public sealed class SelectionFrame : MonoBehaviour, I_BPG_LayoutIgnore {
 
 > uGUI の `ILayoutIgnorer` / `LayoutElement` は**使わない**。それらを使うと「除外したければ uGUI のレイアウトコンポーネントを付けろ」という要求になり、LayoutGroup から脱却する目的と矛盾する。加えて `LayoutElement` の `preferredHeight` などは一切参照されないため、効くように見えて効かない設定項目を晒すことになる。
 
+## 配置パラメータ
+
+余白・間隔・寄せは各コンポーネントが serialize して持つ。既定値は撤去した LayoutGroup の設定と同じ。
+
+| 階層 | 方向 | padding (L/R/T/B) | spacing | 寄せ |
+| --- | --- | --- | --- | --- |
+| ブロック直下 | 縦 | 0 / 0 / 0 / 0 | 0 | 左上 |
+| セクション | 縦 | 0 / 0 / 0 / 0 | 0 | 左上 |
+| ヘッダー | 横 | 15 / 0 / 10 / 20 | 15 | 左・縦中央 |
+| ボディ | 縦 | 20 / 0 / -10 / 0 | -10 | 左上 |
+
+ボディの間隔と上余白が負なのは、**ブロック同士を接続部の凹凸ぶん食い込ませる**ため。
+
 ## 現状と今後
 
-| 階層 | 配置 |
-| --- | --- |
-| ブロック直下（セクションの積み上げ） | 自前 |
-| セクション（ヘッダーとボディ） | 自前 |
-| ヘッダー（アイテムの横並び） | **LayoutGroup（未対応）** |
-| ボディ（子ブロックの配置） | **LayoutGroup（未対応）** |
+**ブロック階層に LayoutGroup は存在しない。** `BlockLayoutPerformanceTest` が 0 個であることを検証している。
 
-残る 2 つも自前化する予定。難所は以下。
+横方向のレイアウト（`BPG_BlockHorizontalLayout`）に対応する際は、`BPG_LayoutUtils.StackChildren()` が既に方向を引数で受けるため、積み上げ自体はそのまま使える。ただし `BPG_BlockSection.Size` と `BPG_BlockSectionBody.UpdateSelfSize` には縦積み前提が埋まっているため、合成軸の切り替えが必要になる。
 
-- **ボディ**: スペーシング `-10`（ブロック同士を食い込ませる）、padding `(20, 0, -10, 0)`
-- **ヘッダー**: `childAlignment` が縦中央。上寄せで計算すると 5px ずれる
-
-横方向のレイアウト（`BPG_BlockHorizontalLayout`）に対応する際は、積み上げ方向を軸として抽象化する必要がある。現状は `BPG_BlockSection.Size` と `BPG_BlockSectionBody.UpdateSelfSize` にも縦積み前提が埋まっている。
+`BPG_BlockSectionBody.UpdateSelfSize()` の高さ計算には、余白・間隔と同じ意味の数値がまだ直書きされている。配置側とは独立しているため、整理は別途行う。
 
 ## 計測
 
