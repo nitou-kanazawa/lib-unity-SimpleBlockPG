@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.BlockPG.View {
+namespace Nitou.uBlock.View.UGUI {
 
     public class NormalBlock : Block {
 

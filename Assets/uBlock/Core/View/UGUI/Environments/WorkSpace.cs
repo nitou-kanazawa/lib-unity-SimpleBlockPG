@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Nitou.BlockPG {
+namespace Nitou.uBlock.View.UGUI {
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(CanvasGroup))]

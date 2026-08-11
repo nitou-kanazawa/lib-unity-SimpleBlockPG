@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Nitou.BlockPG.View {
+namespace Nitou.uBlock.View.UGUI {
 
     [DisallowMultipleComponent]
     public abstract class Block : ComponentBase {
