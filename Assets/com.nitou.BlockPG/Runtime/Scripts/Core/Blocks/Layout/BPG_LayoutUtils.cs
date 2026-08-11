@@ -1,8 +1,8 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Pool;
 
 namespace nitou.BlockPG.Blocks {
+    using nitou.BlockPG.Interface;
 
     /// <summary>
     /// ブロック階層の配置計算．
@@ -28,8 +28,8 @@ namespace nitou.BlockPG.Blocks {
         /// <remarks>
         /// サイズは変更しないため、呼び出し前に各子のサイズが確定している必要がある．
         ///
-        /// 積み上げから外したい子には <see cref="UnityEngine.UI.LayoutElement"/> を付けて
-        /// ignoreLayout を有効にする．（※選択枠やバッジなどの装飾を重ねる用途を想定）
+        /// 積み上げから外したい子には <see cref="BPG_LayoutIgnore"/> を付ける．
+        /// （※選択枠やバッジなどの装飾を重ねる用途を想定）
         /// </remarks>
         internal static void StackChildrenVertically(Transform parent) {
             if (parent == null)
@@ -59,23 +59,22 @@ namespace nitou.BlockPG.Blocks {
         /// 積み上げ対象から外すべき子かどうか判定する．
         /// </summary>
         /// <remarks>
-        /// [NOTE] LayoutGroup と同じ条件に揃える．
-        ///        非アクティブな子と、ignoreLayout が有効な子を対象外とする．
+        /// [NOTE] 非アクティブな子と、<see cref="I_BPG_LayoutIgnore"/> で除外指定された子を対象外とする．
+        ///        無効化されたコンポーネントの指定は尊重しない（Unity の慣例に合わせる）．
         /// </remarks>
         private static bool IsIgnored(RectTransform rect) {
             if (!rect.gameObject.activeSelf)
                 return true;
 
-            // [NOTE] LayoutGroup と同様、無効化されたコンポーネントの指定は尊重しない．
             var ignorers = ListPool<Component>.Get();
-            rect.GetComponents(typeof(ILayoutIgnorer), ignorers);
+            rect.GetComponents(typeof(I_BPG_LayoutIgnore), ignorers);
 
             bool ignored = false;
             for (int i = 0; i < ignorers.Count; i++) {
                 if (ignorers[i] is Behaviour { isActiveAndEnabled: false })
                     continue;
 
-                if (ignorers[i] is ILayoutIgnorer { ignoreLayout: true }) {
+                if (ignorers[i] is I_BPG_LayoutIgnore { IgnoreLayout: true }) {
                     ignored = true;
                     break;
                 }
