@@ -98,51 +98,60 @@ namespace nitou.BlockPG.Interface {
 
         /// <summary>
         /// 親セクション内の最初のブロックかどうか判定する．
-        /// ParentSectionがnullの場合はfalseを返す．
+        /// 親セクションを持たない場合はfalseを返す．
         /// </summary>
         public static bool IsFirstBlockInSection(this I_BPG_Block self) {
-            // ParentSectionがnullの場合
-            if (!self.HasParentBlock()) return false;
+            var sectionBody = self.GetParentSectionBody();
+            if (sectionBody == null) return false;
 
-            var sectionBody = self.ParentSection.Body;
-            if (sectionBody.ChildBlocks.Count != sectionBody.RectTransform.childCount) {
-                Debug.LogWarning("");
-            }
-
-            return sectionBody.ChildBlocks.First() == self;
+            // ※空リストの場合は null が返る
+            return sectionBody.ChildBlocks.FirstOrDefault() == self;
         }
 
         /// <summary>
-        /// 親セクション内の最初のブロックかどうか判定する．
-        /// ParentSectionがnullの場合はfalseを返す．
+        /// 親セクション内の最後のブロックかどうか判定する．
+        /// 親セクションを持たない場合はfalseを返す．
         /// </summary>
         public static bool IsLastBlockInSection(this I_BPG_Block self) {
-            // ParentSectionがnullの場合
-            if (!self.HasParentBlock()) return false;
+            var sectionBody = self.GetParentSectionBody();
+            if (sectionBody == null) return false;
 
-            // 
-            var sectionBody = self.ParentSection.Body;
-            if (sectionBody.ChildBlocks.Count != sectionBody.RectTransform.childCount) {
-                Debug.LogWarning("");
-            }
-
-            return sectionBody.ChildBlocks.Last() == self;
+            // ※空リストの場合は null が返る
+            return sectionBody.ChildBlocks.LastOrDefault() == self;
         }
 
         /// <summary>
         /// 親セクション内でのインデックスを取得する．
-        /// ParentSectionがnullの場合は-1を返す．
+        /// 親セクションを持たない場合は-1を返す．
         /// </summary>
         public static int GetIndexInSection(this I_BPG_Block self) {
-            // ParentSectionがnullの場合
-            if (!self.HasParentBlock()) return -1;
-
-            var sectionBody = self.ParentSection.Body;
-            if (sectionBody.ChildBlocks.Count != sectionBody.RectTransform.childCount) {
-                Debug.LogWarning("");
-            }
+            var sectionBody = self.GetParentSectionBody();
+            if (sectionBody == null) return -1;
 
             return sectionBody.ChildBlocks.IndexOf(self);
+        }
+
+        /// <summary>
+        /// 所属するセクションのボディを取得する．（※取得できない場合はnull）
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 子ブロックのリストは構成変化の検知でしか更新されないため、
+        ///        実際の子の数と食い違う瞬間がありうる．食い違いは呼び出し側では
+        ///        直せないため、原因を追えるよう警告として通知する．
+        /// </remarks>
+        private static I_BPG_BlockSectionBody GetParentSectionBody(this I_BPG_Block self) {
+            var sectionBody = self.ParentSection?.Body;
+            if (sectionBody == null)
+                return null;
+
+            int listed = sectionBody.ChildBlocks.Count;
+            int actual = sectionBody.RectTransform.childCount;
+            if (listed != actual) {
+                Debug.LogWarning($"Child block list is out of sync. " +
+                    $"(section: {sectionBody.RectTransform.name}, listed: {listed}, actual: {actual})",
+                    sectionBody.RectTransform);
+            }
+            return sectionBody;
         }
 
         #endregion
@@ -166,26 +175,30 @@ namespace nitou.BlockPG.Interface {
             return (parentBlock != null) ? parentBlock.GetRootBlock() : self;
         }
 
-        // [TODO] 実装 (※同じ親を持つ1つ前のブロック)
+        /// <summary>
+        /// 同じ親を持つ1つ前のブロックを取得する．（※存在しない場合はnull）
+        /// </summary>
         public static I_BPG_Block GetPreviousBlock(this I_BPG_Block self) {
-            if (!self.HasParentBlock()) return null;
+            var sectionBody = self.GetParentSectionBody();
+            if (sectionBody == null) return null;
 
-            var sectionBody = self.ParentSection.Body;
             var index = sectionBody.ChildBlocks.IndexOf(self);
 
             // インデックスが有効範囲内であれば前の要素を返す
             return index > 0 ? sectionBody.ChildBlocks[index - 1] : null;
         }
 
-        // [TODO] 実装 (※同じ親を持つ1つ後ろのブロック)
+        /// <summary>
+        /// 同じ親を持つ1つ後ろのブロックを取得する．（※存在しない場合はnull）
+        /// </summary>
         public static I_BPG_Block GetNextBlock(this I_BPG_Block self) {
-            if (!self.HasParentBlock()) return null;
+            var sectionBody = self.GetParentSectionBody();
+            if (sectionBody == null) return null;
 
-            var sectionBody = self.ParentSection.Body;
             var index = sectionBody.ChildBlocks.IndexOf(self);
 
             // インデックスが有効範囲内であれば次の要素を返す
-            return (0 <= index && index < sectionBody.ChildBlocks.Count -1) 
+            return (0 <= index && index < sectionBody.ChildBlocks.Count - 1)
                 ? sectionBody.ChildBlocks[index + 1] : null;
         }
 
@@ -200,6 +213,11 @@ namespace nitou.BlockPG.Interface {
             var blockList = new List<I_BPG_Block>();
             if (containSelf) {
                 blockList.Add(self);
+            }
+
+            // ※Layoutを持たないブロックは子階層を持てない
+            if (!self.HasLayout()) {
+                return blockList;
             }
 
             // 子階層以下
@@ -220,7 +238,11 @@ namespace nitou.BlockPG.Interface {
             // ※自分自信を含めるかどうか
             int additional = (containSelf ? 1 : 0);
 
-            // 
+            // ※Layoutを持たないブロックは子階層を持てない
+            if (!self.HasLayout()) {
+                return additional;
+            }
+
             return additional +
                 self.Layout.Sections
                 .Where(section => section != null)
@@ -232,7 +254,21 @@ namespace nitou.BlockPG.Interface {
         /// Obtains a reference to the parent section to which it belongs.
         /// </summary>
         public static I_BPG_BlockSection GetFirstSection(this I_BPG_Block self) {
-            return self.Layout.Sections.FirstOrDefault();
+            return self.HasLayout() ? self.Layout.Sections.FirstOrDefault() : null;
+        }
+
+        /// <summary>
+        /// 子階層のレイアウトが利用可能かどうか判定する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] インターフェース型の == は UnityEngine.Object の比較演算子を通らないため、
+        ///        破棄済みのコンポーネントを null と判定できない．
+        ///        Object へキャストして Unity の判定に載せる．
+        /// </remarks>
+        private static bool HasLayout(this I_BPG_Block self) {
+            return self.Layout is UnityEngine.Object obj
+                ? obj != null
+                : self.Layout != null;
         }
 
         /// <summary>
