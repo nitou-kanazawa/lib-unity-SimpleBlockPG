@@ -11,10 +11,24 @@ SimpleBlockPG でできることを一通り試せるデモシーンです。
 | 左のパレット | ブロックを 4 種類（Entry / Normal / Scope / MultiScope）追加する |
 | ブロックをドラッグ | 他のブロックへ重ねると連結する。入れ子も可能 |
 | ワークスペースの外へドラッグ | ブロックを削除する |
+| **ブロックを右クリック / 長押し** | **メニューを開く（複製 / 削除 / 折り畳み）** |
 | Save | 組み立てた内容をファイルへ保存する |
 | Load | 保存した内容を復元する |
 | Clear | ワークスペースを空にする |
+| Fold | 折り畳めるセクションをまとめて開閉する |
+| Undo / Redo | 直前の操作を取り消す / やり直す |
 | 下部のテーマボタン | 見た目を 5 パターンで切り替える |
+
+### 入力について
+
+**右クリックと長押しは同じイベント（`OnSecondaryAction`）に束ねられています。**
+デモ側はプラットフォームを判定しておらず、購読は 1 本だけです。
+
+```csharp
+BPG_BlockEventBus.OnSecondaryAction.Subscribe(OpenContextMenu);
+```
+
+スタンドアロンでは右クリック、スマホ・タブレットでは長押しで同じメニューが開きます。
 
 保存先は `Application.persistentDataPath/BlockPG/demo-workspace.xml` です。
 
