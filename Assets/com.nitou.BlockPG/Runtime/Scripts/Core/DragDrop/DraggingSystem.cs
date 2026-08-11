@@ -22,13 +22,51 @@ namespace nitou.BlockPG.DragDrop {
         /// ----------------------------------------------------------------------------
         // Property
 
+        /// <summary>
+        /// 接続先とみなす最大距離．
+        /// </summary>
         public float DetectionDistance => _detectionDistance;
 
+        /// <summary>
+        /// 接続先の予告表示．（※未設定でも接続そのものは成立する）
+        /// </summary>
         public BPG_GhostBlock GhostBlock => _ghostBlock;
+
+        /// <summary>
+        /// ドラッグ中のブロックの一時的な配置先．
+        /// </summary>
+        public Transform DraggingHolder => _draggingObjHolder;
 
 
         /// ----------------------------------------------------------------------------
         // Public Method
+
+        /// <summary>
+        /// 実行時に参照を設定する．
+        /// </summary>
+        /// <remarks>
+        /// シーンを介さずにワークスペースを組み立てる場合に使う．
+        /// インスペクタで設定済みの場合は、このメソッドを呼ぶ必要はない．
+        ///
+        /// <paramref name="draggingHolder"/> が未設定だと、ドラッグしたブロックが
+        /// 親なしへ飛ばされて画面から消えるため、ドラッグ処理が成立しない．
+        /// </remarks>
+        /// <param name="draggingHolder">ドラッグ中のブロックの一時的な配置先．</param>
+        /// <param name="ghostBlock">接続先の予告表示．null なら予告なしで動作する．</param>
+        /// <param name="detectionDistance">接続先とみなす最大距離．null なら現在値を保つ．</param>
+        public void Setup(Transform draggingHolder, BPG_GhostBlock ghostBlock = null,
+            float? detectionDistance = null) {
+
+            if (draggingHolder == null)
+                throw new System.ArgumentNullException(nameof(draggingHolder));
+
+            _draggingObjHolder = draggingHolder;
+            _ghostBlock = ghostBlock;
+
+            if (detectionDistance.HasValue) {
+                _detectionDistance = Mathf.Max(0f, detectionDistance.Value);
+            }
+        }
 
         internal bool CanDrag(I_BPG_Draggable draggable) {
             return true;
@@ -99,8 +137,6 @@ namespace nitou.BlockPG.DragDrop {
             foreach (var spot in targetSpots) {
                 var d = spot.RectTransform.GetComponentInParent<I_BPG_Draggable>();
                 if (d == null) continue;
-
-                var programmingEnv = d.RectTransform.GetComponentInParent<I_BPG_ProgrammingEnv>();
 
                 if (d != draggable) {
                     // 距離判定
