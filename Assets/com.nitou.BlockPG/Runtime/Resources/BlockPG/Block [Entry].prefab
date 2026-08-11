@@ -138,7 +138,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1311112427283644930}
   - component: {fileID: 6447644201381095912}
-  - component: {fileID: 8634292164164084112}
   - component: {fileID: 2276361361584507562}
   - component: {fileID: 8016746673481786374}
   - component: {fileID: 6488335694559108353}
@@ -179,32 +178,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2996326564358513553}
   m_CullTransparentMesh: 1
---- !u!114 &8634292164164084112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2996326564358513553}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &2276361361584507562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -524,7 +497,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8226336973784636533}
-  - component: {fileID: 981237702259295295}
   - component: {fileID: 8608782721789233960}
   m_Layer: 5
   m_Name: Section
@@ -554,32 +526,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 245.28, y: 115}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &981237702259295295
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7434867287132660112}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Padding:
-    m_Left: 0
-    m_Right: 0
-    m_Top: 0
-    m_Bottom: 0
-  m_ChildAlignment: 0
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
-  m_ChildScaleHeight: 0
-  m_ReverseArrangement: 0
 --- !u!114 &8608782721789233960
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -67,6 +67,9 @@ namespace nitou.BlockPG.Blocks.Section {
             }
 
             RectTransform.sizeDelta = Size;
+
+            // ※ヘッダーとボディを縦に積む（サイズ確定後に行う）
+            BPG_LayoutUtils.StackChildrenVertically(transform);
         }
 
 

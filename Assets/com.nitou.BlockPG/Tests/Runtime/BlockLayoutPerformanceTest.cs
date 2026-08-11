@@ -98,12 +98,20 @@ namespace RuntimeTests {
         }
 
         [Test]
-        public void 独自のレイアウト計算はuGUIの再構築より軽い() {
-            // [NOTE] 現状は独自計算とLayoutGroupの二重構成になっている．
-            //        LayoutGroup を減らす改修の効果を追跡するための基準値．
+        public void ブロックのルートはuGUIのレイアウトルートではない() {
+            // [NOTE] ブロック自身とセクションの縦積みは自前で行っている．
+            //        ルートに ILayoutController が付くと uGUI の再構築が
+            //        ブロックの部分木全体へ降りてくるため、それを防ぐ．
+            //
+            //        LayoutRebuilder は ILayoutController を持たない階層で走査を打ち切るので、
+            //        ここが空であることが「uGUI がブロックを辿らない」ことと等しい．
             var root = BuildChain(6);
             var rect = root.RectTransform;
 
+            Assert.That(rect.GetComponent<ILayoutController>(), Is.Null,
+                "ブロックのルートに LayoutGroup 等が付いている．");
+
+            // 実測値は推移を追えるようログに残す
             double customMs = MeasureMinMs(() => root.Layout.UpdateLayout());
             double ugui = MeasureMinMs(() => LayoutRebuilder.ForceRebuildLayoutImmediate(rect));
 
@@ -111,20 +119,20 @@ namespace RuntimeTests {
             int groups = rect.GetComponentsInChildren<LayoutGroup>(true).Length;
 
             Debug.Log($"[Layout] blocks={blocks} layoutGroups={groups} / " +
-                $"UpdateLayout={customMs:F4}ms  ForceRebuild={ugui:F4}ms  (ratio {ugui / customMs:F1}x)");
+                $"UpdateLayout={customMs:F4}ms  ForceRebuildFromRoot={ugui:F4}ms");
 
-            Assert.That(customMs, Is.LessThan(ugui),
-                "独自計算がuGUIの再構築より重い．前提が崩れている．");
+            Assert.That(ugui, Is.LessThan(customMs),
+                "ブロックのルートから uGUI の再構築が走っている．");
         }
 
 
         /// ----------------------------------------------------------------------------
         // 構造上の上限
 
-        [TestCase(PrefabName.Entry, 4)]
-        [TestCase(PrefabName.Normal, 3)]
-        [TestCase(PrefabName.Scope, 4)]
-        [TestCase(PrefabName.MultiScope, 7)]
+        [TestCase(PrefabName.Entry, 2)]
+        [TestCase(PrefabName.Normal, 1)]
+        [TestCase(PrefabName.Scope, 2)]
+        [TestCase(PrefabName.MultiScope, 4)]
         public void ブロックあたりのLayoutGroup数が上限内に収まる(string prefabName, int maxGroups) {
             // [NOTE] LayoutGroup はブロックの入れ子ぶんだけ再帰的に増える．
             //        不用意に増えると再構築コストが直接効いてくるため上限で縛る．
