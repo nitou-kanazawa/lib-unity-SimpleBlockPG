@@ -46,8 +46,12 @@ namespace nitou.BlockPG.Interface {
         I_BPG_Draggable Drag { get; }
 
         /// <summary>
-        /// ブロックの機能実装．
+        /// ブロックの機能実装．（※持たない場合はnull）
         /// </summary>
+        /// <remarks>
+        /// [NOTE] 実行の処理系はライブラリ側では提供しない．
+        ///        利用側が <see cref="Blocks.Instruction.BPG_BlockInstruction"/> を継承して付ける．
+        /// </remarks>
         I_BPG_Instruction Instruction { get; }
 
         /// <summary>
@@ -87,6 +91,19 @@ namespace nitou.BlockPG.Interface {
         /// </summary>
         public static bool HasParentBlock(this I_BPG_Block self) {
             return self.GetParentBlock() != null;
+        }
+
+        /// <summary>
+        /// 機能実装が付いているか判定する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] <see cref="HasLayout"/>と同じ理由で、破棄済みのコンポーネントを弾くために
+        ///        UnityEngine.Object として比較する．
+        /// </remarks>
+        public static bool HasInstruction(this I_BPG_Block self) {
+            return self.Instruction is UnityEngine.Object obj
+                ? obj != null
+                : self.Instruction != null;
         }
 
         /// <summary>
