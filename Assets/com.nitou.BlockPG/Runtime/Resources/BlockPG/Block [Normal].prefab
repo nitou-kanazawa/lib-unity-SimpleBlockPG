@@ -473,3 +473,6 @@ MonoBehaviour:
   _minWidht: 200
   _paddingRight: 0
   _spacing: 15
+  _paddingLeft: 15
+  _paddingTop: 10
+  _paddingBottom: 20

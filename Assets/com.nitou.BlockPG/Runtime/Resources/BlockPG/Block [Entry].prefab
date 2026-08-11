@@ -89,6 +89,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dee38b1dca18a294d8f40d8bd975c0b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _spacing: -10
+  _paddingLeft: 0
+  _paddingRight: 0
+  _paddingTop: -10
+  _paddingBottom: 0
 --- !u!114 &8550509831688521169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434,6 +439,9 @@ MonoBehaviour:
   _minWidht: 180
   _paddingRight: 0
   _spacing: 15
+  _paddingLeft: 15
+  _paddingTop: 30
+  _paddingBottom: 20
 --- !u!1 &7434867287132660112
 GameObject:
   m_ObjectHideFlags: 0
