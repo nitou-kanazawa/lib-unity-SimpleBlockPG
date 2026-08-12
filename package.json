@@ -22,7 +22,7 @@
     {
       "displayName": "Demo",
       "description": "ブロックの組み立て・保存・取り消し・テーマ切り替えを試せる Playground と、入力値の保存を確かめる Input Blocks の 2 シーン。",
-      "path": "Samples~/Demo"
+      "path": "Samples/Demo"
     }
   ]
 }
