@@ -1,0 +1,72 @@
+@startuml BlockPG
+
+namespace nitou.BlockPG.Interface {
+
+    interface ILayoutable {
+        + RectTransform RectTransform
+        + Vector2 Size
+        + void UpdateLayout()
+    }
+
+    interface I_BPG_Block {
+        + BlockType Type
+        + I_BPG_Dragable Drag
+        + I_BPG_BlockLayout Layout
+        + I_BPG_BlockSection ParentSection
+
+        + void SetParent(I_BPG_BlockSection parentSection)
+    }
+
+    interface I_BPG_BlockLayout {
+        + IReadOnlyList<I_BPG_BlockSection> Sections
+        + Color Color
+    }
+
+    interface I_BPG_BlockSection {
+        + I_BPG_Block Block
+        + I_BPG_BlockSectionHeader Header
+        + I_BPG_BlockSectionBody Body
+    }
+
+    interface I_BPG_BlockSectionBody {
+        + IReadOnlyList<I_BPG_Block> ChildBlocks
+        + I_BPG_BlockSection BlockSection
+        + I_BPG_Spot Spot
+        + void UpdateChildBlocks()
+    }
+
+    interface I_BPG_BlockSectionHeader {
+        + IList<I_BPG_BlockSectionHeaderItem> Items
+        + void UpdateItems()
+        + void UpdateInputs()
+    }
+
+    interface I_BPG_Dragable {
+        + RectTransform RectTransform
+        + Vector2 RayPoint
+        + I_BPG_Block Block
+    }
+
+    interface I_BPG_BlockSectionHeaderItem{ }
+
+
+    ' インタフェースの関係
+    I_BPG_Block -d-> I_BPG_Dragable : Drag
+    I_BPG_Block -d-> I_BPG_BlockLayout : Layout
+    I_BPG_Block -d-> I_BPG_BlockSection : ParentSection
+    I_BPG_BlockLayout --> I_BPG_BlockSection : Sections
+    I_BPG_BlockSection --> I_BPG_Block : Block
+    I_BPG_BlockSection --> I_BPG_BlockSectionHeader : Header
+    I_BPG_BlockSection --> I_BPG_BlockSectionBody : Body
+    I_BPG_BlockSectionBody -u-> I_BPG_Block : ChildBlocks
+    I_BPG_BlockSectionBody --> I_BPG_BlockSection : BlockSection
+    I_BPG_BlockSectionHeader --> I_BPG_BlockSectionHeaderItem : Items
+    I_BPG_Dragable --> I_BPG_Block : Block
+
+    ' ILayoutableの継承
+    ' I_BPG_BlockLayout ..|> ILayoutable
+    ' I_BPG_BlockSection ..|> ILayoutable
+    ' I_BPG_BlockSectionBody ..|> ILayoutable
+    ' I_BPG_BlockSectionHeader ..|> ILayoutable
+}
+@enduml
