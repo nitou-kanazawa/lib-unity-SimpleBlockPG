@@ -1,0 +1,70 @@
+name: Publish UPM branch
+
+# [NOTE] main へのテストが通ってから走らせる。落ちたコードを配布しないため。
+on:
+  workflow_run:
+    workflows: [Test]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-upm
+  cancel-in-progress: false
+
+env:
+  PKG_ROOT: Packages/com.nitou.blockpg
+  UPM_BRANCH: upm
+
+jobs:
+  publish:
+    # ※workflow_run 経由のときはテストの成否を見る（手動実行のときは無条件）
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # subtree split は履歴を辿るため全履歴が要る
+          fetch-depth: 0
+          ref: main
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Split package subtree
+        run: |
+          set -eux
+          git subtree split -P "$PKG_ROOT" -b "$UPM_BRANCH"
+          git checkout "$UPM_BRANCH"
+
+      # [NOTE] Samples はリポジトリ上ではチルダ無しで持つ（開発中に Unity から
+      #        直接開いて編集できるようにするため）。配布時にだけ隠しフォルダへ変える。
+      #        チルダ付きにしないと、利用者のプロジェクトへ常にインポートされてしまう。
+      - name: Hide samples
+        run: |
+          set -eux
+          if [ -d Samples ]; then
+            git mv Samples "Samples~"
+            # ※隠しフォルダに .meta は不要（残すと孤立した meta になる）
+            [ -f Samples.meta ] && git rm -q Samples.meta || true
+            git commit -q -m "chore: rename Samples to Samples~ for distribution"
+          else
+            echo "Samples folder not found; nothing to hide."
+          fi
+
+      - name: Verify package layout
+        run: |
+          set -eux
+          test -f package.json
+          test -d Runtime
+          test ! -d Samples
+          # ※Samples~ が無ければサンプルが配布から抜け落ちている
+          test -d "Samples~"
+
+      - name: Push UPM branch
+        run: git push -f origin "$UPM_BRANCH"
