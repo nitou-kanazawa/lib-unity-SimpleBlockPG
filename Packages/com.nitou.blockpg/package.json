@@ -1,0 +1,28 @@
+{
+  "name": "com.nitou.blockpg",
+  "version": "0.1.0",
+  "displayName": "SimpleBlockPG",
+  "description": "ドラッグ＆ドロップによるシンプルなビジュアルプログラミングを実装するためのライブラリ。ブロックの組み立て・保存・復元・取り消しまでを提供します。",
+  "unity": "6000.0",
+  "keywords": [
+    "visual-scripting",
+    "block-programming",
+    "ugui",
+    "editor-tool"
+  ],
+  "author": {
+    "name": "nitou-kanazawa"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "com.unity.ugui": "2.0.0",
+    "com.unity.inputsystem": "1.19.0"
+  },
+  "samples": [
+    {
+      "displayName": "Demo",
+      "description": "ブロックの組み立て・保存・取り消し・テーマ切り替えを試せる Playground と、入力値の保存を確かめる Input Blocks の 2 シーン。",
+      "path": "Samples~/Demo"
+    }
+  ]
+}
