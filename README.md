@@ -9,8 +9,10 @@
 Package Manager の **Add package from git URL** に以下を入力します。
 
 ```
-https://github.com/nitou-kanazawa/lib-unity-SimpleBlockPG.git?path=Packages/com.nitou.blockpg
+https://github.com/nitou-kanazawa/lib-unity-SimpleBlockPG.git#upm
 ```
+
+`upm` ブランチは、`main` のテストが通るたびに CI がパッケージ部分だけを切り出して更新します。
 
 ### 依存ライブラリ
 
@@ -32,7 +34,7 @@ Unity 6000.0 以降。開発は 6000.4.8f1 で行っています。
 
 ## サンプル
 
-Package Manager の **Samples** から `Demo` をインポートすると、2 つのシーンが入ります。
+Package Manager の **Samples** から `Demo` をインポートすると、シーンが `Assets/Samples/` へ入ります。
 
 | シーン | 内容 |
 | --- | --- |
@@ -71,7 +73,23 @@ Package Manager の **Samples** から `Demo` をインポートすると、2 �
 
 - テストはパッケージ内にあります。**埋め込みパッケージのテストは Test Runner が自動で拾う**ため、`testables` への登録は不要です（登録が要るのは、レジストリや Git URL 経由で入れたパッケージのテストを走らせたい場合）
 - `Assets/_Development/` は開発用のシーンで、パッケージには含まれません
-- サンプルを編集する場合は `Packages/com.nitou.blockpg/Samples~/Demo/` が原本です。Package Manager からインポートすると `Assets/Samples/` へ複製されますが、そちらは `.gitignore` 済みです
+
+### サンプルの扱い
+
+`Packages/com.nitou.blockpg/Samples/Demo/` を**そのまま Unity から開いて編集できます**。チルダを付けていないため、開発プロジェクトでは通常のフォルダとして取り込まれます。
+
+配布時にだけ `Samples~` へ変える必要があるので、これは CI（`.github/workflows/publish-upm.yml`）が行います。
+
+```
+main へ push
+  └ Test が成功
+      └ Publish UPM branch
+          ├ git subtree split -P Packages/com.nitou.blockpg -b upm
+          ├ Samples -> Samples~ にリネーム（Samples.meta は削除）
+          └ upm ブランチへ force push
+```
+
+チルダを付けないまま配ると、**利用者のプロジェクトへサンプルが常にインポートされてしまいます**。逆に開発リポジトリでチルダを付けると、Unity が取り込まないため編集できません。この 2 つを両立させるためのリネームです。
 
 ## ライセンス
 
