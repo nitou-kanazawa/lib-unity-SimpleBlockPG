@@ -69,7 +69,7 @@ Package Manager の **Samples** から `Demo` をインポートすると、2 �
 
 このリポジトリは Unity プロジェクトを兼ねており、`Packages/com.nitou.blockpg/` が埋め込みパッケージとして解決されます。
 
-- テストはパッケージ内にあります。`Packages/manifest.json` の `testables` に登録済みのため、Test Runner から実行できます
+- テストはパッケージ内にあります。**埋め込みパッケージのテストは Test Runner が自動で拾う**ため、`testables` への登録は不要です（登録が要るのは、レジストリや Git URL 経由で入れたパッケージのテストを走らせたい場合）
 - `Assets/_Development/` は開発用のシーンで、パッケージには含まれません
 - サンプルを編集する場合は `Packages/com.nitou.blockpg/Samples~/Demo/` が原本です。Package Manager からインポートすると `Assets/Samples/` へ複製されますが、そちらは `.gitignore` 済みです
 
