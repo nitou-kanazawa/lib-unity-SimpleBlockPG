@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -141,34 +141,54 @@ namespace RuntimeTests {
         /// ----------------------------------------------------------------------------
         // 非同期API
 
-        // [NOTE] UniTask を待つのに Assert.ThrowsAsync / CatchAsync は使わない．
-        //        内部でスレッドをブロックするため、プレイヤーループ上で進む UniTask の継続と
-        //        自己デッドロックし Editor がハングする．
+        // [NOTE] Task を待つのに Assert.ThrowsAsync / CatchAsync / .Result / .Wait() は使わない．
+        //        いずれもメインスレッドをブロックするが、継続は Unity の
+        //        SynchronizationContext 経由でメインスレッドへ戻ろうとするため
+        //        自己デッドロックし、Editor がハングする．
+        //        完了はコルーチンで待つこと．
+
+        /// <summary>
+        /// Task の完了をフレーム送りで待つ．
+        /// </summary>
+        private static IEnumerator Await(Task task) {
+            while (!task.IsCompleted) {
+                yield return null;
+            }
+
+            // ※失敗を握り潰さない（AggregateException だと原因が読みにくいので中身を投げる）
+            if (task.IsFaulted) {
+                throw task.Exception.InnerExceptions.Count == 1
+                    ? task.Exception.InnerExceptions[0]
+                    : task.Exception;
+            }
+        }
 
         [UnityTest]
-        public IEnumerator SaveAsyncとLoadAsyncで往復できる() => UniTask.ToCoroutine(async () => {
+        public IEnumerator SaveAsyncとLoadAsyncで往復できる() {
             // Arrange
             var original = BuildSampleTree();
             var expected = Describe(original);
 
             // Act
-            await BPG_BlockStorage.SaveAsync(_path, new[] { original });
+            yield return Await(BPG_BlockStorage.SaveAsync(_path, new[] { original }));
             UnityEngine.Object.DestroyImmediate(original.RectTransform.gameObject);
 
-            var restored = await BPG_BlockStorage.LoadAsync(_path, _env.ProgrammingEnv);
+            var loadTask = BPG_BlockStorage.LoadAsync(_path, _env.ProgrammingEnv);
+            yield return Await(loadTask);
+            var restored = loadTask.Result;
 
             // Assert
             Assert.That(File.Exists(_path), Is.True);
             Assert.That(restored.Count, Is.EqualTo(1));
             Assert.That(Describe(restored[0]), Is.EqualTo(expected));
-        });
+        }
 
         [UnityTest]
-        public IEnumerator LoadAsyncの生成部分はフレームをまたがない() => UniTask.ToCoroutine(async () => {
+        public IEnumerator LoadAsyncの生成部分はフレームをまたがない() {
             // [NOTE] ファイルI/Oは別スレッドで待つためフレームは進むが、
             //        メインスレッドへ戻った後のブロック生成は1フレーム内で完結する．
             var original = BuildSampleTree();
-            await BPG_BlockStorage.SaveAsync(_path, new[] { original });
+            yield return Await(BPG_BlockStorage.SaveAsync(_path, new[] { original }));
             UnityEngine.Object.DestroyImmediate(original.RectTransform.gameObject);
 
             var sBlocks = BPG_BlockStorage.LoadSerializableBlocks(_path);
@@ -180,27 +200,28 @@ namespace RuntimeTests {
 
             Assert.That(Time.frameCount, Is.EqualTo(frameBefore));
             Assert.That(restored[0].GetAllChildBlocksCount(containSelf: true), Is.EqualTo(4));
-        });
+        }
 
         [UnityTest]
-        public IEnumerator LoadAsyncは復元後にメインスレッドへ戻っている() => UniTask.ToCoroutine(async () => {
+        public IEnumerator LoadAsyncは復元後にメインスレッドへ戻っている() {
             var original = _env.CreateBlock(PrefabName.Scope);
-            await BPG_BlockStorage.SaveAsync(_path, new[] { original });
+            yield return Await(BPG_BlockStorage.SaveAsync(_path, new[] { original }));
 
-            await BPG_BlockStorage.LoadAsync(_path, _env.ProgrammingEnv);
+            yield return Await(BPG_BlockStorage.LoadAsync(_path, _env.ProgrammingEnv));
 
-            // ※メインスレッド以外では Unity API に触れないため、これが成立する時点で戻っている
+            // ※メインスレッド以外では Unity API に触れないため、復元が成立した時点で戻っている
             Assert.That(_env.ProgrammingEnv.RectTransform, Is.Not.Null);
-        });
+        }
 
         [UnityTest]
-        public IEnumerator 存在しないファイルのLoadAsyncは空を返す() => UniTask.ToCoroutine(async () => {
+        public IEnumerator 存在しないファイルのLoadAsyncは空を返す() {
             LogAssert.ignoreFailingMessages = true;
 
-            var restored = await BPG_BlockStorage.LoadAsync(_path, _env.ProgrammingEnv);
+            var loadTask = BPG_BlockStorage.LoadAsync(_path, _env.ProgrammingEnv);
+            yield return Await(loadTask);
 
-            Assert.That(restored, Is.Empty);
+            Assert.That(loadTask.Result, Is.Empty);
             LogAssert.ignoreFailingMessages = false;
-        });
+        }
     }
 }

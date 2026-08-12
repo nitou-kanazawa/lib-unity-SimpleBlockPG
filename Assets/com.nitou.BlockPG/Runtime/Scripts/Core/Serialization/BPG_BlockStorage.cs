@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using nitou.BlockPG.Interface;
 
@@ -22,6 +22,11 @@ namespace nitou.BlockPG.Serialization {
         //  メインスレッドへ戻ってから1フレーム内でまとめて組み上げる．
         //
         //  → 呼び出し側は await で完了を待てて、かつ生成はフレームをまたがない．
+        //
+        // [NOTE] 非同期APIは UniTask ではなく標準の Task を使う．ライブラリの依存を減らすため．
+        //        Unity はメインスレッドに SynchronizationContext を敷いているため、
+        //        メインスレッドから await すれば継続もメインスレッドへ戻る．
+        //        （UniTask.SwitchToMainThread に相当する明示的な切り替えは要らない）
 
         /// <summary>
         /// ルート要素の識別名．
@@ -145,7 +150,7 @@ namespace nitou.BlockPG.Serialization {
         /// ブロック階層をファイルへ非同期に保存する．
         /// [NOTE] XMLの構築はメインスレッド、ファイル書き込みはスレッドプールで行う．
         /// </summary>
-        public static async UniTask SaveAsync(string path, IEnumerable<I_BPG_Block> blocks,
+        public static async Task SaveAsync(string path, IEnumerable<I_BPG_Block> blocks,
             CancellationToken cancellationToken = default) {
 
             // ※Unityオブジェクトを読むため、変換はメインスレッドで行う
@@ -153,8 +158,7 @@ namespace nitou.BlockPG.Serialization {
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            await UniTask.RunOnThreadPool(
-                () => WriteToFile(path, document), cancellationToken: cancellationToken);
+            await Task.Run(() => WriteToFile(path, document), cancellationToken);
         }
 
         /// <summary>
@@ -186,17 +190,17 @@ namespace nitou.BlockPG.Serialization {
         /// [NOTE] ファイル読み込みとXML解析はスレッドプールで行い、
         ///        ブロックの生成はメインスレッドで1フレーム内に完了する．
         /// </summary>
-        public static async UniTask<IReadOnlyList<I_BPG_Block>> LoadAsync(string path,
+        public static async Task<IReadOnlyList<I_BPG_Block>> LoadAsync(string path,
             I_BPG_ProgrammingEnv programmingEnv, CancellationToken cancellationToken = default) {
 
             if (programmingEnv == null)
                 throw new ArgumentNullException(nameof(programmingEnv));
 
-            var sBlocks = await UniTask.RunOnThreadPool(
-                () => LoadSerializableBlocks(path), cancellationToken: cancellationToken);
+            var sBlocks = await Task.Run(() => LoadSerializableBlocks(path), cancellationToken);
 
-            // ※ブロックの生成はメインスレッドでしか行えない
-            await UniTask.SwitchToMainThread(cancellationToken);
+            // ※ブロックの生成はメインスレッドでしか行えない．
+            //   await が Unity の SynchronizationContext を捕捉するため、ここは既に戻っている．
+            cancellationToken.ThrowIfCancellationRequested();
 
             return InstantiateBlocks(sBlocks, programmingEnv);
         }

@@ -1,11 +1,10 @@
-{
+﻿{
     "name": "Tests.Editor",
     "rootNamespace": "EditorTests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Nitou.BlockPG",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
         "GUID:560b04d1a97f54a4e82edc0cbbb69285"
     ],
     "includePlatforms": [
