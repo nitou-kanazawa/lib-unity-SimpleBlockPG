@@ -129,6 +129,7 @@ namespace nitou.BlockPG.Blocks.Section {
 #if UNITY_EDITOR
         private void OnValidate() {
             GatherComponents();
+            BPG_LayoutGroupGuard.WarnIfConflicting(this);
         }
 #endif
     }

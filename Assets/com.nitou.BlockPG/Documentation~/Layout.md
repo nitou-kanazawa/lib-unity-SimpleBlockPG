@@ -160,9 +160,32 @@ public sealed class SelectionFrame : MonoBehaviour, I_BPG_LayoutIgnore {
 
 `BlockSectionSizeTest` が、ブロック直下に子を足してもサイズが変わらないことを検証している。
 
+## 既存プレハブの移行
+
+同梱プレハブからは撤去済みだが、**利用者が独自に作ったブロックプレハブには LayoutGroup が残っている**可能性がある。残っているとライブラリ側の配置と二重に効いて表示が崩れる。
+
+`Tools > BlockPG > Find Conflicting Layout Groups` でプロジェクト全体（プレハブ＋開いているシーン）を走査できる。`Remove Conflicting Layout Groups` は確認ダイアログのうえで取り除く。
+
+検知は 3 つの経路で行う。
+
+| 経路 | いつ気づくか |
+| --- | --- |
+| `OnValidate` | プレハブを開いた／取り込んだとき |
+| ブロック生成時 | 一度も触っていないプレハブでも、生成すれば気づく（プレハブごとに 1 回） |
+| メニュー | 明示的に一括で調べたいとき |
+
+### 検出の線引き
+
+対象は**ライブラリが配置を決める役割**を持つオブジェクトだけ。
+
+- 検出する: ブロックのルート / セクション / ヘッダー / ボディ
+- 検出しない: ヘッダーアイテムの内側など
+
+アイテムの中で利用者が `LayoutGroup` を使うのは正当な用途なので、階層まるごとを対象にすると誤検出になる。この線引きは `LayoutGroupGuardTest` が押さえている。
+
 ## 現状と今後
 
-**ブロック階層に LayoutGroup は存在しない。** `BlockLayoutPerformanceTest` が 0 個であることを検証している。
+**ブロック階層に LayoutGroup は存在しない。** `BlockLayoutPerformanceTest` が 0 個であることを検証し、`LayoutGroupGuardTest` が同梱プレハブ 4 種すべてで競合が無いことを検証している。
 
 ## 計測
 
