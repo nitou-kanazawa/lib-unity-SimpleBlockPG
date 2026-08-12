@@ -41,6 +41,11 @@ ExportedObj/
 # Unity MCP のスクリーンショット出力
 /[Aa]ssets/Screenshots/
 /[Aa]ssets/Screenshots.meta
+
+# Package Manager でインポートしたサンプルの複製
+# ※原本は Packages/com.nitou.blockpg/Samples~/ 側
+/[Aa]ssets/Samples/
+/[Aa]ssets/Samples.meta
 *.tmp
 *.user
 *.userprefs
