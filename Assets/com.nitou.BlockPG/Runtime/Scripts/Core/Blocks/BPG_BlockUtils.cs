@@ -63,6 +63,11 @@ namespace nitou.BlockPG.Blocks {
             if (programmingEnv == null)
                 throw new System.ArgumentNullException(nameof(programmingEnv));
 
+#if UNITY_EDITOR
+            // ※撤去し損ねた LayoutGroup があると配置が二重に効く（プレハブごとに1回だけ通知）
+            BPG_LayoutGroupGuard.WarnOnceForPrefab(blockPrefab.RectTransform.gameObject);
+#endif
+
             var factory = programmingEnv.BlockFactory;
             if (factory == null) {
                 Debug.LogWarning("Block factory is not available.");

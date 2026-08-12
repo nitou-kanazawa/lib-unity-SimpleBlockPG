@@ -167,6 +167,9 @@ namespace nitou.BlockPG.Blocks {
 #if UNITY_EDITOR
         protected virtual void OnValidate() {
             GatherSections();
+
+            // ※撤去し損ねた LayoutGroup があると配置が二重に効く
+            BPG_LayoutGroupGuard.WarnIfConflicting(this);
         }
 #endif
     }
