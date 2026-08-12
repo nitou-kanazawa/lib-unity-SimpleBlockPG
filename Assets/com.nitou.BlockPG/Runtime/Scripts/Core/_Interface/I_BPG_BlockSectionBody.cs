@@ -44,8 +44,6 @@ namespace nitou.BlockPG.Interface{
 
             // セクション側の更新
             self.BlockSection.UpdateLayout();
-
-            Debug.Log($"Connect to {self.BlockSection.Block.RectTransform.name} [{block.RectTransform.GetSiblingIndex()}]");
         }
 
         /// <summary>

@@ -368,12 +368,83 @@ namespace nitou.BlockPG.Interface {
         /// 指定されたブロックの親に接続する．配置場所は指定されたブロックの後ろ
         /// </summary>
         public static bool ConnectTo(this I_BPG_Block self, I_BPG_Block targetBlock) {
-            if (!targetBlock.HasParentBlock()) return false;
+            return self.InsertAfter(targetBlock);
+        }
 
-            var index = targetBlock.GetIndexInSection();
-            if (index < 0) return false;
+        /// <summary>
+        /// 指定ブロックの直後へ挿し込む．
+        /// </summary>
+        public static bool InsertAfter(this I_BPG_Block self, I_BPG_Block targetBlock) {
+            return TryInsert(self, targetBlock, offset: 1);
+        }
 
-            targetBlock.ParentSection.Body.Append(self, index + 1);
+        /// <summary>
+        /// 指定ブロックの直前へ挿し込む．
+        /// </summary>
+        public static bool InsertBefore(this I_BPG_Block self, I_BPG_Block targetBlock) {
+            return TryInsert(self, targetBlock, offset: 0);
+        }
+
+        /// <summary>
+        /// 親セクションから切り離し、ルートブロックにする．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 画面上の位置は維持する．切り離しは再ペアレントなので、
+        ///        そのままだと配置先の原点へ飛んでしまう．
+        ///
+        /// [NOTE] 後続のブロックは元のスタックに残る．ルートブロック同士は連結できない
+        ///        （接続には親セクションが要る）ため、後続を連れて出ることはできない．
+        /// </remarks>
+        public static bool Detach(this I_BPG_Block self) {
+            if (self.IsRootBlock())
+                return false;
+
+            var programmingEnv = self.RectTransform.GetComponentInParent<I_BPG_ProgrammingEnv>();
+            if (programmingEnv == null) {
+                Debug.LogWarning("Programming environment is not found in parents.", self.RectTransform);
+                return false;
+            }
+
+            // ※元の親は子が減るため、切り離した後にサイズを詰める
+            var parentBlock = self.GetParentBlock();
+            var worldPosition = self.RectTransform.position;
+
+            programmingEnv.Append(self);
+
+            self.RectTransform.position = worldPosition;
+            var localPosition = self.RectTransform.localPosition;
+            self.RectTransform.localPosition = new Vector3(localPosition.x, localPosition.y, 0f);
+
+            if (parentBlock != null && parentBlock.HasLayout()) {
+                parentBlock.Layout.UpdateLayout();
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 対象ブロックの位置を基準に挿し込む．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] 同じセクション内での移動では、自分が抜けたぶん後ろの要素が1つ詰まる．
+        ///        インデックスをそのまま使うと1つずれた位置に入るため補正する．
+        /// </remarks>
+        private static bool TryInsert(I_BPG_Block self, I_BPG_Block targetBlock, int offset) {
+            if (self == null || targetBlock == null)
+                return false;
+
+            // ※ルートブロックは親セクションを持たないため、その前後には挿せない
+            var body = targetBlock.ParentSection?.Body;
+            if (body == null)
+                return false;
+
+            int targetIndex = targetBlock.RectTransform.GetSiblingIndex();
+
+            bool isSameParent = self.RectTransform.parent == targetBlock.RectTransform.parent;
+            if (isSameParent && self.RectTransform.GetSiblingIndex() < targetIndex) {
+                targetIndex--;
+            }
+
+            body.Append(self, targetIndex + offset);
             return true;
         }
 
