@@ -1,4 +1,4 @@
-namespace nitou.BlockPG.Blocks {
+﻿namespace nitou.BlockPG.Blocks {
 
     /// <summary>
     /// ブロック階層を積み上げる方向．
