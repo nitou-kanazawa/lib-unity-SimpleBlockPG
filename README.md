@@ -32,6 +32,12 @@ https://github.com/nitou-kanazawa/lib-unity-SimpleBlockPG.git#upm
 
 Unity 6000.0 以降。開発は 6000.4.8f1 で行っています。
 
+## デモ
+
+ブラウザで触れます。`main` の最新が自動で反映されます。
+
+**https://nitou-kanazawa.github.io/lib-unity-SimpleBlockPG/**
+
 ## サンプル
 
 Package Manager の **Samples** から `Demo` をインポートすると、シーンが `Assets/Samples/` へ入ります。
@@ -90,6 +96,21 @@ main へ push
 ```
 
 チルダを付けないまま配ると、**利用者のプロジェクトへサンプルが常にインポートされてしまいます**。逆に開発リポジトリでチルダを付けると、Unity が取り込まないため編集できません。この 2 つを両立させるためのリネームです。
+
+### WebGL デモの公開
+
+`main` へ push すると、`06-Playground` を WebGL でビルドして GitHub Pages へ公開します。
+
+```
+main へ push
+  └ Deploy WebGL demo
+      ├ game-ci/unity-builder で WebGL ビルド
+      └ GitHub Pages へデプロイ
+```
+
+**WebGL の圧縮設定はエディタから変更しないでください。** Unity の既定（Brotli）は
+サーバ側でヘッダを返す前提のため、GitHub Pages では動きません。詳細は
+[webgl-demo.md](Docs/webgl-demo.md) を参照してください。
 
 ## ライセンス
 

@@ -17,7 +17,8 @@
 ├── Docs/                      設計資料（配布しない）
 └── .github/workflows/
     ├── test.yml               main / PR でテスト
-    └── publish-upm.yml        テスト成功後に upm ブランチを更新
+    ├── publish-upm.yml        テスト成功後に upm ブランチを更新
+    └── deploy-webgl-pages.yml main の最新を WebGL で公開
 ```
 
 利用者の導入は `https://github.com/<owner>/<repo>.git#upm`。

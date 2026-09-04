@@ -2,7 +2,9 @@
 
 SimpleBlockPG でできることを一通り試せるデモシーンです。
 
-`Assets/Demo/06-Playground/06-Playground.unity` を開いて再生してください。
+`Packages/com.nitou.blockpg/Samples/Demo/06-Playground/06-Playground.unity` を開いて再生してください。
+
+ブラウザでも試せます: https://nitou-kanazawa.github.io/lib-unity-SimpleBlockPG/
 
 ## できること
 
