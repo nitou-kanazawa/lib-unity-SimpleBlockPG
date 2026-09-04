@@ -1,4 +1,4 @@
-namespace nitou.BlockPG.Interface {
+﻿namespace nitou.BlockPG.Interface {
 
     /// <summary>
     /// ブロックの機能実装を担う拡張点．

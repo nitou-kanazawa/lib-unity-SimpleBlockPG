@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,10 +15,10 @@ namespace Nitou.uBlock {
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="T">ƒm[ƒh‚ÌŒ^D</typeparam>
-    /// <param name="currentNode">Œ»İ‚Ìƒm[ƒhD</param>
-    /// <param name="newNodes">’Ç‰Á‚³‚ê‚½ƒm[ƒhD</param>
-    /// <param name="remainingNodes">–¢ˆ—‚Ìƒm[ƒhD</param>
+    /// <typeparam name="T">ãƒãƒ¼ãƒ‰ã®å‹ï¼</typeparam>
+    /// <param name="currentNode">ç¾åœ¨ã®ãƒãƒ¼ãƒ‰ï¼</param>
+    /// <param name="newNodes">è¿½åŠ ã•ã‚ŒãŸãƒãƒ¼ãƒ‰ï¼</param>
+    /// <param name="remainingNodes">æœªå‡¦ç†ã®ãƒãƒ¼ãƒ‰ï¼</param>
     /// <returns></returns>
     public delegate IEnumerable<T?> UpdatePendingNodesDelegate<T>(
         T currentNode, IEnumerable<T?> newNodes, IEnumerable<T?> remainingNodes
@@ -26,18 +26,18 @@ namespace Nitou.uBlock {
 
 
     /// <summary>
-    /// <see cref="ITreeNode{TNode}"/> Œ^‚ÌŠg’£ƒƒ\ƒbƒh‚ğ’ñ‹Ÿ‚·‚éD
+    /// <see cref="ITreeNode{TNode}"/> å‹ã®æ‹¡å¼µãƒ¡ã‚½ãƒƒãƒ‰ã‚’æä¾›ã™ã‚‹ï¼
     /// </summary>
     public static partial class TreeNodeExtensions {
 
         /// ----------------------------------------------------------------------------
-        #region —v‘f‚Ì—ñ‹“
+        #region è¦ç´ ã®åˆ—æŒ™
 
         /// <summary>
 		/// Expands and enumerates a tree structure starting from the current node, allowing custom logic for adding and updating nodes during the traversal.
 		/// </summary>
-		/// <typeparam name="T">ƒm[ƒh‚ÌŒ^D</typeparam>
-		/// <param name="startNode">ŠJnƒm[ƒhD</param>
+		/// <typeparam name="T">ãƒãƒ¼ãƒ‰ã®å‹ï¼</typeparam>
+		/// <param name="startNode">é–‹å§‹ãƒãƒ¼ãƒ‰ï¼</param>
 		/// <param name="getNodes">
 		/// A function that determines additional nodes to add based on the specified node.  
 		/// Takes the current node as an argument and returns a collection of nodes related to it.
@@ -45,9 +45,9 @@ namespace Nitou.uBlock {
 		/// <param name="updatePendingNodes">
 		/// A function that updates the list of unenumerated nodes during traversal. This function takes the following arguments:
 		/// <list type="bullet">
-		/// <item><description>Œ»İ‚Ìƒm[ƒhD The value passed as the first argument to the <paramref name="getNodes"/> function.</description></item>
-		/// <item><description>’Ç‰Á‚³‚ê‚½ƒm[ƒhD The return value of the <paramref name="getNodes"/> function.</description></item>
-		/// <item><description>–¢ˆ—‚Ìƒm[ƒhD
+		/// <item><description>ç¾åœ¨ã®ãƒãƒ¼ãƒ‰ï¼ The value passed as the first argument to the <paramref name="getNodes"/> function.</description></item>
+		/// <item><description>è¿½åŠ ã•ã‚ŒãŸãƒãƒ¼ãƒ‰ï¼ The return value of the <paramref name="getNodes"/> function.</description></item>
+		/// <item><description>æœªå‡¦ç†ã®ãƒãƒ¼ãƒ‰ï¼
 		/// <para>If the head element of this collection has not been used as an argument to <paramref name="getNodes"/>, it will be passed as the argument to <paramref name="getNodes"/>. </para>
         /// <para>If it has already been used as an argument to <paramref name="getNodes"/>, that element will be enumerated.</para>
 		/// </description></item>
@@ -57,8 +57,8 @@ namespace Nitou.uBlock {
             GetNodesDelegate<T> getNodes,
             UpdatePendingNodesDelegate<T> updatePendingNodes
         ) where T : ITreeNode<T> {
-            ISet<T> exphistory = new HashSet<T>();  //“WŠJ‚µ‚½—š—ğ
-            ISet<T> rtnhistory = new HashSet<T>();  //—ñ‹“‚µ‚½—š—ğ
+            ISet<T> exphistory = new HashSet<T>();  //å±•é–‹ã—ãŸå±¥æ­´
+            ISet<T> rtnhistory = new HashSet<T>();  //åˆ—æŒ™ã—ãŸå±¥æ­´
             IEnumerable<T?> seeds = new T[1] { (T)startNode };
             while (expand(ref exphistory, out T? cur, ref seeds, getNodes, updatePendingNodes)) {
                 if (cur != null && rtnhistory.Add(cur)) yield return cur;
@@ -66,7 +66,7 @@ namespace Nitou.uBlock {
         }
 
         /// <summary>
-        /// ƒcƒŠ[‚Ì’Tõ‚ğ§Œä‚·‚éƒƒ\ƒbƒhD
+        /// ãƒ„ãƒªãƒ¼ã®æ¢ç´¢ã‚’åˆ¶å¾¡ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ï¼
         /// </summary>
         private static bool expand<T>(ref ISet<T> history, out T? cur, ref IEnumerable<T?> seeds,
             GetNodesDelegate<T> getNewSeeds,

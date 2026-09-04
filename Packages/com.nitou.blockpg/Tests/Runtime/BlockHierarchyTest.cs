@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using nitou.BlockPG.Blocks;
 using nitou.BlockPG.Interface;

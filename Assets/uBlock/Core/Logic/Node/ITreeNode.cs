@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 
 namespace Nitou.uBlock {
@@ -7,12 +7,12 @@ namespace Nitou.uBlock {
         where TNode: ITreeNode<TNode> {
 
         /// <summary>
-        /// eƒm[ƒhD
+        /// è¦ªãƒãƒ¼ãƒ‰ï¼
         /// </summary>
         TNode? Parent { get;}
 
         /// <summary>
-        /// qƒm[ƒhD
+        /// å­ãƒãƒ¼ãƒ‰ï¼
         /// </summary>
         IEnumerable<TNode> Children { get; }
     }
@@ -44,9 +44,9 @@ namespace Nitou.uBlock {
         TNode RemoveChild(TNode child);
 
         /// <summary>
-        /// ‘S‚Ä‚Ìq—v‘f‚ğæ‚èœ‚­D
+        /// å…¨ã¦ã®å­è¦ç´ ã‚’å–ã‚Šé™¤ãï¼
         /// </summary>
-        /// <returns>æ‚èœ‚©‚ê‚½q—v‘f</returns>
+        /// <returns>å–ã‚Šé™¤ã‹ã‚ŒãŸå­è¦ç´ </returns>
         IReadOnlyList<TNode> ClearChildren();
     }    
 }

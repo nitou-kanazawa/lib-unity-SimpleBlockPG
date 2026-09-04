@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 
 namespace Nitou.uBlock {
@@ -11,12 +11,12 @@ namespace Nitou.uBlock {
         public TNode Self => this as TNode;
 
         /// <summary>
-        /// eƒm[ƒhD
+        /// è¦ªãƒãƒ¼ãƒ‰ï¼
         /// </summary>
         public TNode? Parent { get; private set; }
 
         /// <summary>
-        /// qƒm[ƒhD
+        /// å­ãƒãƒ¼ãƒ‰ï¼
         /// </summary>
         public abstract IEnumerable<TNode> Children { get; }
 
@@ -47,7 +47,7 @@ namespace Nitou.uBlock {
         /// <summary>
         /// Called by the parent node during processes like addition or removal.
         /// </summary>
-        /// <param name="newParent">V‚µ‚¢eƒm[ƒh</param>
+        /// <param name="newParent">æ–°ã—ã„è¦ªãƒãƒ¼ãƒ‰</param>
         /// <returns>True if the parent node is successfully set; otherwise, false.</returns>
         private bool SetParent(TNode? newParent) {
             if (this.Parent == newParent) return false;
