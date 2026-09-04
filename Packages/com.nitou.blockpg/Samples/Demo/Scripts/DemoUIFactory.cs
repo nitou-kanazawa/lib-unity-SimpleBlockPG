@@ -125,6 +125,27 @@ namespace nitou.BlockPG.Demo {
         // GameObject
 
         /// <summary>
+        /// 画面全体を覆う Screen Space - Overlay の Canvas を作る．
+        /// </summary>
+        // [NOTE] デモシーンに置かれた Canvas と同じ基準にしてある．
+        //        揃えないと、重ねたときに座標とスケールが食い違う．
+        public static Canvas CreateOverlayCanvas(string name, int sortingOrder = 0) {
+            var obj = new GameObject(name, typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+
+            var canvas = obj.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = sortingOrder;
+
+            var scaler = obj.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            scaler.matchWidthOrHeight = 0.5f;
+
+            return canvas;
+        }
+
+        /// <summary>
         /// RectTransform を持つ子オブジェクトを作る．
         /// </summary>
         public static RectTransform CreateRect(string name, Transform parent) {
