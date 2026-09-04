@@ -1,0 +1,105 @@
+name: Deploy WebGL demo
+
+# [NOTE] main の最新をブラウザで触れるようにするためのワークフロー．
+#        リリース物ではなく動作確認用なので、テストの成否は待たずに main へ入った時点で公開する．
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'Docs/**'
+  workflow_dispatch:
+
+# [NOTE] Pages のデプロイは同時に1つしか走れない．
+#        進行中のデプロイを中断すると公開が壊れるため cancel-in-progress は付けない．
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build WebGL
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Library をキャッシュしないと毎回インポートからやり直しになる
+      # ※プラットフォームごとに内容が異なるためキーを分ける
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-WebGL-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-WebGL-
+
+      # UnityエディタのDockerイメージ（WebGL版は約7GB）の展開で
+      # ubuntu-latest ランナーのディスクが枯渇するため、事前に空きを確保する
+      - name: Free up disk space
+        run: |
+          echo "=== Before ===" && df -h /
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          echo "=== After ===" && df -h /
+
+      - name: Build
+        uses: game-ci/unity-builder@v4
+        env:
+          # [NOTE] Personal ライセンスの場合はこの3つ、Pro の場合は UNITY_SERIAL を使う．
+          #        未登録だとこのステップでライセンス認証に失敗する．（test.yml と同じ Secrets）
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          # ProjectSettings/ProjectVersion.txt から自動で解決する
+          unityVersion: auto
+          targetPlatform: WebGL
+          # ビルド対象シーンと圧縮設定を固定するため、自前のビルドスクリプトを使う
+          buildMethod: nitou.BlockPG.BuildTools.WebGLBuilder.Build
+          # [NOTE] 既定の Semantic はタグから版数を組み立てるため、
+          #        タグが無いリポジトリでは失敗する．公開デモに版数は不要．
+          versioning: None
+
+      # [NOTE] GameCI は Docker 内の root で走るため、成果物が root 所有になる．
+      #        そのままだと後続のアップロードが読めない．
+      - name: Fix artifact permissions
+        run: sudo chown -R $(id -u):$(id -g) build
+
+      # [NOTE] 出力先は GameCI が -customBuildPath で決めるため、
+      #        パスを決め打ちせず index.html の位置から求める．
+      - name: Locate build output
+        id: output
+        run: |
+          set -eu
+          index=$(find build -name index.html -print -quit)
+          if [ -z "$index" ]; then
+            echo "::error::index.html が見つかりません。ビルドが空の可能性があります。"
+            find build -maxdepth 3 || true
+            exit 1
+          fi
+          echo "dir=$(dirname "$index")" >> "$GITHUB_OUTPUT"
+          du -sh "$(dirname "$index")"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.output.outputs.dir }}
+
+  deploy:
+    name: Deploy to Pages
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
