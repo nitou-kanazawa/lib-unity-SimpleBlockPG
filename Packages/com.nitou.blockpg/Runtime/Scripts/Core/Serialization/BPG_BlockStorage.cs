@@ -23,6 +23,10 @@ namespace nitou.BlockPG.Serialization {
         //
         //  → 呼び出し側は await で完了を待てて、かつ生成はフレームをまたがない．
         //
+        // [NOTE] WebGL はスレッドを持たないため Task.Run が使えない．
+        //        当該プラットフォームでは同期実行へフォールバックする．
+        //        （ファイルI/O自体は persistentDataPath 経由で動作する）
+        //
         // [NOTE] 非同期APIは UniTask ではなく標準の Task を使う．ライブラリの依存を減らすため．
         //        Unity はメインスレッドに SynchronizationContext を敷いているため、
         //        メインスレッドから await すれば継続もメインスレッドへ戻る．
@@ -158,7 +162,12 @@ namespace nitou.BlockPG.Serialization {
 
             cancellationToken.ThrowIfCancellationRequested();
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+            WriteToFile(path, document);
+            await Task.CompletedTask;
+#else
             await Task.Run(() => WriteToFile(path, document), cancellationToken);
+#endif
         }
 
         /// <summary>
@@ -196,7 +205,12 @@ namespace nitou.BlockPG.Serialization {
             if (programmingEnv == null)
                 throw new ArgumentNullException(nameof(programmingEnv));
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+            var sBlocks = LoadSerializableBlocks(path);
+            await Task.CompletedTask;
+#else
             var sBlocks = await Task.Run(() => LoadSerializableBlocks(path), cancellationToken);
+#endif
 
             // ※ブロックの生成はメインスレッドでしか行えない．
             //   await が Unity の SynchronizationContext を捕捉するため、ここは既に戻っている．
