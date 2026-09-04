@@ -1,4 +1,4 @@
-namespace nitou.BlockPG.Interface {
+﻿namespace nitou.BlockPG.Interface {
 
     /// <summary>
     /// ブロック固有のデータを保存・復元するための拡張点．

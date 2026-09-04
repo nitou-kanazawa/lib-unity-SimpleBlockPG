@@ -1,4 +1,4 @@
-namespace nitou.BlockPG.Interface {
+﻿namespace nitou.BlockPG.Interface {
 
     /// <summary>
     /// ブロックのレイアウト計算から除外されるオブジェクト．
