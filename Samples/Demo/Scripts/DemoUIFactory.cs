@@ -11,6 +11,11 @@ namespace nitou.BlockPG.Demo {
     /// </summary>
     public static class DemoUIFactory {
 
+        /// <summary>
+        /// 同梱フォントの Resources 上のパス．
+        /// </summary>
+        private const string JapaneseFontPath = "Fonts/MPLUS1p-Regular";
+
         private static readonly Dictionary<int, Sprite> _spriteCache = new();
         private static Font _font;
 
@@ -106,11 +111,23 @@ namespace nitou.BlockPG.Demo {
         // Font
 
         /// <summary>
-        /// 組み込みフォントを取得する．
+        /// 日本語を含むテキストを描画できるフォントを取得する．
         /// </summary>
+        // [NOTE] 組み込みフォント(Liberation Sans)には日本語のグリフが無い．
+        //        エディタでは Unity が OS 導入フォントへフォールバックするため気付けないが、
+        //        WebGL にはフォールバック先が無く、日本語だけが無言で描画されなくなる．
+        //        （実際に公開デモでコンテキストメニューの項目が消えていた）
+        //        そのため同梱フォントを優先して読み込む．
         public static Font GetFont() {
             if (_font != null)
                 return _font;
+
+            _font = Resources.Load<Font>(JapaneseFontPath);
+            if (_font != null)
+                return _font;
+
+            Debug.LogWarning($"Bundled font is not found. Japanese text will not be rendered " +
+                $"on platforms without system fonts. (path: {JapaneseFontPath})");
 
             _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (_font == null) {
