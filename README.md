@@ -118,3 +118,5 @@ main へ push
 ## ライセンス
 
 MIT License
+
+サンプルには M PLUS 1p Regular（SIL Open Font License 1.1）を同梱しています。ライセンス全文はフォントと同じ場所（`Packages/com.nitou.blockpg/Samples/Demo/Resources/Fonts/OFL.txt`）にあります。**組み込みフォントに日本語のグリフが無く、WebGL では OS フォントへフォールバックできない**ため同梱しています。詳細は [webgl-demo.md](Docs/webgl-demo.md) を参照してください。

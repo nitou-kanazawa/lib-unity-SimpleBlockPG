@@ -75,6 +75,30 @@ Unity の WebGL ビルドは圧縮済みのファイルを出力し、サーバ�
 python3 -m http.server 8080 --directory build/WebGL
 ```
 
+## フォントについて
+
+**組み込みフォント（Liberation Sans）には日本語のグリフがありません。**
+
+エディタでは Unity が OS 導入フォントへフォールバックするため気付けませんが、
+**WebGL にはフォールバック先が無く、日本語だけが無言で描画されなくなります。**
+（公開デモでコンテキストメニューの項目が消えていたのがこれです）
+
+そのため M PLUS 1p Regular（SIL OFL 1.1）を同梱し、`DemoUIFactory.GetFont()` が
+これを優先して読み込みます。
+
+```
+Packages/com.nitou.blockpg/Samples/Demo/Resources/Fonts/
+├── MPLUS1p-Regular.ttf   … 1.76MB
+└── OFL.txt               … ライセンス（OFL の要求により同梱）
+```
+
+このフォントは JIS X 0208 の漢字 6682 字のうち 5041 字を収録しています。
+常用漢字は網羅していますが、**旧字体や機種依存文字（㈱ ㌔ ℡ など）は入っていません。**
+
+収録されていない文字を使うと、**エディタでは正常に見えるのに WebGL でだけ消えます。**
+これを検知するため、CI（`.github/workflows/check-assets.yml`）が
+デモのスクリプトに現れる非ASCII文字をフォントの収録範囲と突き合わせています。
+
 ## 制約と注意
 
 - **PR ごとのプレビューは作れません。** GitHub Pages は 1 リポジトリ 1 サイトのため、
@@ -97,3 +121,4 @@ python3 -m http.server 8080 --directory build/WebGL
 | ライセンス認証で失敗する | Secrets が未登録、またはライセンスが失効している |
 | `index.html が見つかりません` | ビルドは通ったが成果物が空。ビルドログでシーンの読み込みを確認する |
 | `No space left on device` | ランナーのディスク不足。`Free up disk space` の削除対象を増やす |
+| 日本語だけ表示されない | フォントに無い文字を使っている。CI の `Demo font coverage` を確認する |
