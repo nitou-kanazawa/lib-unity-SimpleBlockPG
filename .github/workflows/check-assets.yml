@@ -1,0 +1,33 @@
+name: Check assets
+
+# [NOTE] Unity を起動しない軽量な検査．数十秒で結果が出る．
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  font-coverage:
+    name: Demo font coverage
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install fonttools
+
+      # デモへ日本語を追加したとき、同梱フォントに無い文字を早期に検知する
+      # ※エディタではOSフォントへフォールバックするため手元では再現しない
+      - run: python .github/scripts/check_demo_font_coverage.py
