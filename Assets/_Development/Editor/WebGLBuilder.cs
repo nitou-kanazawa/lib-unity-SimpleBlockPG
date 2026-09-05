@@ -18,8 +18,11 @@ namespace nitou.BlockPG.BuildTools {
         /// </summary>
         // [NOTE] EditorBuildSettings は開発中に頻繁に書き換わるため参照しない．
         //        公開されるデモの内容はここで固定する．
+        // ※先頭が起動シーンになる
         private static readonly string[] SCENES = {
+            "Packages/com.nitou.blockpg/Samples/Demo/00-Hub/00-Hub.unity",
             "Packages/com.nitou.blockpg/Samples/Demo/06-Playground/06-Playground.unity",
+            "Packages/com.nitou.blockpg/Samples/Demo/07-InputBlocks/07-InputBlocks.unity",
         };
 
         /// <summary>

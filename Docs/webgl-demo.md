@@ -14,9 +14,14 @@ main へ push
       └ GitHub Pages へデプロイ
 ```
 
-公開されるのは `06-Playground` シーン 1 つです。ビルド対象は
+公開されるのは `00-Hub` / `06-Playground` / `07-InputBlocks` の 3 シーンで、
+起動シーンは `00-Hub` です。ビルド対象は
 [`Assets/_Development/Editor/WebGLBuilder.cs`](../Assets/_Development/Editor/WebGLBuilder.cs)
-の `SCENES` に直接書いてあります。
+の `SCENES` に直接書いてあります（**先頭が起動シーンになる**）。
+
+デモを増やしたら、`SCENES` と `DemoSceneCatalog.Scenes` の両方へ追加してください。
+`SCENES` にだけ足しても Hub に並ばず、`DemoSceneCatalog` にだけ足しても
+ビルド設定に無いためカードが出ません。
 
 `EditorBuildSettings` を参照していないのは、あれが開発中の作業対象を入れる場所で
 頻繁に書き換わるためです。公開されるものが手元の作業状態に引きずられないよう、

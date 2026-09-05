@@ -44,8 +44,11 @@ Package Manager の **Samples** から `Demo` をインポートすると、シ�
 
 | シーン | 内容 |
 | --- | --- |
+| `00-Hub` | デモの入口。各シーンへ移動し、戻ってこられます |
 | `06-Playground` | ブロックの組み立て・保存・取り消し・折り畳み。5 種類のテーマで見た目を切り替えられます |
 | `07-InputBlocks` | 入力値とブロック固有データが保存・復元されることを確かめられます |
+
+`00-Hub` からの移動には、シーンが Build Settings に登録されている必要があります。**インポート直後は登録されていないため、Hub のカードも「Back to Hub」ボタンも出ません。** 各シーンを個別に開けば単体で動きます。使い方は [00-Hub の README](Packages/com.nitou.blockpg/Samples/Demo/00-Hub/README.md) を参照してください。
 
 ## できること
 
@@ -99,7 +102,7 @@ main へ push
 
 ### WebGL デモの公開
 
-`main` へ push すると、`06-Playground` を WebGL でビルドして GitHub Pages へ公開します。
+`main` へ push すると、デモを WebGL でビルドして GitHub Pages へ公開します。起動シーンは `00-Hub` です。
 
 ```
 main へ push
