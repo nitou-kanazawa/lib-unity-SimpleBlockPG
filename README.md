@@ -1,6 +1,6 @@
-# SimpleBlockPG
+# Simple BlockPG
 
-ドラッグ＆ドロップによるシンプルなビジュアルプログラミングを実装するための Unity ライブラリです。
+ドラッグ＆ドロップによる簡易的なビジュアルプログラミング機能を実装するためのUPMパッケージ。
 
 ブロックの組み立て・保存・復元・取り消しまでを提供します。実行処理系（組んだブロックを解釈して動かす部分）は含みません。利用側で実装します。
 
@@ -12,7 +12,8 @@ Package Manager の **Add package from git URL** に以下を入力します。
 https://github.com/nitou-kanazawa/lib-unity-SimpleBlockPG.git#upm
 ```
 
-`upm` ブランチは、`main` のテストが通るたびに CI がパッケージ部分だけを切り出して更新します。
+> [!note]
+> `upm` ブランチは、`main` のテストが通るたびに CI がパッケージ部分だけを切り出して更新します。
 
 ### 依存ライブラリ
 
