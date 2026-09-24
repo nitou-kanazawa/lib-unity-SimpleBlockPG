@@ -82,9 +82,15 @@ namespace nitou.BlockPG.Interface {
             return self.Type is BlockType.Condition;
         }
 
+#if UNITY_6000_4_OR_NEWER
+        public static EntityId GetGameObjectID(this I_BPG_Block self) {
+            return self.RectTransform.gameObject.GetEntityId();
+        }
+#else
         public static int GetGameObjectID(this I_BPG_Block self) {
             return self.RectTransform.gameObject.GetInstanceID();
         }
+#endif
 
         /// <summary>
         /// 親ブロックが存在するか判定する．
