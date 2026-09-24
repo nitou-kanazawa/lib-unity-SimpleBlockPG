@@ -79,7 +79,11 @@ namespace nitou.BlockPG.Blocks {
 
 #if UNITY_EDITOR
         // ※同じプレハブから何個生成しても警告は1回に留める
+#if UNITY_6000_4_OR_NEWER
+        private static readonly HashSet<EntityId> _warnedRoots = new();
+#else
         private static readonly HashSet<int> _warnedRoots = new();
+#endif
 
         /// <summary>
         /// プレハブに競合があれば警告する．（※プレハブごとに1回だけ）
@@ -93,8 +97,13 @@ namespace nitou.BlockPG.Blocks {
             if (prefabRoot == null)
                 return;
 
+#if UNITY_6000_4_OR_NEWER
+            if (!_warnedRoots.Add(prefabRoot.GetEntityId()))
+                return;
+#else
             if (!_warnedRoots.Add(prefabRoot.GetInstanceID()))
                 return;
+#endif
 
             var conflicts = Collect(prefabRoot);
             if (conflicts.Count == 0)
