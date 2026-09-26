@@ -52,6 +52,10 @@ jobs:
             git mv Samples "Samples~"
             # ※隠しフォルダに .meta は不要（残すと孤立した meta になる）
             [ -f Samples.meta ] && git rm -q Samples.meta || true
+            # ※package.json の samples path もチルダ付きに合わせる。合っていないと利用者側の Package Manager が
+            #   "Samples/Demo does not exist" を出す（サンプルの一覧・インポートが壊れる）
+            sed -i -E 's#"path": *"Samples/#"path": "Samples~/#' package.json
+            git add package.json
             git commit -q -m "chore: rename Samples to Samples~ for distribution"
           else
             echo "Samples folder not found; nothing to hide."
@@ -65,6 +69,8 @@ jobs:
           test ! -d Samples
           # ※Samples~ が無ければサンプルが配布から抜け落ちている
           test -d "Samples~"
+          # ※package.json がチルダ無しの path を指していたらサンプルが見つからない
+          ! grep -Eq '"path": *"Samples/' package.json
 
       - name: Push UPM branch
         run: git push -f origin "$UPM_BRANCH"
