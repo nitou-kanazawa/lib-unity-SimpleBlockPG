@@ -1,4 +1,6 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
+using UniRx;
 using UnityEngine;
 
 namespace nitou.BlockPG.Blocks.Section {
@@ -14,6 +16,9 @@ namespace nitou.BlockPG.Blocks.Section {
 
         [SerializeField] TMP_InputField _inputField;
 
+        /// <summary>onEndEdit の購読．（※インスペクタで参照を設定済みの場合も Awake で購読するため）</summary>
+        IDisposable _subscription;
+
         /// <summary>
         /// 対応する入力欄．（※未設定の場合はnull）
         /// </summary>
@@ -27,13 +32,7 @@ namespace nitou.BlockPG.Blocks.Section {
                     return _inputField;
 
                 _inputField = GetComponentInChildren<TMP_InputField>(includeInactive: true);
-
-                // [NOTE] onValueChanged ではなく onEndEdit で受ける．
-                //        1打鍵ごとに正規化すると、数値入力で "-" や "1." のような入力途中の状態が
-                //        その場で丸められてしまい、まともに打てなくなるため．
-                if (_inputField != null) {
-                    _inputField.onEndEdit.AddListener(OnInputFieldEndEdit);
-                }
+                Subscribe();
                 return _inputField;
             }
         }
@@ -45,14 +44,16 @@ namespace nitou.BlockPG.Blocks.Section {
         protected override void Awake() {
             // ※初期値の反映は入力欄の解決後に行う
             _ = InputField;
+            // [NOTE] 参照がインスペクタ（やプレハブ生成）で設定済みだと getter は探しに行かないので、ここで必ず購読する
+            Subscribe();
             base.Awake();
         }
 
         protected virtual void OnDestroy() {
-            if (_inputField != null) {
-                _inputField.onEndEdit.RemoveListener(OnInputFieldEndEdit);
-            }
+            _subscription?.Dispose();
+            _subscription = null;
         }
+
 
 
         /// ----------------------------------------------------------------------------
@@ -76,5 +77,22 @@ namespace nitou.BlockPG.Blocks.Section {
         private void OnInputFieldEndEdit(string value) {
             SetValueFromView(value);
         }
+
+        /// <summary>
+        /// 入力欄の onEndEdit を一度だけ購読する．
+        /// </summary>
+        /// <remarks>
+        /// [NOTE] onValueChanged ではなく onEndEdit で受ける．
+        ///        1打鍵ごとに正規化すると、数値入力で "-" や "1." のような入力途中の状態が
+        ///        その場で丸められてしまい、まともに打てなくなるため．
+        /// </remarks>
+        private void Subscribe() {
+            if (_subscription != null || _inputField == null)
+                return;
+            _subscription = _inputField.onEndEdit.AsObservable()
+                .Subscribe(OnInputFieldEndEdit)
+                .AddTo(this);
+        }
+
     }
 }
