@@ -16,6 +16,9 @@ namespace nitou.BlockPG.Blocks.Section {
 
         [SerializeField] TMP_Dropdown _dropdown;
 
+        /// <summary>onValueChanged を購読済みか．（※インスペクタで参照を設定済みの場合も Awake で購読するため）</summary>
+        bool _subscribed;
+
         /// <summary>
         /// 対応するドロップダウン．（※未設定の場合はnull）
         /// </summary>
@@ -29,9 +32,7 @@ namespace nitou.BlockPG.Blocks.Section {
                     return _dropdown;
 
                 _dropdown = GetComponentInChildren<TMP_Dropdown>(includeInactive: true);
-                if (_dropdown != null) {
-                    _dropdown.onValueChanged.AddListener(OnDropdownValueChanged);
-                }
+                Subscribe();
                 return _dropdown;
             }
         }
@@ -55,13 +56,26 @@ namespace nitou.BlockPG.Blocks.Section {
         protected override void Awake() {
             // ※初期値の反映はドロップダウンの解決後に行う
             _ = Dropdown;
+            // [NOTE] 参照がインスペクタ（やプレハブ生成）で設定済みだと getter は探しに行かないので、ここで必ず購読する
+            Subscribe();
             base.Awake();
         }
 
         private void OnDestroy() {
-            if (_dropdown != null) {
+            if (_dropdown != null && _subscribed) {
                 _dropdown.onValueChanged.RemoveListener(OnDropdownValueChanged);
+                _subscribed = false;
             }
+        }
+
+        /// <summary>
+        /// ドロップダウンの onValueChanged を一度だけ購読する．
+        /// </summary>
+        private void Subscribe() {
+            if (_subscribed || _dropdown == null)
+                return;
+            _dropdown.onValueChanged.AddListener(OnDropdownValueChanged);
+            _subscribed = true;
         }
 
 
