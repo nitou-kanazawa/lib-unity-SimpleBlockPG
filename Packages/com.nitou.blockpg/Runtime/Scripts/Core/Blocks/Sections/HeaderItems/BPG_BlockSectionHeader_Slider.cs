@@ -136,9 +136,7 @@ namespace nitou.BlockPG.Blocks.Section {
                 }
             }
 
-            if (_valueLabel != null) {
-                _valueLabel.text = string.Format(CultureInfo.InvariantCulture, string.IsNullOrEmpty(_labelFormat) ? "{0}" : _labelFormat, number);
-            }
+            UpdateLabel(number);
         }
 
 
@@ -158,6 +156,17 @@ namespace nitou.BlockPG.Blocks.Section {
 
         private void OnSliderValueChanged(float value) {
             SetValueFromView(value.ToString(CultureInfo.InvariantCulture));
+            // ※操作経路では入力欄への書き戻しを行わない（基底の方針）が、ラベルは操作中も追従させる
+            UpdateLabel(NumberValue);
+        }
+
+        /// <summary>
+        /// 現在値のラベルを更新する．（※ラベルが無ければ何もしない）
+        /// </summary>
+        private void UpdateLabel(float number) {
+            if (_valueLabel == null)
+                return;
+            _valueLabel.text = string.Format(CultureInfo.InvariantCulture, string.IsNullOrEmpty(_labelFormat) ? "{0}" : _labelFormat, number);
         }
 
         /// <summary>
