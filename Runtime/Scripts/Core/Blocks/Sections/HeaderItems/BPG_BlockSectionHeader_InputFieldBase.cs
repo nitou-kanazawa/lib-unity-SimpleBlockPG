@@ -1,4 +1,6 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
+using UniRx;
 using UnityEngine;
 
 namespace nitou.BlockPG.Blocks.Section {
@@ -14,8 +16,8 @@ namespace nitou.BlockPG.Blocks.Section {
 
         [SerializeField] TMP_InputField _inputField;
 
-        /// <summary>onEndEdit を購読済みか．（※インスペクタで参照を設定済みの場合も Awake で購読するため）</summary>
-        bool _subscribed;
+        /// <summary>onEndEdit の購読．（※インスペクタで参照を設定済みの場合も Awake で購読するため）</summary>
+        IDisposable _subscription;
 
         /// <summary>
         /// 対応する入力欄．（※未設定の場合はnull）
@@ -48,10 +50,8 @@ namespace nitou.BlockPG.Blocks.Section {
         }
 
         protected virtual void OnDestroy() {
-            if (_inputField != null && _subscribed) {
-                _inputField.onEndEdit.RemoveListener(OnInputFieldEndEdit);
-                _subscribed = false;
-            }
+            _subscription?.Dispose();
+            _subscription = null;
         }
 
 
@@ -87,10 +87,11 @@ namespace nitou.BlockPG.Blocks.Section {
         ///        その場で丸められてしまい、まともに打てなくなるため．
         /// </remarks>
         private void Subscribe() {
-            if (_subscribed || _inputField == null)
+            if (_subscription != null || _inputField == null)
                 return;
-            _inputField.onEndEdit.AddListener(OnInputFieldEndEdit);
-            _subscribed = true;
+            _subscription = _inputField.onEndEdit.AsObservable()
+                .Subscribe(OnInputFieldEndEdit)
+                .AddTo(this);
         }
 
     }

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UniRx;
 using UnityEngine;
 
 namespace nitou.BlockPG.Blocks.Section {
@@ -16,8 +18,8 @@ namespace nitou.BlockPG.Blocks.Section {
 
         [SerializeField] TMP_Dropdown _dropdown;
 
-        /// <summary>onValueChanged を購読済みか．（※インスペクタで参照を設定済みの場合も Awake で購読するため）</summary>
-        bool _subscribed;
+        /// <summary>onValueChanged の購読．（※インスペクタで参照を設定済みの場合も Awake で購読するため）</summary>
+        IDisposable _subscription;
 
         /// <summary>
         /// 対応するドロップダウン．（※未設定の場合はnull）
@@ -62,20 +64,19 @@ namespace nitou.BlockPG.Blocks.Section {
         }
 
         private void OnDestroy() {
-            if (_dropdown != null && _subscribed) {
-                _dropdown.onValueChanged.RemoveListener(OnDropdownValueChanged);
-                _subscribed = false;
-            }
+            _subscription?.Dispose();
+            _subscription = null;
         }
 
         /// <summary>
         /// ドロップダウンの onValueChanged を一度だけ購読する．
         /// </summary>
         private void Subscribe() {
-            if (_subscribed || _dropdown == null)
+            if (_subscription != null || _dropdown == null)
                 return;
-            _dropdown.onValueChanged.AddListener(OnDropdownValueChanged);
-            _subscribed = true;
+            _subscription = _dropdown.onValueChanged.AsObservable()
+                .Subscribe(OnDropdownValueChanged)
+                .AddTo(this);
         }
 
 
