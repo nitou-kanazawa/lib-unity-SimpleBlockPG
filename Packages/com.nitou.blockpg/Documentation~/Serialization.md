@@ -37,6 +37,7 @@ public sealed class MyInput : BPG_BlockSectionHeader_InputBase {
 | `BPG_BlockSectionHeader_TextInput` | `TMP_InputField` | 入力文字列 |
 | `BPG_BlockSectionHeader_NumberInput` | `TMP_InputField` | 数値の文字列表現 |
 | `BPG_BlockSectionHeader_Dropdown` | `TMP_Dropdown` | 選択肢の**文字列** |
+| `BPG_BlockSectionHeader_Slider` | `Slider` | 数値の文字列表現（範囲に丸め、整数指定なら四捨五入） |
 
 ### 決めごと
 
