@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using System.Reflection;
 using nitou.BlockPG.Blocks.Section;
 
 namespace RuntimeTests {
@@ -85,6 +87,24 @@ namespace RuntimeTests {
 
             Assert.That(slider.value, Is.EqualTo(4f));
             Assert.That(count, Is.EqualTo(1), "SetValue の通知は 1 回。書き戻しで再入しない");
+        }
+
+        [Test]
+        public void スライダーの操作でラベルも追従する() {
+            var input = Create();
+            var slider = input.gameObject.AddComponent<Slider>();
+            var labelGo = new GameObject("Label", typeof(RectTransform));
+            labelGo.transform.SetParent(_root.transform, false);
+            var label = labelGo.AddComponent<TextMeshProUGUI>();
+            var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            typeof(BPG_BlockSectionHeader_Slider).GetField("_valueLabel", flags).SetValue(input, label);
+            typeof(BPG_BlockSectionHeader_Slider).GetField("_labelFormat", flags).SetValue(input, "{0} m");
+            input.SetRange(1f, 5f, wholeNumbers: true);
+
+            slider.value = 3f;   // ※ユーザーの操作と同じ経路
+
+            Assert.That(input.Value, Is.EqualTo("3"));
+            Assert.That(label.text, Is.EqualTo("3 m"), "操作中はラベルだけ追従する（入力欄への書き戻しはしない）");
         }
     }
 }
